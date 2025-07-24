@@ -10,6 +10,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/stretchr/testify/require"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -41,7 +42,7 @@ func WaitForExternalSecretReady(t *testing.T, options k8s.KubectlOptions, name, 
 			return false, nil
 		}
 
-		if IsExternalSecretReady(eso) {
+		if IsExternalSecretReady(&eso.Status) {
 			return true, nil
 		}
 		return false, nil
@@ -50,4 +51,24 @@ func WaitForExternalSecretReady(t *testing.T, options k8s.KubectlOptions, name, 
 	if err != nil {
 		t.Fatalf("Application %s/%s did not become Healthy & Synced: %v", namespace, name, err)
 	}
+}
+
+// IsExternalSecretReady checks if the provided ExternalSecret resource has a condition
+// of type ExternalSecretReady with a status of ConditionTrue, indicating that the
+// external secret is ready. It returns true if such a condition is found, otherwise false.
+//
+// Parameters:
+//
+//	sec - Pointer to an esov1.ExternalSecret resource.
+//
+// Returns:
+//
+//	bool - true if the ExternalSecret is ready, false otherwise.
+func IsExternalSecretReady(secStatus *esov1.ExternalSecretStatus) bool {
+	for _, condition := range secStatus.Conditions {
+		if condition.Type == esov1.ExternalSecretReady && condition.Status == corev1.ConditionTrue {
+			return true
+		}
+	}
+	return false
 }
