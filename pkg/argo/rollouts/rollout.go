@@ -1,3 +1,6 @@
+// Package rollouts provides Terratest-style helpers for testing Argo Rollouts.
+// It includes polling-based utilities for checking rollout phases, pause states,
+// and progressive deployment status using the Argo Rollouts clientset.
 package rollouts
 
 import (

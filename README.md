@@ -32,10 +32,13 @@ if !ready {
 
 ## Structure
 
+- `pkg/argo/cd` - Helpers for ArgoCD resources
+- `pkg/argo/events` - Helpers for Argo Events resources
+- `pkg/argo/workflows` - Helpers for Argo Workflows resources
+- `pkg/argo/rollouts` - Helpers for Argo Rollouts resources
 - `pkg/certmanager/` - Helpers for cert-manager resources
 - `pkg/externalsecrets/` - Helpers for external-secrets resources
-- `pkg/argo/` - Helpers for ArgoCD resources
-- `pkg/flux/` - Helpers for Flux resources
+- `pkg/flux/` - Helpers for FluxCD resources
 
 ## Purpose
 

@@ -1,3 +1,6 @@
+// Package flux provides Terratest-style helpers for testing Flux resources such as
+// Kustomizations, HelmReleases, GitRepositories, and HelmRepositories. These functions
+// wait for Flux CRDs to become Ready using status conditions and standard polling logic.
 package flux
 
 import (
@@ -11,6 +14,7 @@ import (
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
 )
 
+// hasReadyCondition returns true if the provided list of conditions contains a Ready condition with Status=True.
 // hasReadyCondition checks if the provided slice of metav1.Condition contains a condition
 // of type "Ready" with a status of metav1.ConditionTrue. It returns true if such a condition
 // is found, otherwise returns false.

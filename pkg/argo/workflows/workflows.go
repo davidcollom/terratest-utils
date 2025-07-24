@@ -1,3 +1,6 @@
+// Package workflows provides Terratest-style helpers for testing Argo Workflows.
+// These include functions to wait for specific workflow phases (Succeeded, Failed, etc.),
+// and utilities to assert workflow conditions using the Argo Workflows clientset.
 package workflows
 
 import (

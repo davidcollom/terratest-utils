@@ -1,3 +1,6 @@
+// Package events provides Terratest-style helpers for testing Argo Events resources,
+// including EventSources and Sensors. These helpers use client-go polling to wait for
+// resources to report a Ready condition, ensuring event-driven workflows are correctly configured.
 package events
 
 import (

@@ -1,3 +1,7 @@
+// Package certmanager provides Terratest-style helpers for testing cert-manager
+// resources including Certificates, Issuers, ClusterIssuers, CertificateRequests,
+// ACME Orders, and Challenges. These helpers use client-go and polling logic to
+// wait for readiness conditions and validate associated Secrets.
 package certmanager
 
 import (

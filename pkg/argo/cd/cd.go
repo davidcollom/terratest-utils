@@ -1,3 +1,6 @@
+// Package cd provides Terratest-style helpers for testing Argo CD Applications and
+// AppProjects. It includes functions to wait for Applications to become Synced and Healthy,
+// as well as utilities to verify AppProject presence.
 package cd
 
 import (

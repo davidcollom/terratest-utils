@@ -1,3 +1,6 @@
+// Package externalsecrets provides Terratest-style helpers for testing External Secrets Operator (ESO)
+// resources including SecretStores, ClusterSecretStores, ExternalSecrets, and PushSecrets.
+// Helpers wait for readiness conditions and validate that secrets have been reconciled properly.
 package externalsecrets
 
 import (
