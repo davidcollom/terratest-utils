@@ -1,0 +1,33 @@
+package flux
+
+import (
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	helmv2 "github.com/fluxcd/helm-controller/api/v2beta1"
+	kustomizev1 "github.com/fluxcd/kustomize-controller/api/v1"
+	sourcev1 "github.com/fluxcd/source-controller/api/v1"
+)
+
+// hasReadyCondition checks if the provided slice of metav1.Condition contains a condition
+// of type "Ready" with a status of metav1.ConditionTrue. It returns true if such a condition
+// is found, otherwise returns false.
+func hasReadyCondition(conds []metav1.Condition) bool {
+	for _, cond := range conds {
+		if cond.Type == "Ready" && cond.Status == metav1.ConditionTrue {
+			return true
+		}
+	}
+	return false
+}
+
+// NewFluxClient creates a new controller-runtime client for Flux resources using the provided Kubernetes REST config.
+func NewFluxClient(cfg *rest.Config) (client.Client, error) {
+	scheme := runtime.NewScheme()
+	_ = kustomizev1.AddToScheme(scheme)
+	_ = helmv2.AddToScheme(scheme)
+	_ = sourcev1.AddToScheme(scheme)
+	return client.New(cfg, client.Options{Scheme: scheme})
+}
