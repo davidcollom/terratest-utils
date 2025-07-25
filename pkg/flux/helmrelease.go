@@ -14,6 +14,20 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+func ListHelmReleases(t *testing.T, options *k8s.KubectlOptions, namespace string) []helmv2.HelmRelease {
+	t.Helper()
+
+	fluxclient, err := NewFluxClient(t, options)
+	require.NoError(t, err, "Unable to create Flux client")
+
+	ctx := t.Context()
+	var releases helmv2.HelmReleaseList
+	err = fluxclient.List(ctx, &releases, client.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list HelmReleases in namespace %s", namespace)
+
+	return releases.Items
+}
+
 // WaitForHelmReleaseReady waits until the specified HelmRelease resource in the given namespace
 // reaches the Ready condition or the timeout is exceeded. It polls the resource status at regular
 // intervals and fails the test if the resource does not become Ready within the timeout period.
@@ -29,7 +43,8 @@ import (
 // The function will call t.Fatalf if the HelmRelease does not become Ready within the timeout.
 func WaitForHelmReleaseReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
-	fluxclient, err := NewFluxClient(options.RestConfig)
+
+	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
 	ctx := t.Context()

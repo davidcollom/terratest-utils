@@ -4,7 +4,14 @@
 package events
 
 import (
+	"testing"
+
+	argoclientset "github.com/argoproj/argo-events/pkg/client/clientset/versioned"
+
+	"github.com/davidcollom/terratest-utils/pkg/utils"
+	"github.com/gruntwork-io/terratest/modules/k8s"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/rest"
 )
 
 // HasReadyCondition checks if the provided slice of metav1.Condition contains a condition
@@ -22,4 +29,20 @@ func HasReadyCondition(conds []metav1.Condition, expectedType string) bool {
 		}
 	}
 	return false
+}
+
+func NewArgoEventsClient(t *testing.T, options *k8s.KubectlOptions) (argoclientset.Interface, error) {
+	t.Helper()
+	var cfg *rest.Config
+	var err error
+	if options.RestConfig == nil {
+		cfg, err = utils.GetRestConfigE(t, options)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		cfg = options.RestConfig
+	}
+
+	return argoclientset.NewForConfig(cfg)
 }

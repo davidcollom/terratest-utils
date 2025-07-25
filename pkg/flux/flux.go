@@ -4,14 +4,17 @@
 package flux
 
 import (
+	"testing"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	"github.com/davidcollom/terratest-utils/pkg/utils"
 	helmv2 "github.com/fluxcd/helm-controller/api/v2beta1"
 	kustomizev1 "github.com/fluxcd/kustomize-controller/api/v1"
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
+	"github.com/gruntwork-io/terratest/modules/k8s"
 )
 
 // hasReadyCondition returns true if the provided list of conditions contains a Ready condition with Status=True.
@@ -28,10 +31,17 @@ func hasReadyCondition(conds []metav1.Condition) bool {
 }
 
 // NewFluxClient creates a new controller-runtime client for Flux resources using the provided Kubernetes REST config.
-func NewFluxClient(cfg *rest.Config) (client.Client, error) {
+func NewFluxClient(t *testing.T, options *k8s.KubectlOptions) (client.Client, error) {
+	cfg, err := utils.GetRestConfigE(t, options)
+
+	if err != nil {
+		return nil, err
+	}
+
 	scheme := runtime.NewScheme()
 	_ = kustomizev1.AddToScheme(scheme)
 	_ = helmv2.AddToScheme(scheme)
 	_ = sourcev1.AddToScheme(scheme)
+
 	return client.New(cfg, client.Options{Scheme: scheme})
 }

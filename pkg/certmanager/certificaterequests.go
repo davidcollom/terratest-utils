@@ -7,7 +7,6 @@ import (
 
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
-	cmclientset "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 
@@ -16,6 +15,19 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
+
+func ListCertificateRequests(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.CertificateRequest {
+	t.Helper()
+
+	client, err := NewCertManagerClient(t, options)
+	require.NoError(t, err, "Failed to create cert-manager clientset")
+
+	ctx := t.Context()
+	crList, err := client.CertmanagerV1().CertificateRequests(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list CertificateRequests in namespace %s", namespace)
+
+	return crList.Items
+}
 
 // WaitForCertificateRequestReady waits until the specified CertificateRequest resource in the given namespace
 // reaches the Ready condition within the provided timeout duration. It polls the resource status every 2 seconds.
@@ -33,7 +45,7 @@ import (
 func WaitForCertificateRequestReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := cmclientset.NewForConfig(options.RestConfig)
+	client, err := NewCertManagerClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()

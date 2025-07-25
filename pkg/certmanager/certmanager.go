@@ -5,9 +5,34 @@
 package certmanager
 
 import (
+	"testing"
+
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
+	cmclientset "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
+	"github.com/davidcollom/terratest-utils/pkg/utils"
+	"github.com/gruntwork-io/terratest/modules/k8s"
+	"k8s.io/client-go/rest"
 )
+
+// NewCertManagerClient creates and returns a new cert-manager clientset.Interface using the provided testing context and kubectl options.
+// If the RestConfig in options is nil, it attempts to generate a new rest.Config using the provided options.
+// Returns the cert-manager clientset.Interface or an error if the configuration could not be created.
+func NewCertManagerClient(t *testing.T, options *k8s.KubectlOptions) (cmclientset.Interface, error) {
+	t.Helper()
+	var cfg *rest.Config
+	var err error
+	if options.RestConfig == nil {
+		cfg, err = utils.GetRestConfigE(t, options)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		cfg = options.RestConfig
+	}
+
+	return cmclientset.NewForConfig(cfg)
+}
 
 // HasCondition checks if a slice of CertificateRequestCondition contains a condition
 // with the specified type and status.

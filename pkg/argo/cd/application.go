@@ -5,8 +5,6 @@ import (
 	"testing"
 	"time"
 
-	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
-
 	"github.com/gruntwork-io/terratest/modules/k8s"
 
 	"github.com/stretchr/testify/require"
@@ -28,10 +26,10 @@ import (
 //	timeout  - The maximum duration to wait for the Application to become Healthy and Synced.
 //
 // Fails the test if the Application does not reach the desired state within the timeout.
-func WaitForApplicationHealthyAndSynced(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForApplicationHealthyAndSynced(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := argocd.NewForConfig(options.RestConfig)
+	client, err := NewArgoCDClient(t, options)
 	require.NoError(t, err, "Unable to create Argo CD client")
 
 	ctx := t.Context()

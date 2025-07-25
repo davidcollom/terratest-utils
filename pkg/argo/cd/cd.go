@@ -4,8 +4,14 @@
 package cd
 
 import (
+	"testing"
+
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
+	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
 	apphealth "github.com/argoproj/gitops-engine/pkg/health"
+	"github.com/davidcollom/terratest-utils/pkg/utils"
+	"github.com/gruntwork-io/terratest/modules/k8s"
+	"k8s.io/client-go/rest"
 )
 
 // IsApplicationHealthyAndSynced returns true if the given Argo CD application is both healthy and synced.
@@ -13,4 +19,20 @@ import (
 func IsApplicationHealthyAndSynced(app *argocdv1alpha1.Application) bool {
 	return app.Status.Health.Status == apphealth.HealthStatusHealthy &&
 		app.Status.Sync.Status == argocdv1alpha1.SyncStatusCodeSynced
+}
+
+func NewArgoCDClient(t *testing.T, options *k8s.KubectlOptions) (argocd.Interface, error) {
+	t.Helper()
+	var cfg *rest.Config
+	var err error
+	if options.RestConfig == nil {
+		cfg, err = utils.GetRestConfigE(t, options)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		cfg = options.RestConfig
+	}
+
+	return argocd.NewForConfig(cfg)
 }

@@ -15,6 +15,20 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+func ListSecretStores(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1.SecretStore {
+	t.Helper()
+
+	esoclient, err := NewESOClient(t, options)
+	require.NoError(t, err, "Unable to create External Secrets client")
+
+	ctx := t.Context()
+	var stores esov1.SecretStoreList
+	err = esoclient.List(ctx, &stores, ctrlclient.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list SecretStores in namespace %s", namespace)
+
+	return stores.Items
+}
+
 // WaitForSecretStoreReady waits until the specified SecretStore resource in the given namespace becomes Ready.
 // It polls the SecretStore status at regular intervals until the Ready condition is met or the timeout is reached.
 // If the SecretStore does not become Ready within the timeout, the test fails.
@@ -28,10 +42,10 @@ import (
 //	timeout  - The maximum duration to wait for the SecretStore to become Ready.
 //
 // This function requires the External Secrets Operator client to be available and the SecretStore resource to be present.
-func WaitForSecretStoreReady(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForSecretStoreReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	esoclient, err := NewESOClient(options.RestConfig)
+	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
 	ctx := t.Context()

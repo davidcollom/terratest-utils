@@ -14,6 +14,19 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+func ListIssuers(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.Issuer {
+	t.Helper()
+
+	client, err := NewCertManagerClient(t, options)
+	require.NoError(t, err, "Failed to create cert-manager clientset")
+
+	ctx := t.Context()
+	issuerList, err := client.CertmanagerV1().Issuers(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list Issuers in namespace %s", namespace)
+
+	return issuerList.Items
+}
+
 // WaitForIssuerReady waits until the specified cert-manager Issuer resource is in the Ready condition within the given timeout.
 // It polls the Issuer status every 2 seconds and fails the test if the Issuer does not become Ready within the timeout period.
 // Parameters:
@@ -27,7 +40,7 @@ import (
 func WaitForIssuerReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := cmclientset.NewForConfig(options.RestConfig)
+	client, err := NewCertManagerClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -47,6 +60,19 @@ func WaitForIssuerReady(t *testing.T, options *k8s.KubectlOptions, name, namespa
 	if err != nil {
 		t.Fatalf("Issuer %s/%s not Ready: %v", namespace, name, err)
 	}
+}
+
+func ListClusterIssuers(t *testing.T, options *k8s.KubectlOptions) []cmv1.ClusterIssuer {
+	t.Helper()
+
+	client, err := cmclientset.NewForConfig(options.RestConfig)
+	require.NoError(t, err, "Failed to create cert-manager clientset")
+
+	ctx := t.Context()
+	issuerList, err := client.CertmanagerV1().ClusterIssuers().List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list ClusterIssuers")
+
+	return issuerList.Items
 }
 
 // WaitForClusterIssuerReady waits until the specified cert-manager ClusterIssuer resource is in the Ready state.

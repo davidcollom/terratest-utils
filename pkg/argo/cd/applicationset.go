@@ -6,7 +6,6 @@ import (
 	"time"
 
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
-	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 
@@ -25,10 +24,10 @@ import (
 //   - name: The name of the ApplicationSet.
 //   - namespace: The namespace where the ApplicationSet resides.
 //   - timeout: The maximum duration to wait for the ApplicationSet to become healthy and synced.
-func WaitForApplicationSetHealthyAndSynced(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForApplicationSetHealthyAndSynced(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := argocd.NewForConfig(options.RestConfig)
+	client, err := NewArgoCDClient(t, options)
 	require.NoError(t, err, "Unable to create Argo CD client")
 
 	ctx := t.Context()

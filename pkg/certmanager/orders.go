@@ -11,8 +11,20 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 
 	acmev1 "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
-	cmclientset "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 )
+
+func ListOrders(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Order {
+	t.Helper()
+
+	client, err := NewCertManagerClient(t, options)
+	require.NoError(t, err, "Failed to create cert-manager clientset")
+
+	ctx := t.Context()
+	orderList, err := client.AcmeV1().Orders(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list Orders in namespace %s", namespace)
+
+	return orderList.Items
+}
 
 // WaitForOrderValid waits until the specified ACME Order resource in the given namespace reaches the "Valid" state or the timeout is exceeded.
 // It polls the Order status every 2 seconds using the cert-manager clientset.
@@ -30,7 +42,7 @@ import (
 func WaitForOrderValid(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := cmclientset.NewForConfig(options.RestConfig)
+	client, err := NewCertManagerClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()

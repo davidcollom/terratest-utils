@@ -6,13 +6,30 @@ import (
 	"time"
 
 	workflowv1alpha1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
-	workflowsClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
+
+func ListWorkflowPhases(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowPhase {
+	t.Helper()
+
+	client, err := NewArgoWorkflowsClient(t, options)
+	require.NoError(t, err, "Failed to create Argo Workflows clientset")
+
+	ctx := t.Context()
+	workflowList, err := client.ArgoprojV1alpha1().Workflows(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list Workflows in namespace %s", namespace)
+
+	phases := make([]workflowv1alpha1.WorkflowPhase, 0, len(workflowList.Items))
+	for _, wf := range workflowList.Items {
+		phases = append(phases, wf.Status.Phase)
+	}
+
+	return phases
+}
 
 // WaitForWorkflowPhase waits until the specified Argo Workflow reaches the desired phase within the given timeout.
 // It polls the workflow status every 2 seconds using the provided Kubernetes options and namespace.
@@ -31,7 +48,7 @@ import (
 func WaitForWorkflowPhase(t *testing.T, options *k8s.KubectlOptions, name, namespace string, desiredPhase workflowv1alpha1.WorkflowPhase, timeout time.Duration) {
 	t.Helper()
 
-	client, err := workflowsClientSet.NewForConfig(options.RestConfig)
+	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
 	ctx := t.Context()

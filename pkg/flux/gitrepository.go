@@ -28,7 +28,7 @@ import (
 // Fails the test if the GitRepository does not reach the Ready condition within the timeout.
 func WaitForGitRepositoryReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
-	fluxclient, err := NewFluxClient(options.RestConfig)
+	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
 	ctx := t.Context()

@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/stretchr/testify/require"
@@ -23,10 +22,10 @@ import (
 //   - name: The name of the AppProject to wait for.
 //   - namespace: The namespace in which to look for the AppProject.
 //   - timeout: The maximum duration to wait for the AppProject to appear.
-func WaitForAppProjectExists(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForAppProjectExists(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := argocd.NewForConfig(options.RestConfig)
+	client, err := NewArgoCDClient(t, options)
 	require.NoError(t, err, "Unable to create Argo CD client")
 
 	ctx := t.Context()

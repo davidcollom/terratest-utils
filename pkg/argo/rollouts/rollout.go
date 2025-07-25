@@ -10,13 +10,44 @@ import (
 
 	rolloutsv1alpha1 "github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1"
 	rolloutClientSet "github.com/argoproj/argo-rollouts/pkg/client/clientset/versioned"
+	"github.com/davidcollom/terratest-utils/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/rest"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
+
+func NewArgoRolloutsClient(t *testing.T, options *k8s.KubectlOptions) (rolloutClientSet.Interface, error) {
+	t.Helper()
+	var cfg *rest.Config
+	var err error
+	if options.RestConfig == nil {
+		cfg, err = utils.GetRestConfigE(t, options)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		cfg = options.RestConfig
+	}
+
+	return rolloutClientSet.NewForConfig(cfg)
+}
+
+func ListRollouts(t *testing.T, options *k8s.KubectlOptions, namespace string) []rolloutsv1alpha1.Rollout {
+	t.Helper()
+
+	client, err := NewArgoRolloutsClient(t, options)
+	require.NoError(t, err, "Failed to create Argo Rollouts clientset")
+
+	ctx := t.Context()
+	rolloutList, err := client.ArgoprojV1alpha1().Rollouts(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list Rollouts in namespace %s", namespace)
+
+	return rolloutList.Items
+}
 
 // WaitForRolloutHealthy waits until the specified Argo Rollout resource reaches a Healthy phase within the given timeout.
 // It polls the rollout status every 2 seconds and checks for the "Progressing" condition with status "True" and phase "Healthy".
@@ -30,7 +61,7 @@ import (
 func WaitForRolloutHealthy(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := rolloutClientSet.NewForConfig(options.RestConfig)
+	client, err := NewArgoRolloutsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Rollouts clientset")
 
 	ctx := t.Context()
@@ -70,7 +101,7 @@ func WaitForRolloutHealthy(t *testing.T, options *k8s.KubectlOptions, name, name
 func WaitForRolloutPaused(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := rolloutClientSet.NewForConfig(options.RestConfig)
+	client, err := NewArgoRolloutsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Rollouts clientset")
 
 	ctx := t.Context()

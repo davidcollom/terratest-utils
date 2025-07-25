@@ -6,7 +6,6 @@ import (
 	"time"
 
 	argoeventsv1alpha1 "github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
-	argoclientset "github.com/argoproj/argo-events/pkg/client/clientset/versioned"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -15,12 +14,25 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func ListEventSources(t *testing.T, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.EventSource {
+	t.Helper()
+
+	client, err := NewArgoEventsClient(t, options)
+	require.NoError(t, err, "Failed to create Argo clientset")
+
+	ctx := t.Context()
+	eventSourceList, err := client.ArgoprojV1alpha1().EventSources(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list EventSources in namespace %s", namespace)
+
+	return eventSourceList.Items
+}
+
 // WaitForEventSourceReady waits until the specified Argo Events EventSource resource is Ready, or times out.
 // Useful for integration tests to ensure event sources are available before proceeding.
 func WaitForEventSourceReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := argoclientset.NewForConfig(options.RestConfig)
+	client, err := NewArgoEventsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo clientset")
 
 	ctx := t.Context()
@@ -30,12 +42,20 @@ func WaitForEventSourceReady(t *testing.T, options *k8s.KubectlOptions, name, na
 			return false, nil // keep retrying
 		}
 
+		var (
+			deployed   = false
+			hasSources = false
+		)
+
 		for _, cond := range es.Status.Conditions {
-			if cond.Type == argoeventsv1alpha1.ConditionReady && cond.Status == "True" {
-				return true, nil
+			if cond.Type == argoeventsv1alpha1.EventSourceConditionDeployed && cond.IsTrue() {
+				deployed = true
+			}
+			if cond.Type == argoeventsv1alpha1.EventSourceConditionSourcesProvided && cond.IsTrue() {
+				hasSources = true
 			}
 		}
-		return false, nil
+		return deployed && hasSources, nil
 	})
 
 	if err != nil {

@@ -14,6 +14,20 @@ import (
 	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+func ListPushSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1alpha1.PushSecret {
+	t.Helper()
+
+	esoclient, err := NewESOClient(t, options)
+	require.NoError(t, err, "Unable to create External Secrets client")
+
+	ctx := t.Context()
+	var pushSecrets esov1alpha1.PushSecretList
+	err = esoclient.List(ctx, &pushSecrets, ctrlclient.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list PushSecrets in namespace %s", namespace)
+
+	return pushSecrets.Items
+}
+
 // WaitForPushSecretReady waits until the specified PushSecret resource in the given namespace becomes Ready within the provided timeout.
 // It polls the Kubernetes API at regular intervals to check the status of the PushSecret's conditions.
 // If the PushSecret does not become Ready within the timeout, the test fails.
@@ -23,9 +37,10 @@ import (
 //   - name: The name of the PushSecret resource.
 //   - namespace: The namespace where the PushSecret is located.
 //   - timeout: The maximum duration to wait for the PushSecret to become Ready.
-func WaitForPushSecretReady(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForPushSecretReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
-	esoclient, err := NewESOClient(options.RestConfig)
+
+	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
 	ctx := t.Context()

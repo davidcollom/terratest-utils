@@ -6,13 +6,25 @@ import (
 	"time"
 
 	workflowv1alpha1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
-	workflowsClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
+
+func ListCronWorkflows(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.CronWorkflow {
+	t.Helper()
+
+	client, err := NewArgoWorkflowsClient(t, options)
+	require.NoError(t, err, "Failed to create Argo Workflows clientset")
+
+	ctx := t.Context()
+	cronWorkflowList, err := client.ArgoprojV1alpha1().CronWorkflows(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list CronWorkflows in namespace %s", namespace)
+
+	return cronWorkflowList.Items
+}
 
 // WaitForCronWorkflowActive waits until the specified Argo CronWorkflow reaches the 'Active' phase within the given timeout.
 // It uses the provided KubectlOptions, workflow name, and namespace for the check.
@@ -44,7 +56,7 @@ func WaitForCronWorkflowStopped(t *testing.T, options *k8s.KubectlOptions, name,
 func WaitForCronWorkflowPhase(t *testing.T, options *k8s.KubectlOptions, name, namespace string, desiredPhase workflowv1alpha1.CronWorkflowPhase, timeout time.Duration) {
 	t.Helper()
 
-	client, err := workflowsClientSet.NewForConfig(options.RestConfig)
+	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
 	ctx := t.Context()

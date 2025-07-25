@@ -6,7 +6,6 @@ import (
 	"time"
 
 	acmev1 "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
-	cmclientset "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -15,6 +14,19 @@ import (
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
+
+func ListChallenges(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Challenge {
+	t.Helper()
+
+	client, err := NewCertManagerClient(t, options)
+	require.NoError(t, err, "Failed to create cert-manager clientset")
+
+	ctx := t.Context()
+	challengeList, err := client.AcmeV1().Challenges(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list Challenges in namespace %s", namespace)
+
+	return challengeList.Items
+}
 
 // WaitForChallengeValid waits until the specified ACME Challenge resource in the given namespace
 // reaches the "Valid" state or the timeout is exceeded. It polls the challenge status at regular
@@ -33,7 +45,7 @@ import (
 func WaitForChallengeValid(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := cmclientset.NewForConfig(options.RestConfig)
+	client, err := NewCertManagerClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
