@@ -4,10 +4,12 @@ import (
 	"testing"
 
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
+
 	apixv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apixclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	"github.com/davidcollom/terratest-utils/pkg/utils"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,7 +22,14 @@ func GetCustomResourceDefinition(t *testing.T, options *terrak8s.KubectlOptions,
 }
 
 func GetCustomResourceDefinitionE(t *testing.T, options *terrak8s.KubectlOptions, crdName string) (*apixv1.CustomResourceDefinition, error) {
-	client, err := apixclientset.NewForConfig(options.RestConfig)
+	t.Helper()
+
+	restConfig, err := utils.GetRestConfigE(t, options)
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := apixclientset.NewForConfig(restConfig)
 	if err != nil {
 		return nil, err
 	}
