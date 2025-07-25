@@ -14,6 +14,18 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListClusterExternalSecrets retrieves a list of ClusterExternalSecret resources from the specified namespace
+// using the provided Kubernetes KubectlOptions. It returns a slice of ClusterExternalSecret objects.
+// The function requires a testing.T instance for error handling and test context propagation.
+// It fails the test if the External Secrets client cannot be created or if listing the secrets fails.
+//
+// Parameters:
+//   - t:        The testing.T instance used for test context and assertions.
+//   - options:  The KubectlOptions specifying the Kubernetes context and configuration.
+//   - namespace: The namespace from which to list ClusterExternalSecrets.
+//
+// Returns:
+//   - []esov1.ClusterExternalSecret: A slice containing the ClusterExternalSecret resources found in the namespace.
 func ListClusterExternalSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1.ClusterExternalSecret {
 	t.Helper()
 

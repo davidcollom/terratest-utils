@@ -14,6 +14,18 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListSensors retrieves a list of Argo Events Sensor resources from the specified namespace.
+// It uses the provided testing context and kubectl options to create an Argo Events client,
+// then lists all Sensor resources in the given namespace. The function fails the test if
+// any error occurs during client creation or sensor listing.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options used to configure the client.
+//   - namespace: The Kubernetes namespace from which to list the sensors.
+//
+// Returns:
+//   - A slice of argoeventsv1alpha1.Sensor objects representing the sensors found in the namespace.
 func ListSensors(t *testing.T, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.Sensor {
 	t.Helper()
 

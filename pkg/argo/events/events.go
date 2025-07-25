@@ -31,6 +31,17 @@ func HasReadyCondition(conds []metav1.Condition, expectedType string) bool {
 	return false
 }
 
+// NewArgoEventsClient creates a new Argo Events client using the provided testing context and Kubernetes options.
+// It retrieves the Kubernetes REST configuration from the provided options or generates one if not present.
+// Returns an Argo Events clientset interface and an error if the client could not be created.
+//
+// Parameters:
+//   - t: The testing context, used for logging and error handling.
+//   - options: The Kubernetes KubectlOptions containing cluster access information.
+//
+// Returns:
+//   - argoclientset.Interface: The Argo Events clientset interface for interacting with Argo Events resources.
+//   - error: An error if the client could not be created.
 func NewArgoEventsClient(t *testing.T, options *k8s.KubectlOptions) (argoclientset.Interface, error) {
 	t.Helper()
 	var cfg *rest.Config

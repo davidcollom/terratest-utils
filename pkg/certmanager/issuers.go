@@ -14,6 +14,18 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListIssuers retrieves a list of cert-manager Issuer resources from the specified namespace.
+// It uses the provided testing context and kubectl options to create a cert-manager client,
+// then queries for Issuers in the given namespace. The function fails the test if any error occurs
+// during client creation or resource listing.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options used to configure the client.
+//   - namespace: The Kubernetes namespace from which to list Issuers.
+//
+// Returns:
+//   - A slice of cmv1.Issuer objects found in the specified namespace.
 func ListIssuers(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.Issuer {
 	t.Helper()
 
@@ -62,6 +74,17 @@ func WaitForIssuerReady(t *testing.T, options *k8s.KubectlOptions, name, namespa
 	}
 }
 
+// ListClusterIssuers retrieves a list of cert-manager ClusterIssuer resources from the Kubernetes cluster
+// using the provided KubectlOptions. It requires a testing.T instance for error handling and test context.
+// The function returns a slice of ClusterIssuer objects. If the client creation or resource listing fails,
+// the test will fail with an appropriate error message.
+//
+// Parameters:
+//   - t: A pointer to testing.T, used for test context and error reporting.
+//   - options: A pointer to k8s.KubectlOptions, containing configuration for accessing the Kubernetes cluster.
+//
+// Returns:
+//   - A slice of cmv1.ClusterIssuer representing the ClusterIssuers found in the cluster.
 func ListClusterIssuers(t *testing.T, options *k8s.KubectlOptions) []cmv1.ClusterIssuer {
 	t.Helper()
 

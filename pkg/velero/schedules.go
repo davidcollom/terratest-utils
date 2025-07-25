@@ -14,6 +14,31 @@ import (
 	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// ListSchedules retrieves all Velero Schedule resources in the specified namespace using the provided Kubernetes options.
+// It returns a slice of velerov1.Schedule objects. The function fails the test if the Velero client cannot be created
+// or if listing the schedules fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The Kubernetes options containing the REST config.
+//   - namespace: The namespace from which to list Velero Schedules.
+//
+// Returns:
+//   - A slice of velerov1.Schedule representing the schedules found in the given namespace.
+func ListSchedules(t *testing.T, options *k8s.KubectlOptions, namespace string) []velerov1.Schedule {
+	t.Helper()
+
+	client, err := NewVeleroClient(options.RestConfig)
+	require.NoError(t, err, "Unable to create Velero client")
+
+	ctx := t.Context()
+	var schedules velerov1.ScheduleList
+	err = client.List(ctx, &schedules, ctrlclient.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list Schedules in namespace %s", namespace)
+
+	return schedules.Items
+}
+
 // WaitForScheduleToExist waits until a Velero Schedule resource with the specified name and namespace exists
 // and is in the "Enabled" phase, or until the given timeout is reached. It polls the Kubernetes API at regular
 // intervals and fails the test if the schedule does not become enabled within the timeout period.

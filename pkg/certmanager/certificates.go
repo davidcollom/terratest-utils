@@ -15,6 +15,18 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListCertificates retrieves all cert-manager Certificate resources in the specified namespace.
+// It uses the provided testing context and kubectl options to create a cert-manager client,
+// then lists and returns the Certificate objects found in the namespace. The function will
+// fail the test if there is an error creating the client or listing the certificates.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list Certificate resources.
+//
+// Returns:
+//   - A slice of certv1.Certificate objects found in the specified namespace.
 func ListCertificates(t *testing.T, options *k8s.KubectlOptions, namespace string) []certv1.Certificate {
 	t.Helper()
 

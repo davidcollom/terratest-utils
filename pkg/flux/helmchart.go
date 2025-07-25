@@ -14,6 +14,31 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListHelmCharts retrieves a list of HelmChart resources from the specified namespace using the provided
+// Kubernetes options. It requires a testing context and will fail the test if unable to create the Flux client
+// or if listing the HelmCharts fails. Returns a slice of HelmChart objects found in the namespace.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list HelmChart resources.
+//
+// Returns:
+//   - A slice of sourcev1.HelmChart objects present in the specified namespace.
+func ListHelmCharts(t *testing.T, options *k8s.KubectlOptions, namespace string) []sourcev1.HelmChart {
+	t.Helper()
+
+	fluxclient, err := NewFluxClient(t, options)
+	require.NoError(t, err, "Unable to create Flux client")
+
+	ctx := t.Context()
+	var charts sourcev1.HelmChartList
+	err = fluxclient.List(ctx, &charts, client.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list HelmCharts in namespace %s", namespace)
+
+	return charts.Items
+}
+
 // WaitForHelmChartReady waits until the specified HelmChart resource in the given namespace becomes Ready within the provided timeout.
 // It uses the Flux client to poll the HelmChart status and checks for the Ready condition.
 // If the HelmChart does not become Ready within the timeout, the test fails with a fatal error.

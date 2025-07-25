@@ -15,6 +15,18 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListChallenges retrieves a list of ACME Challenge resources from the specified namespace
+// using the cert-manager client. It requires a testing context, kubectl options, and the
+// target namespace. The function will fail the test if the client cannot be created or if
+// the challenges cannot be listed.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list ACME Challenges.
+//
+// Returns:
+//   - A slice of acmev1.Challenge objects found in the specified namespace.
 func ListChallenges(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Challenge {
 	t.Helper()
 

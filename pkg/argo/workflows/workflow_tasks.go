@@ -9,6 +9,17 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// ListArgoWorkflowTaskResults retrieves a list of Argo WorkflowTaskResult resources from the specified namespace.
+// It uses the provided testing context and kubectl options to create an Argo Workflows client.
+// The function fails the test if the client cannot be created or if listing the WorkflowTaskResults fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options used to configure the client.
+//   - namespace: The Kubernetes namespace from which to list WorkflowTaskResults.
+//
+// Returns:
+//   - A slice of WorkflowTaskResult resources found in the specified namespace.
 func ListArgoWorkflowTaskResults(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTaskResult {
 	t.Helper()
 
@@ -22,6 +33,18 @@ func ListArgoWorkflowTaskResults(t *testing.T, options *k8s.KubectlOptions, name
 	return workflowTemplateList.Items
 }
 
+// ListArgoWorkflowTaskSet retrieves all Argo WorkflowTaskSet resources in the specified namespace.
+// It uses the provided testing context and kubectl options to create an Argo Workflows client,
+// then lists the WorkflowTaskSets in the given namespace. If any error occurs during client creation
+// or listing, the test will fail. Returns a slice of WorkflowTaskSet objects found in the namespace.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list WorkflowTaskSets.
+//
+// Returns:
+//   - A slice of WorkflowTaskSet objects present in the specified namespace.
 func ListArgoWorkflowTaskSet(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTaskSet {
 	t.Helper()
 

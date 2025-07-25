@@ -18,6 +18,22 @@ import (
 // NewCertManagerClient creates and returns a new cert-manager clientset.Interface using the provided testing context and kubectl options.
 // If the RestConfig in options is nil, it attempts to generate a new rest.Config using the provided options.
 // Returns the cert-manager clientset.Interface or an error if the configuration could not be created.
+//
+// Parameters:
+//   - t: The testing context, used for error reporting and helper annotation.
+//   - options: The kubectl options containing cluster access configuration. If options.RestConfig is nil,
+//     the function will attempt to generate a rest.Config using utils.GetRestConfigE.
+//
+// Returns:
+//   - cmclientset.Interface: The cert-manager clientset for interacting with cert-manager resources.
+//   - error: An error if the configuration or clientset could not be created.
+//
+// Example usage:
+//
+//	client, err := NewCertManagerClient(t, options)
+//	require.NoError(t, err)
+//	issuers, err := client.CertmanagerV1().Issuers("default").List(context.TODO(), metav1.ListOptions{})
+//	require.NoError(t, err)
 func NewCertManagerClient(t *testing.T, options *k8s.KubectlOptions) (cmclientset.Interface, error) {
 	t.Helper()
 	var cfg *rest.Config

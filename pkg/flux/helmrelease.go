@@ -14,6 +14,16 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListHelmReleases retrieves all HelmRelease resources in the specified namespace using the provided kubectl options.
+// It requires a testing context and will fail the test if the Flux client cannot be created or if listing the HelmReleases fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list HelmRelease resources.
+//
+// Returns:
+//   - A slice of helmv2.HelmRelease objects found in the specified namespace.
 func ListHelmReleases(t *testing.T, options *k8s.KubectlOptions, namespace string) []helmv2.HelmRelease {
 	t.Helper()
 

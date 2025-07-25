@@ -16,6 +16,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListCertificateRequests retrieves all CertificateRequest resources in the specified namespace
+// using the provided kubectl options. It returns a slice of CertificateRequest objects.
+// The function fails the test if there is an error creating the cert-manager client or listing the resources.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list CertificateRequests.
+//
+// Returns:
+//   - A slice of cmv1.CertificateRequest representing the CertificateRequests found in the namespace.
 func ListCertificateRequests(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.CertificateRequest {
 	t.Helper()
 

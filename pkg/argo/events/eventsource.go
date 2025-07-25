@@ -14,6 +14,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// ListEventSources retrieves a list of Argo EventSource resources from the specified namespace.
+// It uses the provided testing context and kubectl options to create an Argo Events client,
+// then lists all EventSources in the given namespace. The function fails the test if any error occurs.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list EventSources.
+//
+// Returns:
+//   - A slice of argoeventsv1alpha1.EventSource objects representing the EventSources in the namespace.
 func ListEventSources(t *testing.T, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.EventSource {
 	t.Helper()
 

@@ -13,6 +13,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListCronWorkflows retrieves all Argo CronWorkflows in the specified namespace using the provided kubectl options.
+// It returns a slice of CronWorkflow objects. The function fails the test if the client cannot be created or if
+// listing the CronWorkflows fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options to use for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list the CronWorkflows.
+//
+// Returns:
+//   - A slice of workflowv1alpha1.CronWorkflow representing the CronWorkflows found in the namespace.
 func ListCronWorkflows(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.CronWorkflow {
 	t.Helper()
 

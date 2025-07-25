@@ -13,6 +13,19 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListWorkflowPhases retrieves the phases of all Argo Workflows in the specified namespace.
+// It uses the provided testing context and kubectl options to create an Argo Workflows client,
+// lists all workflows in the given namespace, and returns a slice containing the phase of each workflow.
+//
+// Parameters:
+//   - t: The testing context used for logging and error handling.
+//   - options: The kubectl options used to configure the Kubernetes client.
+//   - namespace: The namespace from which to list the workflows.
+//
+// Returns:
+//   - A slice of workflowv1alpha1.WorkflowPhase representing the phase of each workflow in the namespace.
+//
+// Panics if there is an error creating the client or listing the workflows.
 func ListWorkflowPhases(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowPhase {
 	t.Helper()
 

@@ -14,6 +14,31 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListGitRepositories retrieves all Flux GitRepository resources within the specified Kubernetes namespace.
+// It uses the provided testing context and Kubectl options to create a Flux client, then lists the GitRepositories.
+// If any error occurs during client creation or listing, the test will fail.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The Kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace to search for GitRepository resources.
+//
+// Returns:
+//   - A slice of sourcev1.GitRepository objects found in the specified namespace.
+func ListGitRepositories(t *testing.T, options *k8s.KubectlOptions, namespace string) []sourcev1.GitRepository {
+	t.Helper()
+
+	fluxclient, err := NewFluxClient(t, options)
+	require.NoError(t, err, "Unable to create Flux client")
+
+	ctx := t.Context()
+	var repos sourcev1.GitRepositoryList
+	err = fluxclient.List(ctx, &repos, client.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list GitRepositories in namespace %s", namespace)
+
+	return repos.Items
+}
+
 // WaitForGitRepositoryReady waits until the specified Flux GitRepository resource becomes Ready within the given timeout.
 // It polls the resource status every 2 seconds and fails the test if the resource does not become Ready in time.
 //

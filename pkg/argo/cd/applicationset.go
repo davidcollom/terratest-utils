@@ -14,6 +14,31 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListApplicationSets retrieves all Argo CD ApplicationSet resources in the specified namespace.
+// It uses the provided testing context and kubectl options to create an Argo CD client,
+// then lists the ApplicationSets in the given namespace. The function fails the test if
+// client creation or listing fails, and returns the list of ApplicationSet items.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list ApplicationSets.
+//
+// Returns:
+//   - A slice of ApplicationSet resources found in the specified namespace.
+func ListApplicationSets(t *testing.T, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.ApplicationSet {
+	t.Helper()
+
+	client, err := NewArgoCDClient(t, options)
+	require.NoError(t, err, "Failed to create Argo clientset")
+
+	ctx := t.Context()
+	applicationSetList, err := client.ArgoprojV1alpha1().ApplicationSets(namespace).List(ctx, metav1.ListOptions{})
+	require.NoError(t, err, "Failed to list ApplicationSets in namespace %s", namespace)
+
+	return applicationSetList.Items
+}
+
 // WaitForApplicationSetHealthyAndSynced waits until the specified Argo CD ApplicationSet in the given namespace
 // is healthy and its resources are up to date, or until the provided timeout is reached.
 // It polls the ApplicationSet status every 2 seconds, checking for the "ResourcesUpToDate" condition with a "True" status.

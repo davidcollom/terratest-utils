@@ -14,6 +14,32 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListOCIRepositories retrieves a list of OCIRepository resources from the specified namespace
+// using the provided Kubernetes options. It returns a slice of sourcev1.OCIRepository objects.
+// The function requires a testing.T instance for error handling and test context propagation.
+// It fails the test if the Flux client cannot be created or if listing the OCIRepositories fails.
+//
+// Parameters:
+//   - t:        The testing.T instance used for test context and assertions.
+//   - options:  The KubectlOptions specifying the Kubernetes context and configuration.
+//   - namespace: The namespace from which to list OCIRepository resources.
+//
+// Returns:
+//   - []sourcev1.OCIRepository: A slice containing the retrieved OCIRepository resources.
+func ListOCIRepositories(t *testing.T, options *k8s.KubectlOptions, namespace string) []sourcev1.OCIRepository {
+	t.Helper()
+
+	fluxclient, err := NewFluxClient(t, options)
+	require.NoError(t, err, "Unable to create Flux client")
+
+	ctx := t.Context()
+	var repos sourcev1.OCIRepositoryList
+	err = fluxclient.List(ctx, &repos, client.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list OCIRepositories in namespace %s", namespace)
+
+	return repos.Items
+}
+
 // WaitForOCIRepositoryReady waits until the specified Flux OCIRepository resource becomes Ready within the given timeout.
 // It polls the resource status at regular intervals and fails the test if the resource does not become Ready in time.
 //

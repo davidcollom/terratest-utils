@@ -14,6 +14,18 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListEventBuses retrieves a list of Argo EventBus resources in the specified namespace.
+// It uses the provided testing context and kubectl options to create an Argo Events client,
+// then lists all EventBus objects in the given namespace. The function fails the test if
+// the client cannot be created or if the EventBus list operation fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options used to configure the client.
+//   - namespace: The Kubernetes namespace from which to list EventBus resources.
+//
+// Returns:
+//   - A slice of argoeventsv1alpha1.EventBus objects found in the specified namespace.
 func ListEventBuses(t *testing.T, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.EventBus {
 	t.Helper()
 

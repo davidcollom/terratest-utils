@@ -13,6 +13,17 @@ import (
 	acmev1 "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
 )
 
+// ListOrders retrieves a list of ACME Order resources from the specified namespace using the cert-manager client.
+// It requires a testing context, kubectl options, and the target namespace as input.
+// The function fails the test if the client cannot be created or if listing the Orders fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options used to configure the client.
+//   - namespace: The Kubernetes namespace to search for Orders.
+//
+// Returns:
+//   - A slice of acmev1.Order objects found in the specified namespace.
 func ListOrders(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Order {
 	t.Helper()
 

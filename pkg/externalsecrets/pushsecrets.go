@@ -14,6 +14,18 @@ import (
 	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// ListPushSecrets retrieves all PushSecret resources in the specified Kubernetes namespace.
+// It uses the provided testing context and KubectlOptions to create an External Secrets Operator (ESO) client,
+// then lists all PushSecrets within the given namespace. The function fails the test if any error occurs during
+// client creation or resource listing.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options used to configure the client.
+//   - namespace: The Kubernetes namespace to search for PushSecrets.
+//
+// Returns:
+//   - A slice of PushSecret resources found in the specified namespace.
 func ListPushSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1alpha1.PushSecret {
 	t.Helper()
 

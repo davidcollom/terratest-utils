@@ -20,6 +20,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// NewArgoRolloutsClient creates a new Argo Rollouts client using the provided testing context and kubectl options.
+// It retrieves the Kubernetes REST configuration from the given options or generates one if not present.
+// Returns an Argo Rollouts client interface and an error if the client could not be created.
+//
+// Parameters:
+//   - t: The testing context, used for logging and error handling.
+//   - options: The kubectl options containing cluster configuration and optional REST config.
+//
+// Returns:
+//   - rolloutClientSet.Interface: The Argo Rollouts client interface for interacting with Rollouts resources.
+//   - error: An error if the client could not be created.
 func NewArgoRolloutsClient(t *testing.T, options *k8s.KubectlOptions) (rolloutClientSet.Interface, error) {
 	t.Helper()
 	var cfg *rest.Config
@@ -36,6 +47,16 @@ func NewArgoRolloutsClient(t *testing.T, options *k8s.KubectlOptions) (rolloutCl
 	return rolloutClientSet.NewForConfig(cfg)
 }
 
+// ListRollouts retrieves all Argo Rollouts in the specified namespace using the provided kubectl options.
+// It requires a testing context and will fail the test if the client cannot be created or the Rollouts cannot be listed.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options to use for connecting to the cluster.
+//   - namespace: The namespace from which to list the Rollouts.
+//
+// Returns:
+//   - A slice of rolloutsv1alpha1.Rollout objects representing the Rollouts in the given namespace.
 func ListRollouts(t *testing.T, options *k8s.KubectlOptions, namespace string) []rolloutsv1alpha1.Rollout {
 	t.Helper()
 

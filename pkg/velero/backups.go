@@ -12,6 +12,32 @@ import (
 	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// ListBackups retrieves a list of Velero Backup resources in the specified namespace.
+// It uses the provided testing context and Kubernetes options to create a Velero client,
+// then lists all Backup objects within the given namespace. The function fails the test
+// if the client cannot be created or if the list operation fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The Kubernetes KubectlOptions to use for client configuration.
+//   - namespace: The namespace from which to list Velero Backups.
+//
+// Returns:
+//   - A slice of velerov1.Backup objects found in the specified namespace.
+func ListBackups(t *testing.T, options *k8s.KubectlOptions, namespace string) []velerov1.Backup {
+	t.Helper()
+
+	client, err := NewVeleroClient(options.RestConfig)
+	require.NoError(t, err, "Unable to create Velero client")
+
+	ctx := t.Context()
+	var backups velerov1.BackupList
+	err = client.List(ctx, &backups, ctrlclient.InNamespace(namespace))
+	require.NoError(t, err, "Failed to list Backups in namespace %s", namespace)
+
+	return backups.Items
+}
+
 // WaitForBackupSucceeded waits until the specified Velero backup reaches the "Completed" phase or the timeout is reached.
 // It polls the backup status every 2 seconds and fails the test if the backup does not complete successfully within the given timeout.
 //

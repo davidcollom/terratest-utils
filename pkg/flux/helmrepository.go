@@ -14,6 +14,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListHelmRepositories retrieves all HelmRepository resources in the specified namespace using the provided
+// Kubernetes options. It returns a slice of HelmRepository objects. The function fails the test if it is unable
+// to create a Flux client or if it encounters an error while listing the HelmRepositories.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options to use for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list HelmRepository resources.
+//
+// Returns:
+//   - A slice of sourcev1.HelmRepository objects found in the specified namespace.
 func ListHelmRepositories(t *testing.T, options *k8s.KubectlOptions, namespace string) []sourcev1.HelmRepository {
 	t.Helper()
 

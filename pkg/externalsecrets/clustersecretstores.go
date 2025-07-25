@@ -15,6 +15,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListClusterSecretStores retrieves a list of ClusterSecretStore resources from the specified namespace
+// using the provided Kubernetes options. It returns a slice of ClusterSecretStore objects.
+// The function fails the test if the External Secrets client cannot be created or if the list operation fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options to use for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list ClusterSecretStores.
+//
+// Returns:
+//   - A slice of esov1.ClusterSecretStore representing the ClusterSecretStores found in the namespace.
 func ListClusterSecretStores(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1.ClusterSecretStore {
 	t.Helper()
 

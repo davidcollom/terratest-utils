@@ -17,6 +17,17 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
+// ListExternalSecrets retrieves all ExternalSecret resources in the specified namespace using the provided
+// Kubernetes options. It returns a slice of ExternalSecret objects. The function fails the test if the client
+// cannot be created or if listing the ExternalSecrets fails.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options for connecting to the Kubernetes cluster.
+//   - namespace: The namespace from which to list ExternalSecrets.
+//
+// Returns:
+//   - A slice of ExternalSecret objects found in the specified namespace.
 func ListExternalSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1.ExternalSecret {
 	t.Helper()
 
