@@ -39,13 +39,13 @@ func WaitForExternalSecretReady(t *testing.T, options k8s.KubectlOptions, name, 
 
 	ctx := t.Context()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
-		var eso *esov1.ExternalSecret
-		err := esoclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, eso)
+		var eso esov1.ExternalSecret
+		err := esoclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &eso)
 		if err != nil {
 			return false, nil
 		}
 
-		if IsExternalSecretReady(&eso.Status) {
+		if IsExternalSecretReady(eso.Status) {
 			return true, nil
 		}
 		return false, nil
@@ -67,7 +67,7 @@ func WaitForExternalSecretReady(t *testing.T, options k8s.KubectlOptions, name, 
 // Returns:
 //
 //	bool - true if the ExternalSecret is ready, false otherwise.
-func IsExternalSecretReady(secStatus *esov1.ExternalSecretStatus) bool {
+func IsExternalSecretReady(secStatus esov1.ExternalSecretStatus) bool {
 	for _, condition := range secStatus.Conditions {
 		if condition.Type == esov1.ExternalSecretReady && condition.Status == corev1.ConditionTrue {
 			return true
