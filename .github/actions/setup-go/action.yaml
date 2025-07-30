@@ -1,10 +1,8 @@
-# .github/actions/setup-go/action.yaml
 name: Setup Go
-description: Checkout, install Go and Dependencies
+description: Install Go and Dependencies
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
     - uses: actions/setup-go@v5
       with:
         go-version-file: "go.mod"
