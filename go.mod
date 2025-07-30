@@ -8,12 +8,13 @@ require (
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.0
 	github.com/argoproj/gitops-engine v0.7.1-0.20250520182409-89c110b5952e
-	github.com/cert-manager/cert-manager v1.18.2
+	github.com/cert-manager/cert-manager v1.15.0-alpha.0
 	github.com/external-secrets/external-secrets v0.18.2
 	github.com/fluxcd/helm-controller/api v1.3.0
 	github.com/fluxcd/kustomize-controller/api v1.6.1
 	github.com/fluxcd/source-controller/api v1.6.2
 	github.com/gruntwork-io/terratest v0.50.0
+	github.com/linkerd/linkerd2 v0.5.1-0.20250421210547-0fe0ad015ec1
 	github.com/stretchr/testify v1.10.0
 	github.com/tj/assert v0.0.3
 	github.com/vmware-tanzu/velero v1.16.1
@@ -216,13 +217,13 @@ require (
 	k8s.io/component-helpers v0.33.1 // indirect
 	k8s.io/controller-manager v0.33.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-aggregator v0.32.2 // indirect
+	k8s.io/kube-aggregator v0.32.3 // indirect
 	k8s.io/kube-openapi v0.0.0-20250628140032-d90c4fd18f59 // indirect
 	k8s.io/kubectl v0.33.1 // indirect
 	k8s.io/kubernetes v1.33.3 // indirect
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397 // indirect
 	oras.land/oras-go/v2 v2.5.0 // indirect
-	sigs.k8s.io/gateway-api v1.1.0 // indirect
+	sigs.k8s.io/gateway-api v1.0.0 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
 	sigs.k8s.io/kustomize/api v0.19.0 // indirect
 	sigs.k8s.io/kustomize/kyaml v0.19.0 // indirect
