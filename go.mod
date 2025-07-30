@@ -7,7 +7,7 @@ require (
 	github.com/argoproj/argo-events v1.9.7
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.0
-	github.com/argoproj/gitops-engine v0.7.1-0.20250520182409-89c110b5952e
+	github.com/argoproj/gitops-engine v0.7.1-0.20250724135328-38f73a75c3cf
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.18.2
 	github.com/fluxcd/helm-controller/api v1.3.0
@@ -216,7 +216,7 @@ require (
 	k8s.io/component-helpers v0.33.1 // indirect
 	k8s.io/controller-manager v0.33.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-aggregator v0.32.2 // indirect
+	k8s.io/kube-aggregator v0.33.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250628140032-d90c4fd18f59 // indirect
 	k8s.io/kubectl v0.33.1 // indirect
 	k8s.io/kubernetes v1.33.3 // indirect
