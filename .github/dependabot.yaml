@@ -18,6 +18,26 @@ updates:
       kube:
         patterns:
           - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      other:
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
