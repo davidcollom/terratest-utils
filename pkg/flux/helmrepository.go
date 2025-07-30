@@ -25,15 +25,18 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.HelmRepository objects found in the specified namespace.
-func ListHelmRepositories(t *testing.T, options *k8s.KubectlOptions, namespace string) []sourcev1.HelmRepository {
+func ListHelmRepositories(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmRepository {
 	t.Helper()
 
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
+	// Append the namespace to the list options
+	opts = append(opts, client.InNamespace(namespace))
+
 	ctx := t.Context()
 	var repos sourcev1.HelmRepositoryList
-	err = fluxclient.List(ctx, &repos, client.InNamespace(namespace))
+	err = fluxclient.List(ctx, &repos, opts...)
 	require.NoError(t, err, "Failed to list HelmRepositories in namespace %s", namespace)
 
 	return repos.Items

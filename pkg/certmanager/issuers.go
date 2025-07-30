@@ -7,7 +7,6 @@ import (
 
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
-	cmclientset "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -29,7 +28,7 @@ import (
 func ListIssuers(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.Issuer {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -52,7 +51,7 @@ func ListIssuers(t *testing.T, options *k8s.KubectlOptions, namespace string) []
 func WaitForIssuerReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -88,7 +87,7 @@ func WaitForIssuerReady(t *testing.T, options *k8s.KubectlOptions, name, namespa
 func ListClusterIssuers(t *testing.T, options *k8s.KubectlOptions) []cmv1.ClusterIssuer {
 	t.Helper()
 
-	client, err := cmclientset.NewForConfig(options.RestConfig)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -113,7 +112,7 @@ func ListClusterIssuers(t *testing.T, options *k8s.KubectlOptions) []cmv1.Cluste
 func WaitForClusterIssuerReady(t *testing.T, options *k8s.KubectlOptions, name string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := cmclientset.NewForConfig(options.RestConfig)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()

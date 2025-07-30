@@ -30,7 +30,7 @@ import (
 func ListCertificates(t *testing.T, options *k8s.KubectlOptions, namespace string) []certv1.Certificate {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -52,7 +52,7 @@ func ListCertificates(t *testing.T, options *k8s.KubectlOptions, namespace strin
 func WaitForCertificateReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()

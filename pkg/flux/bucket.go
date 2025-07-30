@@ -26,15 +26,18 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.Bucket objects found in the specified namespace.
-func ListBuckets(t *testing.T, options *k8s.KubectlOptions, namespace string) []sourcev1.Bucket {
+func ListBuckets(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.Bucket {
 	t.Helper()
 
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
+	// Append the namespace to the list options
+	opts = append(opts, client.InNamespace(namespace))
+
 	ctx := t.Context()
 	var buckets sourcev1.BucketList
-	err = fluxclient.List(ctx, &buckets, client.InNamespace(namespace))
+	err = fluxclient.List(ctx, &buckets, opts...)
 	require.NoError(t, err, "Failed to list Buckets in namespace %s", namespace)
 
 	return buckets.Items

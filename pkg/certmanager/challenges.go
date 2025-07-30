@@ -30,7 +30,7 @@ import (
 func ListChallenges(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Challenge {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -57,7 +57,7 @@ func ListChallenges(t *testing.T, options *k8s.KubectlOptions, namespace string)
 func WaitForChallengeValid(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()

@@ -15,6 +15,7 @@ require (
 	github.com/fluxcd/source-controller/api v1.6.2
 	github.com/gruntwork-io/terratest v0.50.0
 	github.com/stretchr/testify v1.10.0
+	github.com/tj/assert v0.0.3
 	github.com/vmware-tanzu/velero v1.16.1
 	k8s.io/api v0.33.3
 	k8s.io/apiextensions-apiserver v0.33.2

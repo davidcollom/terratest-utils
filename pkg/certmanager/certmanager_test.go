@@ -1,16 +1,14 @@
 package certmanager
 
 import (
-	"context"
 	"testing"
 	"time"
 
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
-	fakecm "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned/fake"
+	"github.com/tj/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/util/wait"
 )
 
 func TestWaitForCertificateRequestReady(t *testing.T) {
@@ -19,6 +17,11 @@ func TestWaitForCertificateRequestReady(t *testing.T) {
 		conditions  []cmv1.CertificateRequestCondition
 		expectError bool
 	}{
+		{
+			name:        "No Conditions",
+			conditions:  []cmv1.CertificateRequestCondition{},
+			expectError: true,
+		},
 		{
 			name: "ready true",
 			conditions: []cmv1.CertificateRequestCondition{
@@ -40,7 +43,7 @@ func TestWaitForCertificateRequestReady(t *testing.T) {
 			scheme := runtime.NewScheme()
 			_ = cmv1.AddToScheme(scheme)
 
-			client := fakecm.NewSimpleClientset(&cmv1.CertificateRequest{
+			NewTestClient(t, &cmv1.CertificateRequest{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "test-cr",
 					Namespace: "default",
@@ -50,20 +53,14 @@ func TestWaitForCertificateRequestReady(t *testing.T) {
 				},
 			})
 
-			err := wait.PollImmediate(100*time.Millisecond, 1*time.Second, func() (bool, error) {
-				cr, _ := client.CertmanagerV1().CertificateRequests("default").Get(context.TODO(), "test-cr", metav1.GetOptions{})
-				for _, cond := range cr.Status.Conditions {
-					if cond.Type == cmv1.CertificateRequestConditionReady && cond.Status == cmmetav1.ConditionTrue {
-						return true, nil
-					}
-				}
-				return false, nil
-			})
+			err := WaitForCertificateRequestReadyE(t, k8soptions, "test-cr", "default", 10*time.Second)
 
 			if tc.expectError && err == nil {
+				assert.Error(t, err)
 				t.Fatalf("expected error but got none")
 			}
 			if !tc.expectError && err != nil {
+				assert.NoError(t, err)
 				t.Fatalf("unexpected error: %v", err)
 			}
 		})

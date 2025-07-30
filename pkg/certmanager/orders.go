@@ -27,7 +27,7 @@ import (
 func ListOrders(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Order {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -53,7 +53,7 @@ func ListOrders(t *testing.T, options *k8s.KubectlOptions, namespace string) []a
 func WaitForOrderValid(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()

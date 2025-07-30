@@ -52,7 +52,9 @@ func hasReadyCondition(conds []metav1.Condition) bool {
 // Returns:
 //   - client.Client: A controller-runtime client configured for Flux resources.
 //   - error: An error if the client could not be created.
-func NewFluxClient(t *testing.T, options *k8s.KubectlOptions) (client.Client, error) {
+var NewFluxClient = newFluxClient
+
+func newFluxClient(t *testing.T, options *k8s.KubectlOptions) (client.Client, error) {
 	cfg, err := utils.GetRestConfigE(t, options)
 
 	if err != nil {

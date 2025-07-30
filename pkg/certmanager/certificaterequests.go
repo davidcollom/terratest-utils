@@ -30,7 +30,7 @@ import (
 func ListCertificateRequests(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.CertificateRequest {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -40,7 +40,7 @@ func ListCertificateRequests(t *testing.T, options *k8s.KubectlOptions, namespac
 	return crList.Items
 }
 
-// WaitForCertificateRequestReady waits until the specified CertificateRequest resource in the given namespace
+// WaitForCertificateRequestReadyE waits until the specified CertificateRequest resource in the given namespace
 // reaches the Ready condition within the provided timeout duration. It polls the resource status every 2 seconds.
 // If the CertificateRequest does not become Ready within the timeout, the test fails with a fatal error.
 //
@@ -53,10 +53,10 @@ func ListCertificateRequests(t *testing.T, options *k8s.KubectlOptions, namespac
 //	timeout  - The maximum duration to wait for the CertificateRequest to become Ready.
 //
 // This function requires cert-manager clientset and is intended for use in integration tests.
-func WaitForCertificateRequestReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForCertificateRequestReadyE(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	t.Helper()
 
-	client, err := NewCertManagerClient(t, options)
+	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
 	ctx := t.Context()
@@ -73,7 +73,20 @@ func WaitForCertificateRequestReady(t *testing.T, options *k8s.KubectlOptions, n
 		return false, nil
 	})
 
-	if err != nil {
-		t.Fatalf("CertificateRequest %s/%s not Ready: %v", namespace, name, err)
-	}
+	return err
+}
+
+// WaitForCertificateRequestReady waits until the specified CertificateRequest resource in the given namespace
+// reaches the "Ready" condition or the timeout is exceeded. It fails the test if the CertificateRequest does not
+// become ready within the specified duration.
+//
+// Parameters:
+//   - t: The testing context.
+//   - options: The kubectl options to use for interacting with the Kubernetes cluster.
+//   - name: The name of the CertificateRequest resource.
+//   - namespace: The namespace where the CertificateRequest is located.
+//   - timeout: The maximum duration to wait for the CertificateRequest to become ready.
+func WaitForCertificateRequestReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForCertificateRequestReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err)
 }

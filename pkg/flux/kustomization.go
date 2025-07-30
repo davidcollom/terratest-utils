@@ -26,15 +26,18 @@ import (
 //
 // Returns:
 //   - A slice of kustomizev1.Kustomization objects found in the specified namespace.
-func ListKustomization(t *testing.T, options *k8s.KubectlOptions, namespace string) []kustomizev1.Kustomization {
+func ListKustomization(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []kustomizev1.Kustomization {
 	t.Helper()
 
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
+	// Append the namespace to the list options
+	opts = append(opts, client.InNamespace(namespace))
+
 	ctx := t.Context()
 	var kustomizations kustomizev1.KustomizationList
-	err = fluxclient.List(ctx, &kustomizations, client.InNamespace(namespace))
+	err = fluxclient.List(ctx, &kustomizations, opts...)
 	require.NoError(t, err, "Failed to list Kustomizations in namespace %s", namespace)
 
 	return kustomizations.Items

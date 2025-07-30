@@ -15,7 +15,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-// NewCertManagerClient creates and returns a new cert-manager clientset.Interface using the provided testing context and kubectl options.
+// NewClient creates and returns a new cert-manager clientset.Interface using the provided testing context and kubectl options.
 // If the RestConfig in options is nil, it attempts to generate a new rest.Config using the provided options.
 // Returns the cert-manager clientset.Interface or an error if the configuration could not be created.
 //
@@ -30,11 +30,13 @@ import (
 //
 // Example usage:
 //
-//	client, err := NewCertManagerClient(t, options)
+//	client, err := NewClient(t, options)
 //	require.NoError(t, err)
 //	issuers, err := client.CertmanagerV1().Issuers("default").List(context.TODO(), metav1.ListOptions{})
 //	require.NoError(t, err)
-func NewCertManagerClient(t *testing.T, options *k8s.KubectlOptions) (cmclientset.Interface, error) {
+var NewClient = newClient
+
+func newClient(t *testing.T, options *k8s.KubectlOptions) (cmclientset.Interface, error) {
 	t.Helper()
 	var cfg *rest.Config
 	var err error

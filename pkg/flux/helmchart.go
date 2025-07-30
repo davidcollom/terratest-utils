@@ -25,15 +25,18 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.HelmChart objects present in the specified namespace.
-func ListHelmCharts(t *testing.T, options *k8s.KubectlOptions, namespace string) []sourcev1.HelmChart {
+func ListHelmCharts(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmChart {
 	t.Helper()
 
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
+	// Append the namespace to the list options
+	opts = append(opts, client.InNamespace(namespace))
+
 	ctx := t.Context()
 	var charts sourcev1.HelmChartList
-	err = fluxclient.List(ctx, &charts, client.InNamespace(namespace))
+	err = fluxclient.List(ctx, &charts, opts...)
 	require.NoError(t, err, "Failed to list HelmCharts in namespace %s", namespace)
 
 	return charts.Items

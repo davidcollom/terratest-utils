@@ -24,15 +24,18 @@ import (
 //
 // Returns:
 //   - A slice of helmv2.HelmRelease objects found in the specified namespace.
-func ListHelmReleases(t *testing.T, options *k8s.KubectlOptions, namespace string) []helmv2.HelmRelease {
+func ListHelmReleases(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []helmv2.HelmRelease {
 	t.Helper()
 
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
+	// Append the namespace to the list options
+	opts = append(opts, client.InNamespace(namespace))
+
 	ctx := t.Context()
 	var releases helmv2.HelmReleaseList
-	err = fluxclient.List(ctx, &releases, client.InNamespace(namespace))
+	err = fluxclient.List(ctx, &releases, opts...)
 	require.NoError(t, err, "Failed to list HelmReleases in namespace %s", namespace)
 
 	return releases.Items

@@ -24,7 +24,9 @@ import (
 //
 //	client.Client - The initialized client for ExternalSecrets resources.
 //	error         - An error if the client could not be created.
-func NewESOClient(t *testing.T, options *k8s.KubectlOptions) (client.Client, error) {
+var NewESOClient = newESOClient
+
+func newESOClient(t *testing.T, options *k8s.KubectlOptions) (client.Client, error) {
 	t.Helper()
 
 	var cfg *rest.Config

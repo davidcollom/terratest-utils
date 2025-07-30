@@ -26,15 +26,18 @@ import (
 //
 // Returns:
 //   - A slice of PushSecret resources found in the specified namespace.
-func ListPushSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1alpha1.PushSecret {
+func ListPushSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...ctrlclient.ListOption) []esov1alpha1.PushSecret {
 	t.Helper()
 
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
+	// Append the namespace to the list options.
+	opts = append(opts, ctrlclient.InNamespace(namespace))
+
 	ctx := t.Context()
 	var pushSecrets esov1alpha1.PushSecretList
-	err = esoclient.List(ctx, &pushSecrets, ctrlclient.InNamespace(namespace))
+	err = esoclient.List(ctx, &pushSecrets, opts...)
 	require.NoError(t, err, "Failed to list PushSecrets in namespace %s", namespace)
 
 	return pushSecrets.Items
@@ -71,6 +74,9 @@ func WaitForPushSecretReady(t *testing.T, options *k8s.KubectlOptions, name, nam
 	}
 }
 
+// hasReadyCondition checks if the provided slice of PushSecretStatusCondition contains
+// a condition of type PushSecretReady with a status of ConditionTrue. It returns true
+// if such a condition is found, otherwise it returns false.
 func hasReadyCondition(conds []esov1alpha1.PushSecretStatusCondition) bool {
 	for _, cond := range conds {
 		if cond.Type == esov1alpha1.PushSecretReady && cond.Status == corev1.ConditionTrue {
