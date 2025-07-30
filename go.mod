@@ -3,11 +3,11 @@ module github.com/davidcollom/terratest-utils
 go 1.24.5
 
 require (
-	github.com/argoproj/argo-cd/v3 v3.0.11
+	github.com/argoproj/argo-cd/v3 v3.0.12
 	github.com/argoproj/argo-events v1.9.7
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.0
-	github.com/argoproj/gitops-engine v0.7.1-0.20250520182409-89c110b5952e
+	github.com/argoproj/gitops-engine v0.7.3
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.18.2
 	github.com/fluxcd/helm-controller/api v1.3.0
@@ -95,6 +95,7 @@ require (
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.2 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
+	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect
