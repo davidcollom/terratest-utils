@@ -35,6 +35,9 @@ updates:
         patterns:
           - github.com/external-secrets/*
           - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
       other:
         patterns:
           - "*"

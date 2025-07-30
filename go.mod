@@ -3,7 +3,7 @@ module github.com/davidcollom/terratest-utils
 go 1.24.5
 
 require (
-	github.com/argoproj/argo-cd/v3 v3.0.11
+	github.com/argoproj/argo-cd/v3 v3.0.12
 	github.com/argoproj/argo-events v1.9.7
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.0
@@ -16,8 +16,8 @@ require (
 	github.com/gruntwork-io/terratest v0.50.0
 	github.com/stretchr/testify v1.10.0
 	github.com/tj/assert v0.0.3
-	github.com/vmware-tanzu/velero v1.16.1
-	istio.io/api v1.26.3-0.20250708203130-20827773ee1b
+	github.com/vmware-tanzu/velero v1.16.2
+	istio.io/api v1.26.3
 	istio.io/client-go v1.26.3
 	k8s.io/api v0.33.3
 	k8s.io/apiextensions-apiserver v0.33.2

@@ -41,6 +41,8 @@ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuW
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/argoproj/argo-cd/v3 v3.0.11 h1:TAqk/GEBLevlxmBCR6kSR+fCLRInPic+n8qGg+FvcR4=
 github.com/argoproj/argo-cd/v3 v3.0.11/go.mod h1:ofadwxZACMBM+CGn+d0cytbqU4Xthj/pCjp2k2gekn4=
+github.com/argoproj/argo-cd/v3 v3.0.12 h1:wyZQNonPXIWG7sRAwQlqweFyzMURCo8bz4fOQT09bEs=
+github.com/argoproj/argo-cd/v3 v3.0.12/go.mod h1:ofadwxZACMBM+CGn+d0cytbqU4Xthj/pCjp2k2gekn4=
 github.com/argoproj/argo-events v1.9.7 h1:x+JOTsU3rzXSrzDwrUlLza4kmxp5zc1NMlgTgaLF678=
 github.com/argoproj/argo-events v1.9.7/go.mod h1:gbC1DkCAZ/CXnuTmqv2OTIlQd4//bkNiVG0cJWKS8rg=
 github.com/argoproj/argo-rollouts v1.8.3 h1:blbtQva4IK9r6gFh+dWkCrLnFdPOWiv9ubQYu36qeaA=
@@ -535,6 +537,8 @@ github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAh
 github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=
 github.com/vmware-tanzu/velero v1.16.1 h1:T9Jdt/6Jl1x+nT+OCCyOBtiakCdInHZAB3qU/jH6yGg=
 github.com/vmware-tanzu/velero v1.16.1/go.mod h1:+wInt9pLqlRiUZAWsO5eSxLZK9Q3jSV9MFaUrBfvGN0=
+github.com/vmware-tanzu/velero v1.16.2 h1:Zhve1mKtX4n0oVhHwbEOsgB9fjKKwm96HJK4WaV/28o=
+github.com/vmware-tanzu/velero v1.16.2/go.mod h1:rGIxqbeVHne/47AMtA8vV0ebeQOzyF7VEullayyTEto=
 github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
 github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
 github.com/xanzy/ssh-agent v0.3.3 h1:+/15pJfg/RsTxqYcX6fHqOXZwwMP+2VyYWJeWM2qQFM=
@@ -761,6 +765,8 @@ honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod h1:rf3lG4BRIbNafJWh
 honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWhAfAdb/ePZxsR/4RtNHQocxwk9r4=
 istio.io/api v1.26.3-0.20250708203130-20827773ee1b h1:s2XHljy1IKJvptAAsVLnC8+HiMKZjvw19ZKsiXmP58s=
 istio.io/api v1.26.3-0.20250708203130-20827773ee1b/go.mod h1:DTVGH6CLXj5W8FF9JUD3Tis78iRgT1WeuAnxfTz21Wg=
+istio.io/api v1.26.3 h1:/TiA7bJi24yBQSgpLy5vHhFkobf4DWS1L+CuUxNk4os=
+istio.io/api v1.26.3/go.mod h1:DTVGH6CLXj5W8FF9JUD3Tis78iRgT1WeuAnxfTz21Wg=
 istio.io/client-go v1.26.3 h1:ryF4+Nyz5wDO4mVCzXcm2W+fqbnekY88Z36hTcv5fnw=
 istio.io/client-go v1.26.3/go.mod h1:u2p5L7UvjNswrrlHZ+QMlUOjERK2sXputywzyNhtTMg=
 k8s.io/api v0.33.3 h1:SRd5t//hhkI1buzxb288fy2xvjubstenEKL9K51KBI8=
