@@ -1,3 +1,7 @@
+// Package istio provides Terratest-style helpers for testing Istio resources
+// in Kubernetes clusters. It offers utility functions to create Istio clients,
+// check resource readiness conditions, and interact with Istio custom resources
+// like ServiceEntries and other networking components.
 package istio
 
 import (
