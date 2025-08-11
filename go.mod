@@ -9,7 +9,7 @@ require (
 	github.com/argoproj/argo-workflows/v3 v3.7.0
 	github.com/argoproj/gitops-engine v0.7.1-0.20250724135328-38f73a75c3cf
 	github.com/cert-manager/cert-manager v1.18.2
-	github.com/external-secrets/external-secrets v0.19.0
+	github.com/external-secrets/external-secrets v0.19.1
 	github.com/fluxcd/helm-controller/api v1.3.0
 	github.com/fluxcd/kustomize-controller/api v1.6.1
 	github.com/fluxcd/source-controller/api v1.6.2
