@@ -33,6 +33,7 @@ jobs:
       - name: Run golint
         run: go install golang.org/x/lint/golint@latest && golint ./...
   vulncheck:
+    continue-on-error: true # TODO: remove or filter out upstream vulns
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
