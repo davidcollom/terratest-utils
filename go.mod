@@ -14,7 +14,7 @@ require (
 	github.com/fluxcd/kustomize-controller/api v1.6.1
 	github.com/fluxcd/source-controller/api v1.6.2
 	github.com/gruntwork-io/terratest v0.50.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/tj/assert v0.0.3
 	github.com/vmware-tanzu/velero v1.16.2
 	istio.io/api v1.26.3
