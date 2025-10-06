@@ -53,5 +53,6 @@ jobs:
       - vulncheck
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - name: Run tests
         run: go test -v ./...
