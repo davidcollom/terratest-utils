@@ -1,0 +1,11 @@
+name: Setup Go
+description: Install Go and Dependencies
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: "go.mod"
+    - name: Install dependencies
+      shell: bash
+      run: go mod tidy

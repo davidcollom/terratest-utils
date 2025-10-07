@@ -21,7 +21,20 @@ func IsApplicationHealthyAndSynced(app *argocdv1alpha1.Application) bool {
 		app.Status.Sync.Status == argocdv1alpha1.SyncStatusCodeSynced
 }
 
-func NewArgoCDClient(t *testing.T, options *k8s.KubectlOptions) (argocd.Interface, error) {
+// NewArgoCDClient creates a new ArgoCD client interface for use in tests.
+// This function attempts to use the REST configuration from options if available,
+// otherwise it will create a new REST configuration using the kubectl options.
+//
+// Parameters:
+//   - t: Testing context that implements the testing.TB interface
+//   - options: Kubectl configuration options that may contain a REST client configuration
+//
+// Returns:
+//   - An ArgoCD client interface that can be used to interact with ArgoCD
+//   - An error if the client creation fails
+var NewArgoCDClient = newArgoCDClient
+
+func newArgoCDClient(t *testing.T, options *k8s.KubectlOptions) (argocd.Interface, error) {
 	t.Helper()
 	var cfg *rest.Config
 	var err error
