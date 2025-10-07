@@ -3,7 +3,7 @@ module github.com/davidcollom/terratest-utils
 go 1.25.1
 
 require (
-	github.com/argoproj/argo-cd/v3 v3.0.0-20251006132033-96038ba2a140
+	github.com/argoproj/argo-cd/v3 v3.0.19
 	github.com/argoproj/argo-events v1.9.7
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.0
@@ -13,7 +13,7 @@ require (
 	github.com/fluxcd/helm-controller/api v1.4.1
 	github.com/fluxcd/kustomize-controller/api v1.7.0
 	github.com/fluxcd/source-controller/api v1.7.1
-	github.com/gruntwork-io/terratest v0.50.0
+	github.com/gruntwork-io/terratest v0.51.0
 	github.com/stretchr/testify v1.11.1
 	github.com/tj/assert v0.0.3
 	github.com/vmware-tanzu/velero v1.16.2
@@ -40,7 +40,6 @@ require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
 	github.com/argoproj/pkg v0.13.7-0.20250305113207-cbc37dc61de5 // indirect
-	github.com/argoproj/pkg/v2 v2.0.1 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.39.2 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.7 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.31.11 // indirect
@@ -135,7 +134,7 @@ require (
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic-models v0.7.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/go-github/v69 v69.2.0 // indirect
+	github.com/google/go-github/v66 v66.0.0 // indirect
 	github.com/google/go-github/v75 v75.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.1-0.20241114170450-2d3c2a9cc518 // indirect
