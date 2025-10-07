@@ -17,8 +17,8 @@ require (
 	github.com/stretchr/testify v1.11.1
 	github.com/tj/assert v0.0.3
 	github.com/vmware-tanzu/velero v1.16.2
-	istio.io/api v1.26.3
-	istio.io/client-go v1.26.3
+	istio.io/api v1.27.1
+	istio.io/client-go v1.27.1
 	k8s.io/api v0.34.0
 	k8s.io/apiextensions-apiserver v0.34.0
 	k8s.io/apimachinery v0.34.0
