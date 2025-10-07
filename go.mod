@@ -2,11 +2,14 @@ module github.com/davidcollom/terratest-utils
 
 go 1.25.1
 
+// Needed this to avoid issues with sigs.k8s.io/gateway-api v1.1.0
+replace sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
+
 require (
 	github.com/argoproj/argo-cd/v3 v3.0.19
 	github.com/argoproj/argo-events v1.9.7
 	github.com/argoproj/argo-rollouts v1.8.3
-	github.com/argoproj/argo-workflows/v3 v3.7.0
+	github.com/argoproj/argo-workflows/v3 v3.7.2
 	github.com/argoproj/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.20.2
@@ -14,9 +17,9 @@ require (
 	github.com/fluxcd/kustomize-controller/api v1.7.0
 	github.com/fluxcd/source-controller/api v1.7.1
 	github.com/gruntwork-io/terratest v0.51.0
+	github.com/linkerd/linkerd2 v0.5.1-0.20250723143138-3095b3fef660
 	github.com/stretchr/testify v1.11.1
-	github.com/tj/assert v0.0.3
-	github.com/vmware-tanzu/velero v1.16.2
+	github.com/vmware-tanzu/velero v1.17.0
 	istio.io/api v1.27.1
 	istio.io/client-go v1.27.1
 	k8s.io/api v0.34.1
@@ -237,7 +240,7 @@ require (
 	k8s.io/kube-openapi v0.0.0-20250910181357-589584f1c912 // indirect
 	k8s.io/kubectl v0.34.0 // indirect
 	k8s.io/kubernetes v1.34.0 // indirect
-	k8s.io/utils v0.0.0-20250820121507-0af2bda4dd1d // indirect
+	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4 // indirect
 	oras.land/oras-go/v2 v2.6.0 // indirect
 	sigs.k8s.io/gateway-api v1.1.0 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
