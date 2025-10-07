@@ -13,7 +13,7 @@ require (
 	github.com/fluxcd/helm-controller/api v1.4.1
 	github.com/fluxcd/kustomize-controller/api v1.7.0
 	github.com/fluxcd/source-controller/api v1.7.1
-	github.com/gruntwork-io/terratest v0.50.0
+	github.com/gruntwork-io/terratest v0.51.0
 	github.com/stretchr/testify v1.11.1
 	github.com/tj/assert v0.0.3
 	github.com/vmware-tanzu/velero v1.16.2
