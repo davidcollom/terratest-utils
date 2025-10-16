@@ -13,9 +13,9 @@ require (
 	github.com/argoproj/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.20.2
-	github.com/fluxcd/helm-controller/api v1.4.1
-	github.com/fluxcd/kustomize-controller/api v1.7.0
-	github.com/fluxcd/source-controller/api v1.7.1
+	github.com/fluxcd/helm-controller/api v1.4.2
+	github.com/fluxcd/kustomize-controller/api v1.7.1
+	github.com/fluxcd/source-controller/api v1.7.2
 	github.com/gruntwork-io/terratest v0.51.0
 	github.com/linkerd/linkerd2 v0.5.1-0.20250723143138-3095b3fef660
 	github.com/stretchr/testify v1.11.1
@@ -26,7 +26,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.34.1
 	k8s.io/apimachinery v0.34.1
 	k8s.io/client-go v0.34.1
-	sigs.k8s.io/controller-runtime v0.22.1
+	sigs.k8s.io/controller-runtime v0.22.2
 )
 
 require (
@@ -102,8 +102,8 @@ require (
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect
 	github.com/fluxcd/pkg/apis/acl v0.9.0 // indirect
-	github.com/fluxcd/pkg/apis/kustomize v1.12.0 // indirect
-	github.com/fluxcd/pkg/apis/meta v1.21.0 // indirect
+	github.com/fluxcd/pkg/apis/kustomize v1.13.0 // indirect
+	github.com/fluxcd/pkg/apis/meta v1.22.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
