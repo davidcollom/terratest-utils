@@ -6,11 +6,11 @@ go 1.25.1
 replace sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
 
 require (
-	github.com/argoproj/argo-cd/v3 v3.0.19
+	github.com/argoproj/argo-cd/v3 v3.1.9
 	github.com/argoproj/argo-events v1.9.7
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.3
-	github.com/argoproj/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627
+	github.com/argoproj/gitops-engine v0.7.3
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.20.3
 	github.com/fluxcd/helm-controller/api v1.4.2
@@ -43,6 +43,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
 	github.com/argoproj/pkg v0.13.7-0.20250305113207-cbc37dc61de5 // indirect
+	github.com/argoproj/pkg/v2 v2.0.1 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.39.2 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.7 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.31.12 // indirect
@@ -98,6 +99,7 @@ require (
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
+	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect
@@ -137,7 +139,7 @@ require (
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic-models v0.7.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/go-github/v66 v66.0.0 // indirect
+	github.com/google/go-github/v69 v69.2.0 // indirect
 	github.com/google/go-github/v75 v75.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.1-0.20241114170450-2d3c2a9cc518 // indirect
@@ -208,7 +210,6 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	go.opentelemetry.io/otel v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
-	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.43.0 // indirect
