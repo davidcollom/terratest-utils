@@ -13,9 +13,9 @@ require (
 	github.com/argoproj/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.20.3
-	github.com/fluxcd/helm-controller/api v1.4.2
-	github.com/fluxcd/kustomize-controller/api v1.7.1
-	github.com/fluxcd/source-controller/api v1.7.2
+	github.com/fluxcd/helm-controller/api v1.4.3
+	github.com/fluxcd/kustomize-controller/api v1.7.2
+	github.com/fluxcd/source-controller/api v1.7.3
 	github.com/gruntwork-io/terratest v0.51.0
 	github.com/linkerd/linkerd2 v0.5.1-0.20250723143138-3095b3fef660
 	github.com/stretchr/testify v1.11.1
