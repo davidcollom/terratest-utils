@@ -16,21 +16,21 @@ jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-go
       - name: Run go fmt
         run: go fmt ./...
   vet:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-go
       - name: Run go vet
         run: go vet ./...
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-go
 
       - name: Run golint
@@ -39,7 +39,7 @@ jobs:
     continue-on-error: true # TODO: remove or filter out upstream vulns
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-go
       - name: Install govulncheck
         run: |
@@ -56,6 +56,6 @@ jobs:
       - vulncheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Run tests
         run: go test -v ./...
