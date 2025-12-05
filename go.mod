@@ -11,13 +11,12 @@ require (
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.4
 	github.com/argoproj/gitops-engine v0.7.1-0.20251006172252-b89b0871b414
-	github.com/cert-manager/cert-manager v1.18.2
+	github.com/cert-manager/cert-manager v1.19.1
 	github.com/external-secrets/external-secrets v0.20.3
 	github.com/fluxcd/helm-controller/api v1.4.3
 	github.com/fluxcd/kustomize-controller/api v1.7.2
 	github.com/fluxcd/source-controller/api v1.7.3
-	github.com/gruntwork-io/terratest v0.51.0
-	github.com/linkerd/linkerd2 v0.5.1-0.20250723143138-3095b3fef660
+	github.com/gruntwork-io/terratest v0.54.0
 	github.com/stretchr/testify v1.11.1
 	github.com/vmware-tanzu/velero v1.17.0
 	istio.io/api v1.27.2
@@ -70,7 +69,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.37.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.69.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/rds v1.91.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/route53 v1.46.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/route53 v1.58.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.69.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.39.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sns v1.33.6 // indirect
@@ -237,13 +236,13 @@ require (
 	k8s.io/component-helpers v0.34.0 // indirect
 	k8s.io/controller-manager v0.34.0 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-aggregator v0.34.0 // indirect
+	k8s.io/kube-aggregator v0.34.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20250910181357-589584f1c912 // indirect
 	k8s.io/kubectl v0.34.0 // indirect
 	k8s.io/kubernetes v1.34.0 // indirect
 	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4 // indirect
 	oras.land/oras-go/v2 v2.6.0 // indirect
-	sigs.k8s.io/gateway-api v1.1.0 // indirect
+	sigs.k8s.io/gateway-api v1.4.0 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/kustomize/api v0.20.1 // indirect
 	sigs.k8s.io/kustomize/kyaml v0.20.1 // indirect
