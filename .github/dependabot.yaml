@@ -38,6 +38,12 @@ updates:
       tanzu:
         patterns:
           - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
       other:
         patterns:
           - "*"
