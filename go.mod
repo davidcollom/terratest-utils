@@ -10,7 +10,7 @@ require (
 	github.com/argoproj/argo-events v1.9.9
 	github.com/argoproj/argo-rollouts v1.8.3
 	github.com/argoproj/argo-workflows/v3 v3.7.4
-	github.com/argoproj/gitops-engine v0.7.1-0.20251108235403-13d5172d3ee2
+	github.com/argoproj/gitops-engine v0.7.3
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.20.4
 	github.com/fluxcd/helm-controller/api v1.4.5
@@ -99,6 +99,7 @@ require (
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
+	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect
@@ -209,7 +210,6 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	go.opentelemetry.io/otel v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
-	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.45.0 // indirect
