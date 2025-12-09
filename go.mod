@@ -9,7 +9,7 @@ require (
 	github.com/argoproj/argo-cd/v3 v3.2.1
 	github.com/argoproj/argo-events v1.9.9
 	github.com/argoproj/argo-rollouts v1.8.3
-	github.com/argoproj/argo-workflows/v3 v3.7.4
+	github.com/argoproj/argo-workflows/v3 v3.7.5
 	github.com/argoproj/gitops-engine v0.7.1-0.20251108235403-13d5172d3ee2
 	github.com/cert-manager/cert-manager v1.18.2
 	github.com/external-secrets/external-secrets v0.20.4
