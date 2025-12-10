@@ -19,7 +19,7 @@ require (
 	github.com/gruntwork-io/terratest v0.54.0
 	github.com/linkerd/linkerd2 v0.5.1-0.20250723143138-3095b3fef660
 	github.com/stretchr/testify v1.11.1
-	github.com/vmware-tanzu/velero v1.17.0
+	github.com/vmware-tanzu/velero v1.17.1
 	istio.io/api v1.28.1
 	istio.io/client-go v1.28.1
 	k8s.io/api v0.34.2
