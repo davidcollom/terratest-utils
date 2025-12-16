@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	helmv2 "github.com/fluxcd/helm-controller/api/v2beta1"
+	helmv2 "github.com/fluxcd/helm-controller/api/v2"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
