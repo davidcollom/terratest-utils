@@ -20,12 +20,12 @@ require (
 	github.com/linkerd/linkerd2 v0.5.1-0.20250723143138-3095b3fef660
 	github.com/stretchr/testify v1.11.1
 	github.com/vmware-tanzu/velero v1.17.1
-	istio.io/api v1.28.1
-	istio.io/client-go v1.28.1
-	k8s.io/api v0.34.3
+	istio.io/api v1.29.1
+	istio.io/client-go v1.29.1
+	k8s.io/api v0.35.0
 	k8s.io/apiextensions-apiserver v0.34.3
-	k8s.io/apimachinery v0.34.3
-	k8s.io/client-go v0.34.3
+	k8s.io/apimachinery v0.35.0
+	k8s.io/client-go v0.35.0
 	sigs.k8s.io/controller-runtime v0.22.4
 )
 
@@ -235,7 +235,7 @@ require (
 	k8s.io/kube-openapi v0.0.0-20251125145642-4e65d59e963e // indirect
 	k8s.io/kubectl v0.34.3 // indirect
 	k8s.io/kubernetes v1.34.3 // indirect
-	k8s.io/utils v0.0.0-20251002143259-bc988d571ff4 // indirect
+	k8s.io/utils v0.0.0-20251219084037-98d557b7f1e7 // indirect
 	oras.land/oras-go/v2 v2.6.0 // indirect
 	sigs.k8s.io/gateway-api v1.4.1 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
