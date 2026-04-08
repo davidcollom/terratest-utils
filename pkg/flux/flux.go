@@ -4,7 +4,7 @@
 package flux
 
 import (
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -54,7 +54,7 @@ func hasReadyCondition(conds []metav1.Condition) bool {
 //   - error: An error if the client could not be created.
 var NewFluxClient = newFluxClient
 
-func newFluxClient(t *testing.T, options *k8s.KubectlOptions) (client.Client, error) {
+func newFluxClient(t testing.TestingT, options *k8s.KubectlOptions) (client.Client, error) {
 	cfg, err := utils.GetRestConfigE(t, options)
 
 	if err != nil {

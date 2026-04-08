@@ -2,7 +2,7 @@ package externalsecrets
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
@@ -26,13 +26,11 @@ import (
 //
 // Returns:
 //   - []esov1.ClusterExternalSecret: A slice containing the ClusterExternalSecret resources found in the namespace.
-func ListClusterExternalSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1.ClusterExternalSecret {
-	t.Helper()
-
+func ListClusterExternalSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.ClusterExternalSecret {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var secrets esov1.ClusterExternalSecretList
 	err = esoclient.List(ctx, &secrets, client.InNamespace(namespace))
 	require.NoError(t, err, "Failed to list ClusterExternalSecrets in namespace %s", namespace)
@@ -53,13 +51,11 @@ func ListClusterExternalSecrets(t *testing.T, options *k8s.KubectlOptions, names
 //   - timeout: The maximum duration to wait for the resource to become ready.
 //
 // Fails the test if the ClusterExternalSecret does not become ready within the timeout.
-func WaitForClusterExternalSecretReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForClusterExternalSecretReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var eso esov1.ClusterExternalSecret
 		err := esoclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &eso)

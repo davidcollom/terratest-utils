@@ -2,7 +2,7 @@ package flux
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
@@ -25,16 +25,14 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.GitRepository objects found in the specified namespace.
-func ListGitRepositories(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.GitRepository {
-	t.Helper()
-
+func ListGitRepositories(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.GitRepository {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var repos sourcev1.GitRepositoryList
 	err = fluxclient.List(ctx, &repos, opts...)
 	require.NoError(t, err, "Failed to list GitRepositories in namespace %s", namespace)
@@ -54,12 +52,11 @@ func ListGitRepositories(t *testing.T, options *k8s.KubectlOptions, namespace st
 //	timeout  - The maximum duration to wait for the resource to become Ready.
 //
 // Fails the test if the GitRepository does not reach the Ready condition within the timeout.
-func WaitForGitRepositoryReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
+func WaitForGitRepositoryReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var repo sourcev1.GitRepository

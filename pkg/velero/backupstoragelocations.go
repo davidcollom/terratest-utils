@@ -2,8 +2,10 @@ package velero
 
 import (
 	"context"
-	"testing"
+	"fmt"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
@@ -23,13 +25,11 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.BackupStorageLocation objects found in the specified namespace.
-func ListBackupStorageLocation(t *testing.T, options *k8s.KubectlOptions, namespace string) []velerov1.BackupStorageLocation {
-	t.Helper()
-
+func ListBackupStorageLocation(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.BackupStorageLocation {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var bsl velerov1.BackupStorageLocationList
 	err = client.List(ctx, &bsl, ctrlclient.InNamespace(namespace))
 	require.NoError(t, err, "Failed to list BackupStorageLocations in namespace %s", namespace)
@@ -50,12 +50,10 @@ func ListBackupStorageLocation(t *testing.T, options *k8s.KubectlOptions, namesp
 //
 // This function is intended for use in integration or end-to-end tests to ensure that
 // a Velero BackupStorageLocation is ready before proceeding.
-func WaitForBackupStorageLocationReady(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForBackupStorageLocationReady(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
-	ctx := t.Context()
+	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
@@ -63,7 +61,7 @@ func WaitForBackupStorageLocationReady(t *testing.T, options k8s.KubectlOptions,
 		var bsl velerov1.BackupStorageLocation
 		err := client.Get(ctx, key, &bsl)
 		if err != nil {
-			t.Logf("Retrying: BSL %s/%s not found: %v", namespace, name, err)
+			fmt.Printf("Retrying: BSL %s/%s not found: %v\n", namespace, name, err)
 			return false, nil
 		}
 		return bsl.Status.Phase == velerov1.BackupStorageLocationPhaseAvailable, nil

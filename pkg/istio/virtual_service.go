@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to VirtualService objects found in the namespace.
-func ListVirtualServices(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.VirtualService {
-	t.Helper()
-
+func ListVirtualServices(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.VirtualService {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	virtualServices, err := istioClient.NetworkingV1alpha3().VirtualServices(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Virtual Services in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListVirtualServices(t *testing.T, options *k8s.KubectlOptions, namespace st
 //   - name: The name of the VirtualService to check.
 //   - namespace: The namespace of the VirtualService.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForVirtualServiceReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForVirtualServiceReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var virtualService *istionetworkingv1alpha3.VirtualService
 		virtualService, err := istioClient.NetworkingV1alpha3().VirtualServices(namespace).Get(ctx, name, v1meta.GetOptions{})

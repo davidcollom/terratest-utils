@@ -2,6 +2,11 @@ module github.com/davidcollom/terratest-utils
 
 go 1.26.1
 
+// Needed to pin to that of linkerd's latest release, which is v0.5.1,
+// which depends on gateway-api v1.0:
+// https://github.com/linkerd/linkerd2/blob/b0431fde84c07a549a271ca9643fd125674dd5ad/go.mod
+replace sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
+
 require (
 	github.com/argoproj/argo-cd/v3 v3.3.6
 	github.com/argoproj/argo-events v1.9.10
@@ -14,7 +19,7 @@ require (
 	github.com/fluxcd/kustomize-controller/api v1.8.3
 	github.com/fluxcd/source-controller/api v1.8.2
 	github.com/gruntwork-io/terratest v0.56.0
-	github.com/linkerd/linkerd2 v0.5.1-0.20250723143138-3095b3fef660
+	github.com/linkerd/linkerd2 v0.5.1-0.20260402204901-372abd361635
 	github.com/stretchr/testify v1.11.1
 	github.com/vmware-tanzu/velero v1.18.0
 	istio.io/api v1.29.1

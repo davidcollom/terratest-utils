@@ -2,8 +2,10 @@ package velero
 
 import (
 	"context"
-	"testing"
+	"fmt"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
@@ -26,13 +28,11 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Restore objects found in the specified namespace.
-func ListRestores(t *testing.T, options *k8s.KubectlOptions, namespace string) []velerov1.Restore {
-	t.Helper()
-
+func ListRestores(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Restore {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var restores velerov1.RestoreList
 	err = client.List(ctx, &restores, ctrlclient.InNamespace(namespace))
 	require.NoError(t, err, "Failed to list Restores in namespace %s", namespace)
@@ -50,11 +50,10 @@ func ListRestores(t *testing.T, options *k8s.KubectlOptions, namespace string) [
 //   - name: The name of the Velero Restore resource.
 //   - namespace: The namespace where the Restore resource is located.
 //   - timeout: The maximum duration to wait for the Restore to complete.
-func WaitForRestoreCompleted(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
+func WaitForRestoreCompleted(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
-	ctx := t.Context()
+	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
@@ -62,7 +61,7 @@ func WaitForRestoreCompleted(t *testing.T, options k8s.KubectlOptions, name, nam
 		var restore velerov1.Restore
 		err := client.Get(ctx, key, &restore)
 		if err != nil {
-			t.Logf("Retrying: Restore %s/%s not found: %v", namespace, name, err)
+			fmt.Printf("Retrying: Restore %s/%s not found: %v\n", namespace, name, err)
 			return false, nil
 		}
 		return restore.Status.Phase == velerov1.RestorePhaseCompleted, nil

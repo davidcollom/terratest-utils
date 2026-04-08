@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to RequestAuthentication objects found in the namespace.
-func ListRequestAuthentications(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.RequestAuthentication {
-	t.Helper()
-
+func ListRequestAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.RequestAuthentication {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	requestAuthentications, err := istioClient.SecurityV1().RequestAuthentications(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Request Authentications in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListRequestAuthentications(t *testing.T, options *k8s.KubectlOptions, names
 //   - name: The name of the RequestAuthentication to check.
 //   - namespace: The namespace of the RequestAuthentication.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForRequestAuthenticationReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForRequestAuthenticationReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var requestAuthentication *istiosecurityv1.RequestAuthentication
 		requestAuthentication, err := istioClient.SecurityV1().RequestAuthentications(namespace).Get(ctx, name, v1meta.GetOptions{})

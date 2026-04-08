@@ -2,15 +2,15 @@ package k8s
 
 import (
 	"context"
-	"testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 
-	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,9 +25,7 @@ import (
 //
 // Returns:
 //   - A pointer to the retrieved appsv1.StatefulSet object.
-func GetStatefulSet(t *testing.T, options *terrak8s.KubectlOptions, name, namespace string, opts metav1.GetOptions) *appsv1.StatefulSet {
-	t.Helper()
-
+func GetStatefulSet(t testing.TestingT, options *KubectlOptions, name, namespace string, opts metav1.GetOptions) *appsv1.StatefulSet {
 	sts, err := GetStatefulSetE(t, options, name, namespace, opts)
 	require.NoError(t, err)
 	return sts
@@ -47,16 +45,13 @@ func GetStatefulSet(t *testing.T, options *terrak8s.KubectlOptions, name, namesp
 // Returns:
 //   - *appsv1.StatefulSet: The retrieved StatefulSet object.
 //   - error: An error if the StatefulSet could not be retrieved.
-func GetStatefulSetE(t *testing.T, options *terrak8s.KubectlOptions, name, namespace string, opts metav1.GetOptions) (*appsv1.StatefulSet, error) {
-	t.Helper()
-
-	client, err := terrak8s.GetKubernetesClientFromOptionsE(t, options)
+func GetStatefulSetE(t testing.TestingT, options *KubectlOptions, name, namespace string, opts metav1.GetOptions) (*appsv1.StatefulSet, error) {
+	client, err := NewClient(t, options)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx := t.Context()
-	return client.AppsV1().StatefulSets(namespace).Get(ctx, name, opts)
+	return client.AppsV1().StatefulSets(namespace).Get(context.Background(), name, opts)
 }
 
 // ListStatefulSets retrieves a list of Kubernetes StatefulSets in the cluster using the provided KubectlOptions and ListOptions.
@@ -69,9 +64,7 @@ func GetStatefulSetE(t *testing.T, options *terrak8s.KubectlOptions, name, names
 //
 // Returns:
 //   - A slice of appsv1.StatefulSet objects representing the StatefulSets found.
-func ListStatefulSets(t *testing.T, options *terrak8s.KubectlOptions, opts metav1.ListOptions) []appsv1.StatefulSet {
-	t.Helper()
-
+func ListStatefulSets(t testing.TestingT, options *KubectlOptions, opts metav1.ListOptions) []appsv1.StatefulSet {
 	statefulSets, err := ListStatefulSetsE(t, options, opts)
 	require.NoError(t, err)
 	return statefulSets
@@ -89,16 +82,13 @@ func ListStatefulSets(t *testing.T, options *terrak8s.KubectlOptions, opts metav
 // Returns:
 //   - A slice of StatefulSet objects found in the specified namespace.
 //   - An error if the StatefulSets could not be listed.
-func ListStatefulSetsE(t *testing.T, options *terrak8s.KubectlOptions, opts metav1.ListOptions) ([]appsv1.StatefulSet, error) {
-	t.Helper()
-
-	client, err := terrak8s.GetKubernetesClientFromOptionsE(t, options)
+func ListStatefulSetsE(t testing.TestingT, options *KubectlOptions, opts metav1.ListOptions) ([]appsv1.StatefulSet, error) {
+	client, err := NewClient(t, options)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx := t.Context()
-	statefulSetList, err := client.AppsV1().StatefulSets(options.Namespace).List(ctx, opts)
+	statefulSetList, err := client.AppsV1().StatefulSets(options.Namespace).List(context.Background(), opts)
 	if err != nil {
 		return nil, err
 	}
@@ -116,14 +106,11 @@ func ListStatefulSetsE(t *testing.T, options *terrak8s.KubectlOptions, opts meta
 //   - name: The name of the StatefulSet to check.
 //   - namespace: The namespace where the StatefulSet is located.
 //   - timeout: The maximum duration to wait for the StatefulSet to become ready.
-func WaitForStatefulSetReady(t *testing.T, options *terrak8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForStatefulSetReady(t testing.TestingT, options *KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create stateful set clientset")
 
-	ctx := t.Context()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	err = wait.PollUntilContextTimeout(context.Background(), 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		sts, err := client.AppsV1().StatefulSets(namespace).Get(ctx, name, v1.GetOptions{})
 		if err != nil {
 			return false, nil // retry

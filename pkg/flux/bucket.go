@@ -2,7 +2,7 @@ package flux
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
@@ -26,16 +26,14 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.Bucket objects found in the specified namespace.
-func ListBuckets(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.Bucket {
-	t.Helper()
-
+func ListBuckets(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.Bucket {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var buckets sourcev1.BucketList
 	err = fluxclient.List(ctx, &buckets, opts...)
 	require.NoError(t, err, "Failed to list Buckets in namespace %s", namespace)
@@ -53,13 +51,11 @@ func ListBuckets(t *testing.T, options *k8s.KubectlOptions, namespace string, op
 //	name     - The name of the Bucket resource.
 //	namespace- The namespace where the Bucket resource is located.
 //	timeout  - The maximum duration to wait for the Bucket to become ready.
-func WaitForBucketReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForBucketReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var bucket sourcev1.Bucket

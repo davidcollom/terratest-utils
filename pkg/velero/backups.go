@@ -2,8 +2,10 @@ package velero
 
 import (
 	"context"
-	"testing"
+	"fmt"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
@@ -24,13 +26,11 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Backup objects found in the specified namespace.
-func ListBackups(t *testing.T, options *k8s.KubectlOptions, namespace string) []velerov1.Backup {
-	t.Helper()
-
+func ListBackups(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Backup {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var backups velerov1.BackupList
 	err = client.List(ctx, &backups, ctrlclient.InNamespace(namespace))
 	require.NoError(t, err, "Failed to list Backups in namespace %s", namespace)
@@ -49,12 +49,10 @@ func ListBackups(t *testing.T, options *k8s.KubectlOptions, namespace string) []
 //   - timeout: The maximum duration to wait for the backup to complete.
 //
 // This function will call t.Fatalf if the backup does not complete successfully within the timeout.
-func WaitForBackupSucceeded(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForBackupSucceeded(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
-	ctx := t.Context()
+	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
@@ -62,7 +60,7 @@ func WaitForBackupSucceeded(t *testing.T, options k8s.KubectlOptions, name, name
 		var backup velerov1.Backup
 		err := client.Get(ctx, key, &backup)
 		if err != nil {
-			t.Logf("Retrying: Backup %s/%s not found: %v", namespace, name, err)
+			fmt.Printf("Retrying: Backup %s/%s not found: %v\n", namespace, name, err)
 			return false, nil
 		}
 		return backup.Status.Phase == velerov1.BackupPhaseCompleted, nil

@@ -2,7 +2,7 @@ package flux
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
@@ -25,16 +25,14 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.HelmChart objects present in the specified namespace.
-func ListHelmCharts(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmChart {
-	t.Helper()
-
+func ListHelmCharts(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmChart {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var charts sourcev1.HelmChartList
 	err = fluxclient.List(ctx, &charts, opts...)
 	require.NoError(t, err, "Failed to list HelmCharts in namespace %s", namespace)
@@ -55,13 +53,11 @@ func ListHelmCharts(t *testing.T, options *k8s.KubectlOptions, namespace string,
 //	timeout  - The maximum duration to wait for the HelmChart to become Ready.
 //
 // Fails the test if the HelmChart does not reach the Ready condition within the timeout.
-func WaitForHelmChartReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForHelmChartReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var chart sourcev1.HelmChart

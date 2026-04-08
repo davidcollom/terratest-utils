@@ -2,8 +2,10 @@ package velero
 
 import (
 	"context"
-	"testing"
+	"fmt"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
@@ -25,13 +27,11 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Schedule representing the schedules found in the given namespace.
-func ListSchedules(t *testing.T, options *k8s.KubectlOptions, namespace string) []velerov1.Schedule {
-	t.Helper()
-
+func ListSchedules(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Schedule {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var schedules velerov1.ScheduleList
 	err = client.List(ctx, &schedules, ctrlclient.InNamespace(namespace))
 	require.NoError(t, err, "Failed to list Schedules in namespace %s", namespace)
@@ -51,11 +51,10 @@ func ListSchedules(t *testing.T, options *k8s.KubectlOptions, namespace string) 
 //   - timeout: The maximum duration to wait for the schedule to become enabled.
 //
 // This function logs retries and fails the test with a fatal error if the schedule does not become enabled in time.
-func WaitForScheduleToExist(t *testing.T, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
+func WaitForScheduleToExist(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewVeleroClient(options.RestConfig)
 	require.NoError(t, err, "Unable to create Velero client")
-	ctx := t.Context()
+	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
@@ -63,7 +62,7 @@ func WaitForScheduleToExist(t *testing.T, options k8s.KubectlOptions, name, name
 		var schedule velerov1.Schedule
 		err := client.Get(ctx, key, &schedule)
 		if err != nil {
-			t.Logf("Retrying: Schedule %s/%s not found: %v", namespace, name, err)
+			fmt.Printf("Retrying: Schedule %s/%s not found: %v\n", namespace, name, err)
 			return false, nil
 		}
 		return schedule.Status.Phase == velerov1.SchedulePhaseEnabled, nil

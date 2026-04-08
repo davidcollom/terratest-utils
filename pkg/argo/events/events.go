@@ -4,7 +4,7 @@
 package events
 
 import (
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	argoclientset "github.com/argoproj/argo-events/pkg/client/clientset/versioned"
 
@@ -42,8 +42,7 @@ func HasReadyCondition(conds []metav1.Condition, expectedType string) bool {
 // Returns:
 //   - argoclientset.Interface: The Argo Events clientset interface for interacting with Argo Events resources.
 //   - error: An error if the client could not be created.
-func NewArgoEventsClient(t *testing.T, options *k8s.KubectlOptions) (argoclientset.Interface, error) {
-	t.Helper()
+func NewArgoEventsClient(t testing.TestingT, options *k8s.KubectlOptions) (argoclientset.Interface, error) {
 	var cfg *rest.Config
 	var err error
 	if options.RestConfig == nil {

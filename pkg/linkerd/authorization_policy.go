@@ -2,8 +2,9 @@ package linkerd
 
 import (
 	"context"
-	"testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	linkerdpolicyv1alpha1 "github.com/linkerd/linkerd2/controller/gen/apis/policy/v1alpha1"
@@ -22,12 +23,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to AuthorizationPolicy objects found in the namespace.
-func ListAuthorizationPolicies(t *testing.T, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.AuthorizationPolicy {
-	t.Helper()
-
+func ListAuthorizationPolicies(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.AuthorizationPolicy {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	authorizationPolicies, err := linkerdClient.PolicyV1alpha1().AuthorizationPolicies(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list AuthorizationPolicies in namespace %s", namespace)
 
@@ -51,12 +50,10 @@ func ListAuthorizationPolicies(t *testing.T, options *k8s.KubectlOptions, namesp
 //
 // Returns:
 //   - A pointer to the AuthorizationPolicy object.
-func GetAuthorizationPolicy(t *testing.T, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.AuthorizationPolicy {
-	t.Helper()
-
+func GetAuthorizationPolicy(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.AuthorizationPolicy {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	authorizationPolicy, err := linkerdClient.PolicyV1alpha1().AuthorizationPolicies(namespace).Get(ctx, name, v1meta.GetOptions{})
 	require.NoError(t, err, "Failed to get AuthorizationPolicy %s in namespace %s", name, namespace)
 
@@ -72,12 +69,10 @@ func GetAuthorizationPolicy(t *testing.T, options *k8s.KubectlOptions, name, nam
 //   - name: The name of the AuthorizationPolicy to check.
 //   - namespace: The namespace of the AuthorizationPolicy.
 //   - timeout: The maximum duration to wait for the resource to exist.
-func WaitForAuthorizationPolicyExists(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForAuthorizationPolicyExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := linkerdClient.PolicyV1alpha1().AuthorizationPolicies(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {

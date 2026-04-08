@@ -2,10 +2,9 @@ package k8s
 
 import (
 	"context"
-	"testing"
 	"time"
 
-	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	apixv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -27,9 +26,7 @@ import (
 // Returns:
 //
 //	*apixv1.CustomResourceDefinition - The requested CRD object.
-func GetCustomResourceDefinition(t *testing.T, options *terrak8s.KubectlOptions, crdName string, opts metav1.GetOptions) *apixv1.CustomResourceDefinition {
-	t.Helper()
-
+func GetCustomResourceDefinition(t testing.TestingT, options *KubectlOptions, crdName string, opts metav1.GetOptions) *apixv1.CustomResourceDefinition {
 	crd, err := GetCustomResourceDefinitionE(t, options, crdName, opts)
 	require.NoError(t, err)
 	return crd
@@ -47,14 +44,12 @@ func GetCustomResourceDefinition(t *testing.T, options *terrak8s.KubectlOptions,
 // Returns:
 //   - *apixv1.CustomResourceDefinition: The retrieved CRD object.
 //   - error: An error if the CRD could not be retrieved.
-func GetCustomResourceDefinitionE(t *testing.T, options *terrak8s.KubectlOptions, crdName string, opts metav1.GetOptions) (*apixv1.CustomResourceDefinition, error) {
-	t.Helper()
-
+func GetCustomResourceDefinitionE(t testing.TestingT, options *KubectlOptions, crdName string, opts metav1.GetOptions) (*apixv1.CustomResourceDefinition, error) {
 	client, err := NewAPIXClient(t, options)
 	if err != nil {
 		return nil, err
 	}
-	return client.ApiextensionsV1().CustomResourceDefinitions().Get(t.Context(), crdName, opts)
+	return client.ApiextensionsV1().CustomResourceDefinitions().Get(context.Background(), crdName, opts)
 }
 
 // ListCustomResourceDefinitionsE retrieves a list of CustomResourceDefinitions (CRDs) from the Kubernetes cluster
@@ -68,14 +63,12 @@ func GetCustomResourceDefinitionE(t *testing.T, options *terrak8s.KubectlOptions
 // Returns:
 //   - A pointer to a CustomResourceDefinitionList containing the CRDs found in the cluster.
 //   - error: An error if the list could not be retrieved.
-func ListCustomResourceDefinitionsE(t *testing.T, options *terrak8s.KubectlOptions, opts metav1.ListOptions) (*apixv1.CustomResourceDefinitionList, error) {
-	t.Helper()
-
+func ListCustomResourceDefinitionsE(t testing.TestingT, options *KubectlOptions, opts metav1.ListOptions) (*apixv1.CustomResourceDefinitionList, error) {
 	client, err := NewAPIXClient(t, options)
 	if err != nil {
 		return nil, err
 	}
-	return client.ApiextensionsV1().CustomResourceDefinitions().List(t.Context(), opts)
+	return client.ApiextensionsV1().CustomResourceDefinitions().List(context.Background(), opts)
 }
 
 // WaitForCustomResourceDefinitionIsReady waits until the specified CustomResourceDefinition (CRD) is ready in the Kubernetes cluster.
@@ -87,16 +80,13 @@ func ListCustomResourceDefinitionsE(t *testing.T, options *terrak8s.KubectlOptio
 //   - options: The kubectl options to use for connecting to the cluster.
 //   - crdName: The name of the CRD to check for readiness.
 //   - timeout: The maximum duration to wait for the CRD to become ready.
-func WaitForCustomResourceDefinitionIsReady(t *testing.T, options *terrak8s.KubectlOptions, crdName string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForCustomResourceDefinitionIsReady(t testing.TestingT, options *KubectlOptions, crdName string, timeout time.Duration) {
 	client, err := NewAPIXClient(t, options)
 	if err != nil {
 		t.Fatalf("Failed to create APIX client: %v", err)
 	}
 
-	ctx := t.Context()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	err = wait.PollUntilContextTimeout(context.Background(), 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		crd, err := client.ApiextensionsV1().CustomResourceDefinitions().Get(ctx, crdName, metav1.GetOptions{})
 		if err != nil {
 			return false, nil // retry

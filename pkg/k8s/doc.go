@@ -8,11 +8,11 @@
 // Example usage:
 //
 //	import (
-//	    "testing"
+//	    "github.com/gruntwork-io/terratest/modules/testing"
 //	    "github.com/davidcollom/terratest-utils/pkg/k8s"
 //	)
 //
-//	func TestStatefulSetReady(t *testing.T) {
+//	func TestStatefulSetReady(t testing.TestingT) {
 //	    options := k8s.NewKubectlOptions("", "", "default")
 //	    k8s.WaitForStatefulSetReady(t, options, "my-statefulset", "default", 5*time.Minute)
 //	}

@@ -2,7 +2,7 @@ package linkerd
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to Server objects found in the namespace.
-func ListServers(t *testing.T, options *k8s.KubectlOptions, namespace string) []*linkerdserverv1beta1.Server {
-	t.Helper()
-
+func ListServers(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdserverv1beta1.Server {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	servers, err := linkerdClient.ServerV1beta1().Servers(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Servers in namespace %s", namespace)
 
@@ -51,12 +49,10 @@ func ListServers(t *testing.T, options *k8s.KubectlOptions, namespace string) []
 //
 // Returns:
 //   - A pointer to the Server object.
-func GetServer(t *testing.T, options *k8s.KubectlOptions, name, namespace string) *linkerdserverv1beta1.Server {
-	t.Helper()
-
+func GetServer(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdserverv1beta1.Server {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	server, err := linkerdClient.ServerV1beta1().Servers(namespace).Get(ctx, name, v1meta.GetOptions{})
 	require.NoError(t, err, "Failed to get Server %s in namespace %s", name, namespace)
 
@@ -72,12 +68,10 @@ func GetServer(t *testing.T, options *k8s.KubectlOptions, name, namespace string
 //   - name: The name of the Server to check.
 //   - namespace: The namespace of the Server.
 //   - timeout: The maximum duration to wait for the resource to exist.
-func WaitForServerExists(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForServerExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := linkerdClient.ServerV1beta1().Servers(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {

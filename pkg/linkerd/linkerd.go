@@ -1,7 +1,7 @@
 package linkerd
 
 import (
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -19,7 +19,7 @@ import (
 //
 // Returns:
 //   - *linkerdclientset.Clientset: A pointer to the initialized Linkerd client.
-func NewClient(t *testing.T, options *k8s.KubectlOptions) *linkerdclientset.Clientset {
+func NewClient(t testing.TestingT, options *k8s.KubectlOptions) *linkerdclientset.Clientset {
 	cfg, err := utils.GetRestConfigE(t, options)
 	require.NoError(t, err)
 

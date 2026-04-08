@@ -2,7 +2,7 @@ package certmanager
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	certv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
@@ -27,13 +27,11 @@ import (
 //
 // Returns:
 //   - A slice of certv1.Certificate objects found in the specified namespace.
-func ListCertificates(t *testing.T, options *k8s.KubectlOptions, namespace string) []certv1.Certificate {
-	t.Helper()
-
+func ListCertificates(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []certv1.Certificate {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	certList, err := client.CertmanagerV1().Certificates(namespace).List(ctx, v1.ListOptions{})
 	require.NoError(t, err, "Failed to list Certificates in namespace %s", namespace)
 
@@ -49,13 +47,11 @@ func ListCertificates(t *testing.T, options *k8s.KubectlOptions, namespace strin
 //   - name: The name of the Certificate resource.
 //   - namespace: The namespace of the Certificate resource.
 //   - timeout: The maximum duration to wait for the Certificate to become Ready.
-func WaitForCertificateReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForCertificateReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		cert, err := client.CertmanagerV1().Certificates(namespace).Get(ctx, name, v1.GetOptions{})
 		if err != nil {
@@ -86,7 +82,7 @@ func WaitForCertificateReady(t *testing.T, options *k8s.KubectlOptions, name, na
 //	t       - The testing context.
 //	options - Kubectl options for accessing the Kubernetes cluster.
 //	cert    - The cert-manager Certificate resource whose Secret should be validated.
-func ValidateCertificateSecret(t *testing.T, options *k8s.KubectlOptions, cert *certv1.Certificate) {
+func ValidateCertificateSecret(t testing.TestingT, options *k8s.KubectlOptions, cert *certv1.Certificate) {
 	// We need to ensure we're looking in the right namespace
 	options.Namespace = cert.Namespace
 	secret := k8s.GetSecret(t, options, cert.Spec.SecretName)

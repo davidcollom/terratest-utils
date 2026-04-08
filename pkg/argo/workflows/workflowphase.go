@@ -2,7 +2,7 @@ package workflows
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	workflowv1alpha1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
@@ -26,13 +26,11 @@ import (
 //   - A slice of workflowv1alpha1.WorkflowPhase representing the phase of each workflow in the namespace.
 //
 // Panics if there is an error creating the client or listing the workflows.
-func ListWorkflowPhases(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowPhase {
-	t.Helper()
-
+func ListWorkflowPhases(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowPhase {
 	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	workflowList, err := client.ArgoprojV1alpha1().Workflows(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list Workflows in namespace %s", namespace)
 
@@ -58,13 +56,11 @@ func ListWorkflowPhases(t *testing.T, options *k8s.KubectlOptions, namespace str
 //	timeout      - The maximum duration to wait for the workflow to reach the desired phase.
 //
 // Fails the test if the workflow does not reach the desired phase within the timeout.
-func WaitForWorkflowPhase(t *testing.T, options *k8s.KubectlOptions, name, namespace string, desiredPhase workflowv1alpha1.WorkflowPhase, timeout time.Duration) {
-	t.Helper()
-
+func WaitForWorkflowPhase(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, desiredPhase workflowv1alpha1.WorkflowPhase, timeout time.Duration) {
 	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		wf, err := client.ArgoprojV1alpha1().Workflows(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {

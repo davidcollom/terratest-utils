@@ -2,7 +2,7 @@ package cd
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
@@ -26,13 +26,11 @@ import (
 //
 // Returns:
 //   - A slice of ApplicationSet resources found in the specified namespace.
-func ListApplicationSets(t *testing.T, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.ApplicationSet {
-	t.Helper()
-
+func ListApplicationSets(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.ApplicationSet {
 	client, err := NewArgoCDClient(t, options)
 	require.NoError(t, err, "Failed to create Argo clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	applicationSetList, err := client.ArgoprojV1alpha1().ApplicationSets(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list ApplicationSets in namespace %s", namespace)
 
@@ -49,13 +47,11 @@ func ListApplicationSets(t *testing.T, options *k8s.KubectlOptions, namespace st
 //   - name: The name of the ApplicationSet.
 //   - namespace: The namespace where the ApplicationSet resides.
 //   - timeout: The maximum duration to wait for the ApplicationSet to become healthy and synced.
-func WaitForApplicationSetHealthyAndSynced(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForApplicationSetHealthyAndSynced(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewArgoCDClient(t, options)
 	require.NoError(t, err, "Unable to create Argo CD client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		app, err := client.ArgoprojV1alpha1().ApplicationSets(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {

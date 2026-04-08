@@ -2,8 +2,10 @@ package externalsecrets
 
 import (
 	"context"
-	"testing"
+	"fmt"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -26,13 +28,11 @@ import (
 //
 // Returns:
 //   - A slice of esov1.ClusterSecretStore representing the ClusterSecretStores found in the namespace.
-func ListClusterSecretStores(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1.ClusterSecretStore {
-	t.Helper()
-
+func ListClusterSecretStores(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.ClusterSecretStore {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var stores esov1.ClusterSecretStoreList
 	err = esoclient.List(ctx, &stores, ctrlclient.InNamespace(namespace))
 	require.NoError(t, err, "Failed to list ClusterSecretStores in namespace %s", namespace)
@@ -54,18 +54,16 @@ func ListClusterSecretStores(t *testing.T, options *k8s.KubectlOptions, namespac
 //
 // This function is intended for use in integration tests to ensure that ClusterSecretStore resources
 // are fully initialized before proceeding.
-func WaitForClusterSecretStoreReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForClusterSecretStoreReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var store esov1.ClusterSecretStore
 		err := esoclient.Get(context.TODO(), ctrlclient.ObjectKey{Name: name, Namespace: namespace}, &store)
 		if err != nil {
-			t.Logf("SecretStore %s/%s not yet available: %v", namespace, name, err)
+			fmt.Printf("SecretStore %s/%s not yet available: %v\n", namespace, name, err)
 			return false, nil // keep retrying
 		}
 		for _, cond := range store.Status.Conditions {

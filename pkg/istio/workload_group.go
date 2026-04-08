@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to WorkloadGroup objects found in the namespace.
-func ListWorkloadGroups(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.WorkloadGroup {
-	t.Helper()
-
+func ListWorkloadGroups(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.WorkloadGroup {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	workloadGroups, err := istioClient.NetworkingV1alpha3().WorkloadGroups(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Workload Groups in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListWorkloadGroups(t *testing.T, options *k8s.KubectlOptions, namespace str
 //   - name: The name of the WorkloadGroup to check.
 //   - namespace: The namespace of the WorkloadGroup.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForWorkloadGroupReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForWorkloadGroupReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var workloadGroup *istionetworkingv1alpha3.WorkloadGroup
 		workloadGroup, err := istioClient.NetworkingV1alpha3().WorkloadGroups(namespace).Get(ctx, name, v1meta.GetOptions{})
