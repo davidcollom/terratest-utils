@@ -1,7 +1,9 @@
 package workflows
 
 import (
-	"testing"
+	"context"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	workflowv1alpha1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,13 +25,11 @@ import (
 //
 // Returns:
 //   - A slice of WorkflowTemplate objects found in the specified namespace.
-func ListArgoWorkflowTemplates(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTemplate {
-	t.Helper()
-
+func ListArgoWorkflowTemplates(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTemplate {
 	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	workflowTemplateList, err := client.ArgoprojV1alpha1().WorkflowTemplates(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list WorkflowTemplates in namespace %s", namespace)
 
@@ -47,13 +47,11 @@ func ListArgoWorkflowTemplates(t *testing.T, options *k8s.KubectlOptions, namesp
 //
 // Returns:
 //   - A slice of ClusterWorkflowTemplate objects.
-func ListArgoClusterWorkflowTemplates(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.ClusterWorkflowTemplate {
-	t.Helper()
-
+func ListArgoClusterWorkflowTemplates(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.ClusterWorkflowTemplate {
 	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	workflowTemplateList, err := client.ArgoprojV1alpha1().ClusterWorkflowTemplates().List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list WorkflowTemplates in namespace %s", namespace)
 

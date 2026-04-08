@@ -5,7 +5,7 @@
 package certmanager
 
 import (
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
@@ -36,8 +36,7 @@ import (
 //	require.NoError(t, err)
 var NewClient = newClient
 
-func newClient(t *testing.T, options *k8s.KubectlOptions) (cmclientset.Interface, error) {
-	t.Helper()
+func newClient(t testing.TestingT, options *k8s.KubectlOptions) (cmclientset.Interface, error) {
 	var cfg *rest.Config
 	var err error
 	if options.RestConfig == nil {

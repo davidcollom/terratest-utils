@@ -5,7 +5,7 @@
 package istio
 
 import (
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -26,7 +26,7 @@ import (
 //   - *Client: A pointer to the initialized Istio client.
 var NewClient = newClient
 
-func newClient(t *testing.T, options *k8s.KubectlOptions) *istioClientset.Clientset {
+func newClient(t testing.TestingT, options *k8s.KubectlOptions) *istioClientset.Clientset {
 	cfg, err := utils.GetRestConfigE(t, options)
 	require.NoError(t, err)
 
@@ -36,7 +36,7 @@ func newClient(t *testing.T, options *k8s.KubectlOptions) *istioClientset.Client
 	return client
 }
 
-func istioConditionReady(t *testing.T, status *istiometa.IstioStatus) bool {
+func istioConditionReady(t testing.TestingT, status *istiometa.IstioStatus) bool {
 	require.NotNil(t, status)
 	var found bool
 	for _, condition := range status.Conditions {
@@ -48,7 +48,7 @@ func istioConditionReady(t *testing.T, status *istiometa.IstioStatus) bool {
 	return found
 }
 
-func serviceEntryConditionReady(t *testing.T, status *istionetworking.ServiceEntryStatus) bool {
+func serviceEntryConditionReady(t testing.TestingT, status *istionetworking.ServiceEntryStatus) bool {
 	require.NotNil(t, status)
 	var found bool
 	for _, condition := range status.Conditions {

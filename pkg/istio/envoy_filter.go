@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to EnvoyFilter objects found in the namespace.
-func ListEnvoyFilters(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.EnvoyFilter {
-	t.Helper()
-
+func ListEnvoyFilters(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.EnvoyFilter {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	envoyFilters, err := istioClient.NetworkingV1alpha3().EnvoyFilters(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Envoy Filters in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListEnvoyFilters(t *testing.T, options *k8s.KubectlOptions, namespace strin
 //   - name: The name of the EnvoyFilter to check.
 //   - namespace: The namespace of the EnvoyFilter.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForEnvoyFilterReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForEnvoyFilterReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var envoyFilter *istionetworkingv1alpha3.EnvoyFilter
 		envoyFilter, err := istioClient.NetworkingV1alpha3().EnvoyFilters(namespace).Get(ctx, name, v1meta.GetOptions{})

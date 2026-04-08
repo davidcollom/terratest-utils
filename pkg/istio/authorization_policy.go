@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to AuthorizationPolicy objects found in the namespace.
-func ListAuthorizationPolicies(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.AuthorizationPolicy {
-	t.Helper()
-
+func ListAuthorizationPolicies(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.AuthorizationPolicy {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	authorizationPolicies, err := istioClient.SecurityV1().AuthorizationPolicies(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Authorization Policies in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListAuthorizationPolicies(t *testing.T, options *k8s.KubectlOptions, namesp
 //   - name: The name of the AuthorizationPolicy to check.
 //   - namespace: The namespace of the AuthorizationPolicy.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForAuthorizationPolicyReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForAuthorizationPolicyReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var authorizationPolicy *istiosecurityv1.AuthorizationPolicy
 		authorizationPolicy, err := istioClient.SecurityV1().AuthorizationPolicies(namespace).Get(ctx, name, v1meta.GetOptions{})

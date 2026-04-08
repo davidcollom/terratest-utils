@@ -2,7 +2,7 @@ package cd
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
@@ -25,13 +25,11 @@ import (
 //   - A slice of AppProject resources found in the given namespace.
 //
 // This function will fail the test if it cannot create the Argo CD client or if it fails to list the AppProjects.
-func ListAppProjects(t *testing.T, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.AppProject {
-	t.Helper()
-
+func ListAppProjects(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.AppProject {
 	client, err := NewArgoCDClient(t, options)
 	require.NoError(t, err, "Failed to create Argo CD clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	appProjectList, err := client.ArgoprojV1alpha1().AppProjects(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list AppProjects in namespace %s", namespace)
 
@@ -47,13 +45,11 @@ func ListAppProjects(t *testing.T, options *k8s.KubectlOptions, namespace string
 //   - name: The name of the AppProject to wait for.
 //   - namespace: The namespace in which to look for the AppProject.
 //   - timeout: The maximum duration to wait for the AppProject to appear.
-func WaitForAppProjectExists(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForAppProjectExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewArgoCDClient(t, options)
 	require.NoError(t, err, "Unable to create Argo CD client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := client.ArgoprojV1alpha1().AppProjects(namespace).Get(ctx, name, metav1.GetOptions{})
 		return err == nil, nil

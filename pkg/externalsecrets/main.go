@@ -1,7 +1,7 @@
 package externalsecrets
 
 import (
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
 	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
@@ -26,9 +26,7 @@ import (
 //	error         - An error if the client could not be created.
 var NewESOClient = newESOClient
 
-func newESOClient(t *testing.T, options *k8s.KubectlOptions) (client.Client, error) {
-	t.Helper()
-
+func newESOClient(t testing.TestingT, options *k8s.KubectlOptions) (client.Client, error) {
 	var cfg *rest.Config
 	var err error
 	if options.RestConfig == nil {

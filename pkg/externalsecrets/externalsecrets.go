@@ -5,7 +5,7 @@ package externalsecrets
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
@@ -28,13 +28,11 @@ import (
 //
 // Returns:
 //   - A slice of ExternalSecret objects found in the specified namespace.
-func ListExternalSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string) []esov1.ExternalSecret {
-	t.Helper()
-
+func ListExternalSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.ExternalSecret {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var secrets esov1.ExternalSecretList
 	err = esoclient.List(ctx, &secrets, client.InNamespace(namespace))
 	require.NoError(t, err, "Failed to list ExternalSecrets in namespace %s", namespace)
@@ -56,13 +54,11 @@ func ListExternalSecrets(t *testing.T, options *k8s.KubectlOptions, namespace st
 //
 // The function uses the External Secrets Operator client to fetch the resource and checks its readiness
 // using IsExternalSecretReady. If the resource does not become ready within the timeout, the test fails.
-func WaitForExternalSecretReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForExternalSecretReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var eso esov1.ExternalSecret
 		err := esoclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &eso)

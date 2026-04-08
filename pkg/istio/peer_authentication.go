@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to PeerAuthentication objects found in the namespace.
-func ListPeerAuthentications(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.PeerAuthentication {
-	t.Helper()
-
+func ListPeerAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.PeerAuthentication {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	peerAuthentications, err := istioClient.SecurityV1().PeerAuthentications(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Peer Authentications in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListPeerAuthentications(t *testing.T, options *k8s.KubectlOptions, namespac
 //   - name: The name of the PeerAuthentication to check.
 //   - namespace: The namespace of the PeerAuthentication.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForPeerAuthenticationReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForPeerAuthenticationReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var peerAuthentication *istiosecurityv1.PeerAuthentication
 		peerAuthentication, err := istioClient.SecurityV1().PeerAuthentications(namespace).Get(ctx, name, v1meta.GetOptions{})

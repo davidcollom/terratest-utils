@@ -2,7 +2,7 @@ package linkerd
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
@@ -34,12 +34,10 @@ var (
 //
 // Returns:
 //   - A slice of pointers to unstructured objects representing TrafficSplit resources found in the namespace.
-func ListTrafficSplits(t *testing.T, options *k8s.KubectlOptions, namespace string) []*unstructured.Unstructured {
-	t.Helper()
-
+func ListTrafficSplits(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*unstructured.Unstructured {
 	dynamicClient := NewDynamicClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	trafficSplits, err := dynamicClient.Resource(TrafficSplitGVR).Namespace(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list TrafficSplits in namespace %s", namespace)
 
@@ -62,12 +60,10 @@ func ListTrafficSplits(t *testing.T, options *k8s.KubectlOptions, namespace stri
 //
 // Returns:
 //   - An unstructured object representing the TrafficSplit resource.
-func GetTrafficSplit(t *testing.T, options *k8s.KubectlOptions, name, namespace string) *unstructured.Unstructured {
-	t.Helper()
-
+func GetTrafficSplit(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *unstructured.Unstructured {
 	dynamicClient := NewDynamicClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	trafficSplit, err := dynamicClient.Resource(TrafficSplitGVR).Namespace(namespace).Get(ctx, name, v1meta.GetOptions{})
 	require.NoError(t, err, "Failed to get TrafficSplit %s in namespace %s", name, namespace)
 
@@ -83,12 +79,10 @@ func GetTrafficSplit(t *testing.T, options *k8s.KubectlOptions, name, namespace 
 //   - name: The name of the TrafficSplit to check.
 //   - namespace: The namespace of the TrafficSplit.
 //   - timeout: The maximum duration to wait for the resource to exist.
-func WaitForTrafficSplitExists(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForTrafficSplitExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	dynamicClient := NewDynamicClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := dynamicClient.Resource(TrafficSplitGVR).Namespace(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
@@ -112,7 +106,7 @@ func WaitForTrafficSplitExists(t *testing.T, options *k8s.KubectlOptions, name, 
 //
 // Returns:
 //   - dynamic.Interface: A dynamic client for interacting with custom resources.
-func NewDynamicClient(t *testing.T, options *k8s.KubectlOptions) dynamic.Interface {
+func NewDynamicClient(t testing.TestingT, options *k8s.KubectlOptions) dynamic.Interface {
 	cfg, err := utils.GetRestConfigE(t, options)
 	require.NoError(t, err)
 

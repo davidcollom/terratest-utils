@@ -2,7 +2,7 @@ package certmanager
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -24,13 +24,11 @@ import (
 //
 // Returns:
 //   - A slice of acmev1.Order objects found in the specified namespace.
-func ListOrders(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Order {
-	t.Helper()
-
+func ListOrders(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []acmev1.Order {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	orderList, err := client.AcmeV1().Orders(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list Orders in namespace %s", namespace)
 
@@ -50,13 +48,11 @@ func ListOrders(t *testing.T, options *k8s.KubectlOptions, namespace string) []a
 //	timeout  - The maximum duration to wait for the Order to become valid.
 //
 // Fails the test if the Order does not reach the "Valid" state within the specified timeout.
-func WaitForOrderValid(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForOrderValid(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		order, err := client.AcmeV1().Orders(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {

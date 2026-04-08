@@ -2,7 +2,7 @@ package events
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	argoeventsv1alpha1 "github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
@@ -26,13 +26,11 @@ import (
 //
 // Returns:
 //   - A slice of argoeventsv1alpha1.Sensor objects representing the sensors found in the namespace.
-func ListSensors(t *testing.T, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.Sensor {
-	t.Helper()
-
+func ListSensors(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.Sensor {
 	client, err := NewArgoEventsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	sensorList, err := client.ArgoprojV1alpha1().Sensors(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list Sensors in namespace %s", namespace)
 
@@ -48,13 +46,11 @@ func ListSensors(t *testing.T, options *k8s.KubectlOptions, namespace string) []
 //   - name: The name of the Sensor resource.
 //   - namespace: The namespace where the Sensor is located.
 //   - timeout: The maximum duration to wait for the sensor to become Ready.
-func WaitForSensorReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForSensorReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewArgoEventsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		sensor, err := client.ArgoprojV1alpha1().Sensors(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {

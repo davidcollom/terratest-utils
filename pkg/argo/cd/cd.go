@@ -4,7 +4,7 @@
 package cd
 
 import (
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
 	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
@@ -34,8 +34,7 @@ func IsApplicationHealthyAndSynced(app *argocdv1alpha1.Application) bool {
 //   - An error if the client creation fails
 var NewArgoCDClient = newArgoCDClient
 
-func newArgoCDClient(t *testing.T, options *k8s.KubectlOptions) (argocd.Interface, error) {
-	t.Helper()
+func newArgoCDClient(t testing.TestingT, options *k8s.KubectlOptions) (argocd.Interface, error) {
 	var cfg *rest.Config
 	var err error
 	if options.RestConfig == nil {

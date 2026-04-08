@@ -2,7 +2,7 @@ package flux
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
@@ -25,16 +25,14 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.HelmRepository objects found in the specified namespace.
-func ListHelmRepositories(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmRepository {
-	t.Helper()
-
+func ListHelmRepositories(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmRepository {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var repos sourcev1.HelmRepositoryList
 	err = fluxclient.List(ctx, &repos, opts...)
 	require.NoError(t, err, "Failed to list HelmRepositories in namespace %s", namespace)
@@ -52,13 +50,11 @@ func ListHelmRepositories(t *testing.T, options *k8s.KubectlOptions, namespace s
 //   - timeout: The maximum duration to wait for the resource to become Ready.
 //
 // Fails the test if the HelmRepository does not reach the Ready condition within the timeout.
-func WaitForHelmRepositoryReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForHelmRepositoryReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var helmrepo sourcev1.HelmRepository

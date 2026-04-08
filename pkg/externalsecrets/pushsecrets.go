@@ -2,8 +2,10 @@ package externalsecrets
 
 import (
 	"context"
-	"testing"
+	"fmt"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	esov1alpha1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1alpha1"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -26,16 +28,14 @@ import (
 //
 // Returns:
 //   - A slice of PushSecret resources found in the specified namespace.
-func ListPushSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...ctrlclient.ListOption) []esov1alpha1.PushSecret {
-	t.Helper()
-
+func ListPushSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...ctrlclient.ListOption) []esov1alpha1.PushSecret {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
 	// Append the namespace to the list options.
 	opts = append(opts, ctrlclient.InNamespace(namespace))
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var pushSecrets esov1alpha1.PushSecretList
 	err = esoclient.List(ctx, &pushSecrets, opts...)
 	require.NoError(t, err, "Failed to list PushSecrets in namespace %s", namespace)
@@ -52,18 +52,16 @@ func ListPushSecrets(t *testing.T, options *k8s.KubectlOptions, namespace string
 //   - name: The name of the PushSecret resource.
 //   - namespace: The namespace where the PushSecret is located.
 //   - timeout: The maximum duration to wait for the PushSecret to become Ready.
-func WaitForPushSecretReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForPushSecretReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	esoclient, err := NewESOClient(t, options)
 	require.NoError(t, err, "Unable to create External Secrets client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var ps esov1alpha1.PushSecret
 		err := esoclient.Get(ctx, ctrlclient.ObjectKey{Name: name, Namespace: namespace}, &ps)
 		if err != nil {
-			t.Logf("PushSecret %s/%s not found yet: %v", namespace, name, err)
+			fmt.Printf("PushSecret %s/%s not found yet: %v\n", namespace, name, err)
 			return false, nil
 		}
 		return hasReadyCondition(ps.Status.Conditions), nil

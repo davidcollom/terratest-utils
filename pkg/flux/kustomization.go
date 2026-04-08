@@ -2,7 +2,7 @@ package flux
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	kustomizev1 "github.com/fluxcd/kustomize-controller/api/v1"
@@ -26,16 +26,14 @@ import (
 //
 // Returns:
 //   - A slice of kustomizev1.Kustomization objects found in the specified namespace.
-func ListKustomization(t *testing.T, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []kustomizev1.Kustomization {
-	t.Helper()
-
+func ListKustomization(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []kustomizev1.Kustomization {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
 
-	ctx := t.Context()
+	ctx := context.Background()
 	var kustomizations kustomizev1.KustomizationList
 	err = fluxclient.List(ctx, &kustomizations, opts...)
 	require.NoError(t, err, "Failed to list Kustomizations in namespace %s", namespace)
@@ -53,13 +51,11 @@ func ListKustomization(t *testing.T, options *k8s.KubectlOptions, namespace stri
 //   - timeout: The maximum duration to wait for the resource to become Ready.
 //
 // The function will fail the test if the Kustomization does not become Ready within the timeout.
-func WaitForKustomizationReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForKustomizationReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	fluxclient, err := NewFluxClient(t, options)
 	require.NoError(t, err, "Unable to create Flux client")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var kust kustomizev1.Kustomization

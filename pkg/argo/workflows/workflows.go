@@ -4,8 +4,10 @@
 package workflows
 
 import (
-	"testing"
+	"context"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	workflowv1alpha1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	workflowsClientSet "github.com/argoproj/argo-workflows/v3/pkg/client/clientset/versioned"
@@ -28,13 +30,11 @@ import (
 //
 // Returns:
 //   - A slice of Workflow objects present in the specified namespace.
-func ListArgoWorkflows(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.Workflow {
-	t.Helper()
-
+func ListArgoWorkflows(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.Workflow {
 	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	workflowList, err := client.ArgoprojV1alpha1().Workflows(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list Workflows in namespace %s", namespace)
 
@@ -45,8 +45,7 @@ func ListArgoWorkflows(t *testing.T, options *k8s.KubectlOptions, namespace stri
 // It returns an implementation of the workflowv1alpha1.Interface for interacting with Argo Workflows resources.
 // If the provided KubectlOptions does not include a RestConfig, it attempts to generate one.
 // Returns an error if the client cannot be created.
-func NewArgoWorkflowsClient(t *testing.T, options *k8s.KubectlOptions) (workflowsClientSet.Interface, error) {
-	t.Helper()
+func NewArgoWorkflowsClient(t testing.TestingT, options *k8s.KubectlOptions) (workflowsClientSet.Interface, error) {
 	var cfg *rest.Config
 	var err error
 	if options.RestConfig == nil {
@@ -73,13 +72,11 @@ func NewArgoWorkflowsClient(t *testing.T, options *k8s.KubectlOptions) (workflow
 //
 // Returns:
 //   - []workflowv1alpha1.Workflow: A slice containing the workflows found in the specified namespace.
-func ListWorkflows(t *testing.T, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.Workflow {
-	t.Helper()
-
+func ListWorkflows(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.Workflow {
 	client, err := NewArgoWorkflowsClient(t, options)
 	require.NoError(t, err, "Failed to create Argo Workflows clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	workflowList, err := client.ArgoprojV1alpha1().Workflows(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list Workflows in namespace %s", namespace)
 
@@ -96,7 +93,7 @@ func ListWorkflows(t *testing.T, options *k8s.KubectlOptions, namespace string) 
 //   - name: The name of the workflow to check.
 //   - namespace: The namespace where the workflow resides.
 //   - timeout: The maximum duration to wait for the workflow to reach the "Running" phase.
-func WaitForWorkflowRunning(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForWorkflowRunning(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	WaitForWorkflowPhase(t, options, name, namespace, workflowv1alpha1.WorkflowRunning, timeout)
 }
 
@@ -110,7 +107,7 @@ func WaitForWorkflowRunning(t *testing.T, options *k8s.KubectlOptions, name, nam
 //	name      - The name of the workflow to monitor.
 //	namespace - The namespace where the workflow is running.
 //	timeout   - The maximum duration to wait for the workflow to reach the "Error" phase.
-func WaitForWorkflowError(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForWorkflowError(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	WaitForWorkflowPhase(t, options, name, namespace, workflowv1alpha1.WorkflowError, timeout)
 }
 
@@ -126,6 +123,6 @@ func WaitForWorkflowError(t *testing.T, options *k8s.KubectlOptions, name, names
 //   - timeout: The maximum duration to wait for the workflow to reach the "Pending" phase.
 //
 // This function delegates to WaitForWorkflowPhase with the "Pending" phase.
-func WaitForWorkflowPending(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForWorkflowPending(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	WaitForWorkflowPhase(t, options, name, namespace, workflowv1alpha1.WorkflowPending, timeout)
 }

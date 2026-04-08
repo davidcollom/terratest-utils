@@ -2,7 +2,7 @@ package certmanager
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
@@ -25,13 +25,11 @@ import (
 //
 // Returns:
 //   - A slice of cmv1.Issuer objects found in the specified namespace.
-func ListIssuers(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.Issuer {
-	t.Helper()
-
+func ListIssuers(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []cmv1.Issuer {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	issuerList, err := client.CertmanagerV1().Issuers(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list Issuers in namespace %s", namespace)
 
@@ -48,13 +46,11 @@ func ListIssuers(t *testing.T, options *k8s.KubectlOptions, namespace string) []
 //   - timeout: The maximum duration to wait for the Issuer to become Ready.
 //
 // Fails the test if the Issuer is not Ready within the timeout or if there is an error creating the cert-manager clientset.
-func WaitForIssuerReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForIssuerReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		issuer, err := client.CertmanagerV1().Issuers(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 		if err != nil {
@@ -84,13 +80,11 @@ func WaitForIssuerReady(t *testing.T, options *k8s.KubectlOptions, name, namespa
 //
 // Returns:
 //   - A slice of cmv1.ClusterIssuer representing the ClusterIssuers found in the cluster.
-func ListClusterIssuers(t *testing.T, options *k8s.KubectlOptions) []cmv1.ClusterIssuer {
-	t.Helper()
-
+func ListClusterIssuers(t testing.TestingT, options *k8s.KubectlOptions) []cmv1.ClusterIssuer {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	issuerList, err := client.CertmanagerV1().ClusterIssuers().List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list ClusterIssuers")
 
@@ -109,13 +103,11 @@ func ListClusterIssuers(t *testing.T, options *k8s.KubectlOptions) []cmv1.Cluste
 //	timeout - The maximum duration to wait for the ClusterIssuer to become Ready.
 //
 // This function requires a cert-manager clientset and uses the provided REST config to interact with the Kubernetes API.
-func WaitForClusterIssuerReady(t *testing.T, options *k8s.KubectlOptions, name string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForClusterIssuerReady(t testing.TestingT, options *k8s.KubectlOptions, name string, timeout time.Duration) {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		issuer, err := client.CertmanagerV1().ClusterIssuers().Get(ctx, name, metav1.GetOptions{})
 		if err != nil {

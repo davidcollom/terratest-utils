@@ -1,8 +1,7 @@
 package utils
 
 import (
-	"testing"
-
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"k8s.io/client-go/rest"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -20,9 +19,7 @@ import (
 // Returns:
 //   - *rest.Config: The Kubernetes REST client configuration.
 //   - error: An error if the configuration could not be loaded.
-func GetRestConfigE(t *testing.T, options *k8s.KubectlOptions) (*rest.Config, error) {
-	t.Helper()
-
+func GetRestConfigE(t testing.TestingT, options *k8s.KubectlOptions) (*rest.Config, error) {
 	if options.RestConfig != nil {
 		return options.RestConfig, nil
 	}

@@ -2,7 +2,7 @@ package linkerd
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to ServiceProfile objects found in the namespace.
-func ListServiceProfiles(t *testing.T, options *k8s.KubectlOptions, namespace string) []*linkerdv1alpha2.ServiceProfile {
-	t.Helper()
-
+func ListServiceProfiles(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdv1alpha2.ServiceProfile {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	serviceProfiles, err := linkerdClient.LinkerdV1alpha2().ServiceProfiles(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list ServiceProfiles in namespace %s", namespace)
 
@@ -51,12 +49,10 @@ func ListServiceProfiles(t *testing.T, options *k8s.KubectlOptions, namespace st
 //
 // Returns:
 //   - A pointer to the ServiceProfile object.
-func GetServiceProfile(t *testing.T, options *k8s.KubectlOptions, name, namespace string) *linkerdv1alpha2.ServiceProfile {
-	t.Helper()
-
+func GetServiceProfile(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdv1alpha2.ServiceProfile {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	serviceProfile, err := linkerdClient.LinkerdV1alpha2().ServiceProfiles(namespace).Get(ctx, name, v1meta.GetOptions{})
 	require.NoError(t, err, "Failed to get ServiceProfile %s in namespace %s", name, namespace)
 
@@ -72,12 +68,10 @@ func GetServiceProfile(t *testing.T, options *k8s.KubectlOptions, name, namespac
 //   - name: The name of the ServiceProfile to check.
 //   - namespace: The namespace of the ServiceProfile.
 //   - timeout: The maximum duration to wait for the resource to exist.
-func WaitForServiceProfileExists(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForServiceProfileExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := linkerdClient.LinkerdV1alpha2().ServiceProfiles(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {

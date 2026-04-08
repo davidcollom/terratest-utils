@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to Sidecar objects found in the namespace.
-func ListSidecars(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.Sidecar {
-	t.Helper()
-
+func ListSidecars(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.Sidecar {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	sidecars, err := istioClient.NetworkingV1alpha3().Sidecars(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Sidecars in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListSidecars(t *testing.T, options *k8s.KubectlOptions, namespace string) [
 //   - name: The name of the Sidecar to check.
 //   - namespace: The namespace of the Sidecar.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForSidecarReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForSidecarReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var sidecar *istionetworkingv1alpha3.Sidecar
 		sidecar, err := istioClient.NetworkingV1alpha3().Sidecars(namespace).Get(ctx, name, v1meta.GetOptions{})

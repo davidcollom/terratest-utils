@@ -1,10 +1,9 @@
 package k8s
 
 import (
-	"testing"
-
 	"github.com/davidcollom/terratest-utils/pkg/utils"
 	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	apixclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 )
@@ -33,9 +32,7 @@ var NewClient = terrak8s.GetKubernetesClientFromOptionsE
 //	require.NoError(t, err)
 var NewAPIXClient = newAPIXClient
 
-func newAPIXClient(t *testing.T, options *terrak8s.KubectlOptions) (apixclientset.Interface, error) {
-	t.Helper()
-
+func newAPIXClient(t testing.TestingT, options *KubectlOptions) (apixclientset.Interface, error) {
 	restConfig, err := utils.GetRestConfigE(t, options)
 	if err != nil {
 		return nil, err

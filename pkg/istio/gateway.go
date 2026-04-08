@@ -2,7 +2,7 @@ package istio
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to Gateway objects found in the namespace.
-func ListGateways(t *testing.T, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.Gateway {
-	t.Helper()
-
+func ListGateways(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.Gateway {
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	gateways, err := istioClient.NetworkingV1alpha3().Gateways(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list Gateways in namespace %s", namespace)
 
@@ -43,13 +41,11 @@ func ListGateways(t *testing.T, options *k8s.KubectlOptions, namespace string) [
 //   - name: The name of the Gateway to check.
 //   - namespace: The namespace of the Gateway.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
-func WaitForGatewayReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForGatewayReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var gateway *istionetworkingv1alpha3.Gateway
 		gateway, err := istioClient.NetworkingV1alpha3().Gateways(namespace).Get(ctx, name, v1meta.GetOptions{})

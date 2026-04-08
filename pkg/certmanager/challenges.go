@@ -2,7 +2,7 @@ package certmanager
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	acmev1 "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
@@ -27,13 +27,11 @@ import (
 //
 // Returns:
 //   - A slice of acmev1.Challenge objects found in the specified namespace.
-func ListChallenges(t *testing.T, options *k8s.KubectlOptions, namespace string) []acmev1.Challenge {
-	t.Helper()
-
+func ListChallenges(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []acmev1.Challenge {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	challengeList, err := client.AcmeV1().Challenges(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list Challenges in namespace %s", namespace)
 
@@ -54,13 +52,11 @@ func ListChallenges(t *testing.T, options *k8s.KubectlOptions, namespace string)
 //	timeout   - The maximum duration to wait for the challenge to become valid.
 //
 // Fails the test if the challenge does not reach the "Valid" state within the timeout.
-func WaitForChallengeValid(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForChallengeValid(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		challenge, err := client.AcmeV1().Challenges(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 		if err != nil {

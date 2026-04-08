@@ -2,7 +2,7 @@ package certmanager
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
@@ -27,13 +27,11 @@ import (
 //
 // Returns:
 //   - A slice of cmv1.CertificateRequest representing the CertificateRequests found in the namespace.
-func ListCertificateRequests(t *testing.T, options *k8s.KubectlOptions, namespace string) []cmv1.CertificateRequest {
-	t.Helper()
-
+func ListCertificateRequests(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []cmv1.CertificateRequest {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	crList, err := client.CertmanagerV1().CertificateRequests(namespace).List(ctx, metav1.ListOptions{})
 	require.NoError(t, err, "Failed to list CertificateRequests in namespace %s", namespace)
 
@@ -53,13 +51,11 @@ func ListCertificateRequests(t *testing.T, options *k8s.KubectlOptions, namespac
 //	timeout  - The maximum duration to wait for the CertificateRequest to become Ready.
 //
 // This function requires cert-manager clientset and is intended for use in integration tests.
-func WaitForCertificateRequestReadyE(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
-	t.Helper()
-
+func WaitForCertificateRequestReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewClient(t, options)
 	require.NoError(t, err, "Failed to create cert-manager clientset")
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		cr, err := client.CertmanagerV1().CertificateRequests(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
@@ -86,7 +82,7 @@ func WaitForCertificateRequestReadyE(t *testing.T, options *k8s.KubectlOptions, 
 //   - name: The name of the CertificateRequest resource.
 //   - namespace: The namespace where the CertificateRequest is located.
 //   - timeout: The maximum duration to wait for the CertificateRequest to become ready.
-func WaitForCertificateRequestReady(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForCertificateRequestReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForCertificateRequestReadyE(t, options, name, namespace, timeout)
 	require.NoError(t, err)
 }

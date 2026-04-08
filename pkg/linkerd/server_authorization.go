@@ -2,7 +2,7 @@ package linkerd
 
 import (
 	"context"
-	"testing"
+	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -22,12 +22,10 @@ import (
 //
 // Returns:
 //   - A slice of pointers to ServerAuthorization objects found in the namespace.
-func ListServerAuthorizations(t *testing.T, options *k8s.KubectlOptions, namespace string) []*linkerdserverauthorizationv1beta1.ServerAuthorization {
-	t.Helper()
-
+func ListServerAuthorizations(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdserverauthorizationv1beta1.ServerAuthorization {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	serverAuthorizations, err := linkerdClient.ServerauthorizationV1beta1().ServerAuthorizations(namespace).List(ctx, v1meta.ListOptions{})
 	require.NoError(t, err, "Failed to list ServerAuthorizations in namespace %s", namespace)
 
@@ -51,12 +49,10 @@ func ListServerAuthorizations(t *testing.T, options *k8s.KubectlOptions, namespa
 //
 // Returns:
 //   - A pointer to the ServerAuthorization object.
-func GetServerAuthorization(t *testing.T, options *k8s.KubectlOptions, name, namespace string) *linkerdserverauthorizationv1beta1.ServerAuthorization {
-	t.Helper()
-
+func GetServerAuthorization(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdserverauthorizationv1beta1.ServerAuthorization {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	serverAuthorization, err := linkerdClient.ServerauthorizationV1beta1().ServerAuthorizations(namespace).Get(ctx, name, v1meta.GetOptions{})
 	require.NoError(t, err, "Failed to get ServerAuthorization %s in namespace %s", name, namespace)
 
@@ -72,12 +68,10 @@ func GetServerAuthorization(t *testing.T, options *k8s.KubectlOptions, name, nam
 //   - name: The name of the ServerAuthorization to check.
 //   - namespace: The namespace of the ServerAuthorization.
 //   - timeout: The maximum duration to wait for the resource to exist.
-func WaitForServerAuthorizationExists(t *testing.T, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
-	t.Helper()
-
+func WaitForServerAuthorizationExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	linkerdClient := NewClient(t, options)
 
-	ctx := t.Context()
+	ctx := context.Background()
 	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := linkerdClient.ServerauthorizationV1beta1().ServerAuthorizations(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
