@@ -1,6 +1,6 @@
 module github.com/davidcollom/terratest-utils
 
-go 1.26.1
+go 1.26.2
 
 // Needed to pin to that of linkerd's latest release, which is v0.5.1,
 // which depends on gateway-api v1.0:
