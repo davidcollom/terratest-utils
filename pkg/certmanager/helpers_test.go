@@ -27,10 +27,5 @@ func NewTestClient(t testing.TestingT, objs ...runtime.Object) cmclientset.Inter
 		return client, nil
 	}
 
-	// Ensure we have a cleanup to reset the function!
-	defer func() {
-		NewClient = newClient
-	}()
-
 	return client
 }
