@@ -22,6 +22,7 @@ import (
 // expectedType: The condition type to look for.
 //
 // Returns true if a condition with the expected type and a status of "True" exists, false otherwise.
+// HasReadyCondition performs this helper operation.
 func HasReadyCondition(conds []metav1.Condition, expectedType string) bool {
 	for _, cond := range conds {
 		if cond.Type == expectedType && cond.Status == "True" {
@@ -42,6 +43,7 @@ func HasReadyCondition(conds []metav1.Condition, expectedType string) bool {
 // Returns:
 //   - argoclientset.Interface: The Argo Events clientset interface for interacting with Argo Events resources.
 //   - error: An error if the client could not be created.
+// NewArgoEventsClient creates a new client or helper instance.
 func NewArgoEventsClient(t testing.TestingT, options *k8s.KubectlOptions) (argoclientset.Interface, error) {
 	var cfg *rest.Config
 	var err error

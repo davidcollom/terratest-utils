@@ -2,8 +2,9 @@ package flux
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -26,9 +27,19 @@ import (
 //
 // Returns:
 //   - []sourcev1.OCIRepository: A slice containing the retrieved OCIRepository resources.
+// ListOCIRepositories lists matching resources.
 func ListOCIRepositories(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.OCIRepository {
+	repos, err := ListOCIRepositoriesE(t, options, namespace, opts...)
+	require.NoError(t, err, "Failed to list OCIRepositories in namespace %s", namespace)
+	return repos
+}
+
+// ListOCIRepositoriesE lists matching resources.
+func ListOCIRepositoriesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) ([]sourcev1.OCIRepository, error) {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return nil, err
+	}
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
@@ -36,9 +47,11 @@ func ListOCIRepositories(t testing.TestingT, options *k8s.KubectlOptions, namesp
 	ctx := context.Background()
 	var repos sourcev1.OCIRepositoryList
 	err = fluxclient.List(ctx, &repos, opts...)
-	require.NoError(t, err, "Failed to list OCIRepositories in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return repos.Items
+	return repos.Items, nil
 }
 
 // WaitForOCIRepositoryReady waits until the specified Flux OCIRepository resource becomes Ready within the given timeout.
@@ -53,12 +66,21 @@ func ListOCIRepositories(t testing.TestingT, options *k8s.KubectlOptions, namesp
 //	timeout  - The maximum duration to wait for the resource to become Ready.
 //
 // Fails the test if the OCIRepository does not reach the Ready condition within the timeout.
+// WaitForOCIRepositoryReady waits for the resource condition to be satisfied.
 func WaitForOCIRepositoryReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForOCIRepositoryReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "OCIRepository %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForOCIRepositoryReadyE waits for the resource condition to be satisfied.
+func WaitForOCIRepositoryReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var ocirepo sourcev1.OCIRepository
 		err = fluxclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &ocirepo)
@@ -67,8 +89,4 @@ func WaitForOCIRepositoryReady(t testing.TestingT, options *k8s.KubectlOptions, 
 		}
 		return hasReadyCondition(ocirepo.Status.Conditions), nil
 	})
-
-	if err != nil {
-		t.Fatalf("OCIRepository %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

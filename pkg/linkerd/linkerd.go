@@ -19,6 +19,7 @@ import (
 //
 // Returns:
 //   - *linkerdclientset.Clientset: A pointer to the initialized Linkerd client.
+// NewClient creates a new client or helper instance.
 func NewClient(t testing.TestingT, options *k8s.KubectlOptions) *linkerdclientset.Clientset {
 	cfg, err := utils.GetRestConfigE(t, options)
 	require.NoError(t, err)

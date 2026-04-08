@@ -2,8 +2,9 @@ package flux
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -25,9 +26,19 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.HelmChart objects present in the specified namespace.
+// ListHelmCharts lists matching resources.
 func ListHelmCharts(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmChart {
+	charts, err := ListHelmChartsE(t, options, namespace, opts...)
+	require.NoError(t, err, "Failed to list HelmCharts in namespace %s", namespace)
+	return charts
+}
+
+// ListHelmChartsE lists matching resources.
+func ListHelmChartsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) ([]sourcev1.HelmChart, error) {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return nil, err
+	}
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
@@ -35,9 +46,11 @@ func ListHelmCharts(t testing.TestingT, options *k8s.KubectlOptions, namespace s
 	ctx := context.Background()
 	var charts sourcev1.HelmChartList
 	err = fluxclient.List(ctx, &charts, opts...)
-	require.NoError(t, err, "Failed to list HelmCharts in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return charts.Items
+	return charts.Items, nil
 }
 
 // WaitForHelmChartReady waits until the specified HelmChart resource in the given namespace becomes Ready within the provided timeout.
@@ -53,12 +66,21 @@ func ListHelmCharts(t testing.TestingT, options *k8s.KubectlOptions, namespace s
 //	timeout  - The maximum duration to wait for the HelmChart to become Ready.
 //
 // Fails the test if the HelmChart does not reach the Ready condition within the timeout.
+// WaitForHelmChartReady waits for the resource condition to be satisfied.
 func WaitForHelmChartReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForHelmChartReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "HelmChart %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForHelmChartReadyE waits for the resource condition to be satisfied.
+func WaitForHelmChartReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var chart sourcev1.HelmChart
 		err = fluxclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &chart)
@@ -67,8 +89,4 @@ func WaitForHelmChartReady(t testing.TestingT, options *k8s.KubectlOptions, name
 		}
 		return hasReadyCondition(chart.Status.Conditions), nil
 	})
-
-	if err != nil {
-		t.Fatalf("HelmChart %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

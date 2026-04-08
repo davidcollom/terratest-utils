@@ -2,8 +2,9 @@ package workflows
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	workflowv1alpha1 "github.com/argoproj/argo-workflows/v3/pkg/apis/workflow/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -26,20 +27,34 @@ import (
 //   - A slice of workflowv1alpha1.WorkflowPhase representing the phase of each workflow in the namespace.
 //
 // Panics if there is an error creating the client or listing the workflows.
+// ListWorkflowPhases lists matching resources.
 func ListWorkflowPhases(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowPhase {
+	phases, err := ListWorkflowPhasesE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Workflow phases in namespace %s", namespace)
+	return phases
+}
+
+// ListWorkflowPhasesE retrieves the phases of all Argo Workflows in the specified namespace.
+// It returns an error to the caller instead of failing the test directly.
+// ListWorkflowPhasesE lists matching resources.
+func ListWorkflowPhasesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]workflowv1alpha1.WorkflowPhase, error) {
 	client, err := NewArgoWorkflowsClient(t, options)
-	require.NoError(t, err, "Failed to create Argo Workflows clientset")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	workflowList, err := client.ArgoprojV1alpha1().Workflows(namespace).List(ctx, metav1.ListOptions{})
-	require.NoError(t, err, "Failed to list Workflows in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
 	phases := make([]workflowv1alpha1.WorkflowPhase, 0, len(workflowList.Items))
 	for _, wf := range workflowList.Items {
 		phases = append(phases, wf.Status.Phase)
 	}
 
-	return phases
+	return phases, nil
 }
 
 // WaitForWorkflowPhase waits until the specified Argo Workflow reaches the desired phase within the given timeout.
@@ -56,12 +71,21 @@ func ListWorkflowPhases(t testing.TestingT, options *k8s.KubectlOptions, namespa
 //	timeout      - The maximum duration to wait for the workflow to reach the desired phase.
 //
 // Fails the test if the workflow does not reach the desired phase within the timeout.
+// WaitForWorkflowPhase waits for the resource condition to be satisfied.
 func WaitForWorkflowPhase(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, desiredPhase workflowv1alpha1.WorkflowPhase, timeout time.Duration) {
+	err := WaitForWorkflowPhaseE(t, options, name, namespace, desiredPhase, timeout)
+	require.NoError(t, err, "Workflow %s/%s did not reach phase %q in time", namespace, name, desiredPhase)
+}
+
+// WaitForWorkflowPhaseE waits until the specified Argo Workflow reaches the desired phase within the given timeout.
+func WaitForWorkflowPhaseE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, desiredPhase workflowv1alpha1.WorkflowPhase, timeout time.Duration) error {
 	client, err := NewArgoWorkflowsClient(t, options)
-	require.NoError(t, err, "Failed to create Argo Workflows clientset")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		wf, err := client.ArgoprojV1alpha1().Workflows(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return false, nil
@@ -69,8 +93,4 @@ func WaitForWorkflowPhase(t testing.TestingT, options *k8s.KubectlOptions, name,
 
 		return wf.Status.Phase == desiredPhase, nil
 	})
-
-	if err != nil {
-		t.Fatalf("Workflow %s/%s did not reach phase %q in time: %v", namespace, name, desiredPhase, err)
-	}
 }

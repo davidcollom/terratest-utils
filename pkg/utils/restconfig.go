@@ -19,6 +19,7 @@ import (
 // Returns:
 //   - *rest.Config: The Kubernetes REST client configuration.
 //   - error: An error if the configuration could not be loaded.
+// GetRestConfigE gets a resource by name.
 func GetRestConfigE(t testing.TestingT, options *k8s.KubectlOptions) (*rest.Config, error) {
 	if options.RestConfig != nil {
 		return options.RestConfig, nil

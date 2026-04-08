@@ -2,8 +2,9 @@ package istio
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
@@ -22,14 +23,24 @@ import (
 //
 // Returns:
 //   - A slice of pointers to DestinationRule objects found in the namespace.
+// ListDestinationRules lists matching resources.
 func ListDestinationRules(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*isitonetworkingv1alpha3.DestinationRule {
+	destinationRules, err := ListDestinationRulesE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Destination Rules in namespace %s", namespace)
+	return destinationRules
+}
+
+// ListDestinationRulesE lists matching resources.
+func ListDestinationRulesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]*isitonetworkingv1alpha3.DestinationRule, error) {
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
 	destinationRules, err := istioClient.NetworkingV1alpha3().DestinationRules(namespace).List(ctx, v1meta.ListOptions{})
-	require.NoError(t, err, "Failed to list Destination Rules in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return destinationRules.Items
+	return destinationRules.Items, nil
 }
 
 // WaitForDestinationRuleReady waits until the specified DestinationRule in the given namespace is Ready or the timeout is reached.
@@ -41,12 +52,19 @@ func ListDestinationRules(t testing.TestingT, options *k8s.KubectlOptions, names
 //   - name: The name of the DestinationRule to check.
 //   - namespace: The namespace of the DestinationRule.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+// WaitForDestinationRuleReady waits for the resource condition to be satisfied.
 func WaitForDestinationRuleReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForDestinationRuleReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "DestinationRule %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForDestinationRuleReadyE waits for the resource condition to be satisfied.
+func WaitForDestinationRuleReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
-	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var destinationRule *isitonetworkingv1alpha3.DestinationRule
 		destinationRule, err := istioClient.NetworkingV1alpha3().DestinationRules(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
@@ -57,8 +75,4 @@ func WaitForDestinationRuleReady(t testing.TestingT, options *k8s.KubectlOptions
 		}
 		return false, nil
 	})
-
-	if err != nil {
-		t.Fatalf("DestinationRule %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

@@ -16,6 +16,7 @@ import (
 
 // IsApplicationHealthyAndSynced returns true if the given Argo CD application is both healthy and synced.
 // It checks that the application's health status is 'Healthy' and its sync status is 'Synced'.
+// IsApplicationHealthyAndSynced returns whether the resource matches the expected state.
 func IsApplicationHealthyAndSynced(app *argocdv1alpha1.Application) bool {
 	return app.Status.Health.Status == apphealth.HealthStatusHealthy &&
 		app.Status.Sync.Status == argocdv1alpha1.SyncStatusCodeSynced

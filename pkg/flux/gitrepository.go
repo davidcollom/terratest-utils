@@ -25,9 +25,19 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.GitRepository objects found in the specified namespace.
+// ListGitRepositories lists matching resources.
 func ListGitRepositories(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.GitRepository {
+	repos, err := ListGitRepositoriesE(t, options, namespace, opts...)
+	require.NoError(t, err, "Failed to list GitRepositories in namespace %s", namespace)
+	return repos
+}
+
+// ListGitRepositoriesE lists matching resources.
+func ListGitRepositoriesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) ([]sourcev1.GitRepository, error) {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return nil, err
+	}
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
@@ -35,9 +45,11 @@ func ListGitRepositories(t testing.TestingT, options *k8s.KubectlOptions, namesp
 	ctx := context.Background()
 	var repos sourcev1.GitRepositoryList
 	err = fluxclient.List(ctx, &repos, opts...)
-	require.NoError(t, err, "Failed to list GitRepositories in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return repos.Items
+	return repos.Items, nil
 }
 
 // WaitForGitRepositoryReady waits until the specified Flux GitRepository resource becomes Ready within the given timeout.
@@ -52,12 +64,21 @@ func ListGitRepositories(t testing.TestingT, options *k8s.KubectlOptions, namesp
 //	timeout  - The maximum duration to wait for the resource to become Ready.
 //
 // Fails the test if the GitRepository does not reach the Ready condition within the timeout.
+// WaitForGitRepositoryReady waits for the resource condition to be satisfied.
 func WaitForGitRepositoryReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForGitRepositoryReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "GitRepository %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForGitRepositoryReadyE waits for the resource condition to be satisfied.
+func WaitForGitRepositoryReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var repo sourcev1.GitRepository
 		err = fluxclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &repo)
@@ -66,8 +87,4 @@ func WaitForGitRepositoryReady(t testing.TestingT, options *k8s.KubectlOptions, 
 		}
 		return hasReadyCondition(repo.Status.Conditions), nil
 	})
-
-	if err != nil {
-		t.Fatalf("GitRepository %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

@@ -2,8 +2,9 @@ package certmanager
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
@@ -24,15 +25,27 @@ import (
 //
 // Returns:
 //   - A slice of acmev1.Order objects found in the specified namespace.
+// ListOrders lists matching resources.
 func ListOrders(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []acmev1.Order {
+	orders, err := ListOrdersE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Orders in namespace %s", namespace)
+	return orders
+}
+
+// ListOrdersE lists matching resources.
+func ListOrdersE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]acmev1.Order, error) {
 	client, err := NewClient(t, options)
-	require.NoError(t, err, "Failed to create cert-manager clientset")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	orderList, err := client.AcmeV1().Orders(namespace).List(ctx, metav1.ListOptions{})
-	require.NoError(t, err, "Failed to list Orders in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return orderList.Items
+	return orderList.Items, nil
 }
 
 // WaitForOrderValid waits until the specified ACME Order resource in the given namespace reaches the "Valid" state or the timeout is exceeded.
@@ -48,20 +61,25 @@ func ListOrders(t testing.TestingT, options *k8s.KubectlOptions, namespace strin
 //	timeout  - The maximum duration to wait for the Order to become valid.
 //
 // Fails the test if the Order does not reach the "Valid" state within the specified timeout.
+// WaitForOrderValid waits for the resource condition to be satisfied.
 func WaitForOrderValid(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForOrderValidE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "ACME Order %s/%s not in Valid state", namespace, name)
+}
+
+// WaitForOrderValidE waits for the resource condition to be satisfied.
+func WaitForOrderValidE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewClient(t, options)
-	require.NoError(t, err, "Failed to create cert-manager clientset")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		order, err := client.AcmeV1().Orders(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return false, nil
 		}
 		return order.Status.State == acmev1.Valid, nil
 	})
-
-	if err != nil {
-		t.Fatalf("ACME Order %s/%s not in Valid state: %v", namespace, name, err)
-	}
 }

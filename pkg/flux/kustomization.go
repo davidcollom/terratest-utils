@@ -2,8 +2,9 @@ package flux
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	kustomizev1 "github.com/fluxcd/kustomize-controller/api/v1"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -26,9 +27,19 @@ import (
 //
 // Returns:
 //   - A slice of kustomizev1.Kustomization objects found in the specified namespace.
+// ListKustomization lists matching resources.
 func ListKustomization(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []kustomizev1.Kustomization {
+	kustomizations, err := ListKustomizationE(t, options, namespace, opts...)
+	require.NoError(t, err, "Failed to list Kustomizations in namespace %s", namespace)
+	return kustomizations
+}
+
+// ListKustomizationE lists matching resources.
+func ListKustomizationE(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) ([]kustomizev1.Kustomization, error) {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return nil, err
+	}
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
@@ -36,9 +47,11 @@ func ListKustomization(t testing.TestingT, options *k8s.KubectlOptions, namespac
 	ctx := context.Background()
 	var kustomizations kustomizev1.KustomizationList
 	err = fluxclient.List(ctx, &kustomizations, opts...)
-	require.NoError(t, err, "Failed to list Kustomizations in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return kustomizations.Items
+	return kustomizations.Items, nil
 }
 
 // WaitForKustomizationReady waits until the specified Flux Kustomization resource reaches the Ready condition within the given timeout.
@@ -51,12 +64,21 @@ func ListKustomization(t testing.TestingT, options *k8s.KubectlOptions, namespac
 //   - timeout: The maximum duration to wait for the resource to become Ready.
 //
 // The function will fail the test if the Kustomization does not become Ready within the timeout.
+// WaitForKustomizationReady waits for the resource condition to be satisfied.
 func WaitForKustomizationReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForKustomizationReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "Kustomization %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForKustomizationReadyE waits for the resource condition to be satisfied.
+func WaitForKustomizationReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var kust kustomizev1.Kustomization
 		err = fluxclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &kust)
@@ -65,8 +87,4 @@ func WaitForKustomizationReady(t testing.TestingT, options *k8s.KubectlOptions, 
 		}
 		return hasReadyCondition(kust.Status.Conditions), nil
 	})
-
-	if err != nil {
-		t.Fatalf("Kustomization %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

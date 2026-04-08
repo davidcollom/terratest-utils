@@ -2,8 +2,9 @@ package events
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	argoeventsv1alpha1 "github.com/argoproj/argo-events/pkg/apis/events/v1alpha1"
 
@@ -26,25 +27,46 @@ import (
 //
 // Returns:
 //   - A slice of argoeventsv1alpha1.EventBus objects found in the specified namespace.
+// ListEventBuses lists matching resources.
 func ListEventBuses(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.EventBus {
+	eventBuses, err := ListEventBusesE(t, options, namespace)
+	require.NoError(t, err, "Failed to list EventBuses in namespace %s", namespace)
+	return eventBuses
+}
+
+// ListEventBusesE lists matching resources.
+func ListEventBusesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]argoeventsv1alpha1.EventBus, error) {
 	client, err := NewArgoEventsClient(t, options)
-	require.NoError(t, err, "Failed to create Argo clientset")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	eventBusList, err := client.ArgoprojV1alpha1().EventBus(namespace).List(ctx, metav1.ListOptions{})
-	require.NoError(t, err, "Failed to list EventBuses in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return eventBusList.Items
+	return eventBusList.Items, nil
 }
 
 // WaitForEventBusReady waits until the specified Argo Events EventBus resource is Ready, or times out.
 // Useful for integration tests to ensure event infrastructure is available before proceeding.
+// WaitForEventBusReady waits for the resource condition to be satisfied.
 func WaitForEventBusReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForEventBusReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "EventBus %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForEventBusReadyE waits for the resource condition to be satisfied.
+func WaitForEventBusReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewArgoEventsClient(t, options)
-	require.NoError(t, err, "Failed to create Argo clientset")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		eventBus, err := client.ArgoprojV1alpha1().EventBus(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return false, nil
@@ -65,8 +87,4 @@ func WaitForEventBusReady(t testing.TestingT, options *k8s.KubectlOptions, name,
 		}
 		return configured && deployed, nil
 	})
-
-	if err != nil {
-		t.Fatalf("EventBus %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

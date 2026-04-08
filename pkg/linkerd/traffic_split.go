@@ -2,8 +2,9 @@ package linkerd
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -34,19 +35,29 @@ var (
 //
 // Returns:
 //   - A slice of pointers to unstructured objects representing TrafficSplit resources found in the namespace.
+// ListTrafficSplits lists matching resources.
 func ListTrafficSplits(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*unstructured.Unstructured {
+	trafficSplits, err := ListTrafficSplitsE(t, options, namespace)
+	require.NoError(t, err, "Failed to list TrafficSplits in namespace %s", namespace)
+	return trafficSplits
+}
+
+// ListTrafficSplitsE lists matching resources.
+func ListTrafficSplitsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]*unstructured.Unstructured, error) {
 	dynamicClient := NewDynamicClient(t, options)
 
 	ctx := context.Background()
 	trafficSplits, err := dynamicClient.Resource(TrafficSplitGVR).Namespace(namespace).List(ctx, v1meta.ListOptions{})
-	require.NoError(t, err, "Failed to list TrafficSplits in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
 	var result []*unstructured.Unstructured
 	for i := range trafficSplits.Items {
 		result = append(result, &trafficSplits.Items[i])
 	}
 
-	return result
+	return result, nil
 }
 
 // GetTrafficSplit retrieves a specific SMI TrafficSplit resource by name in the specified namespace.
@@ -60,14 +71,24 @@ func ListTrafficSplits(t testing.TestingT, options *k8s.KubectlOptions, namespac
 //
 // Returns:
 //   - An unstructured object representing the TrafficSplit resource.
+// GetTrafficSplit gets a resource by name.
 func GetTrafficSplit(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *unstructured.Unstructured {
+	trafficSplit, err := GetTrafficSplitE(t, options, name, namespace)
+	require.NoError(t, err, "Failed to get TrafficSplit %s in namespace %s", name, namespace)
+	return trafficSplit
+}
+
+// GetTrafficSplitE gets a resource by name.
+func GetTrafficSplitE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) (*unstructured.Unstructured, error) {
 	dynamicClient := NewDynamicClient(t, options)
 
 	ctx := context.Background()
 	trafficSplit, err := dynamicClient.Resource(TrafficSplitGVR).Namespace(namespace).Get(ctx, name, v1meta.GetOptions{})
-	require.NoError(t, err, "Failed to get TrafficSplit %s in namespace %s", name, namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return trafficSplit
+	return trafficSplit, nil
 }
 
 // WaitForTrafficSplitExists waits until the specified TrafficSplit exists in the given namespace or the timeout is reached.
@@ -79,21 +100,24 @@ func GetTrafficSplit(t testing.TestingT, options *k8s.KubectlOptions, name, name
 //   - name: The name of the TrafficSplit to check.
 //   - namespace: The namespace of the TrafficSplit.
 //   - timeout: The maximum duration to wait for the resource to exist.
+// WaitForTrafficSplitExists waits for the resource condition to be satisfied.
 func WaitForTrafficSplitExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForTrafficSplitExistsE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "TrafficSplit %s/%s did not exist within timeout", namespace, name)
+}
+
+// WaitForTrafficSplitExistsE waits for the resource condition to be satisfied.
+func WaitForTrafficSplitExistsE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	dynamicClient := NewDynamicClient(t, options)
 
 	ctx := context.Background()
-	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := dynamicClient.Resource(TrafficSplitGVR).Namespace(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
 			return false, nil
 		}
 		return true, nil
 	})
-
-	if err != nil {
-		t.Fatalf("TrafficSplit %s/%s did not exist within timeout: %v", namespace, name, err)
-	}
 }
 
 // NewDynamicClient creates and returns a new dynamic Kubernetes client for use with custom resources.
@@ -106,6 +130,7 @@ func WaitForTrafficSplitExists(t testing.TestingT, options *k8s.KubectlOptions, 
 //
 // Returns:
 //   - dynamic.Interface: A dynamic client for interacting with custom resources.
+// NewDynamicClient creates a new client or helper instance.
 func NewDynamicClient(t testing.TestingT, options *k8s.KubectlOptions) dynamic.Interface {
 	cfg, err := utils.GetRestConfigE(t, options)
 	require.NoError(t, err)

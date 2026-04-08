@@ -25,6 +25,7 @@ import (
 //
 // Returns:
 //   - A pointer to the retrieved appsv1.StatefulSet object.
+// GetStatefulSet gets a resource by name.
 func GetStatefulSet(t testing.TestingT, options *KubectlOptions, name, namespace string, opts metav1.GetOptions) *appsv1.StatefulSet {
 	sts, err := GetStatefulSetE(t, options, name, namespace, opts)
 	require.NoError(t, err)
@@ -45,6 +46,7 @@ func GetStatefulSet(t testing.TestingT, options *KubectlOptions, name, namespace
 // Returns:
 //   - *appsv1.StatefulSet: The retrieved StatefulSet object.
 //   - error: An error if the StatefulSet could not be retrieved.
+// GetStatefulSetE gets a resource by name.
 func GetStatefulSetE(t testing.TestingT, options *KubectlOptions, name, namespace string, opts metav1.GetOptions) (*appsv1.StatefulSet, error) {
 	client, err := NewClient(t, options)
 	if err != nil {
@@ -64,6 +66,7 @@ func GetStatefulSetE(t testing.TestingT, options *KubectlOptions, name, namespac
 //
 // Returns:
 //   - A slice of appsv1.StatefulSet objects representing the StatefulSets found.
+// ListStatefulSets lists matching resources.
 func ListStatefulSets(t testing.TestingT, options *KubectlOptions, opts metav1.ListOptions) []appsv1.StatefulSet {
 	statefulSets, err := ListStatefulSetsE(t, options, opts)
 	require.NoError(t, err)
@@ -82,6 +85,7 @@ func ListStatefulSets(t testing.TestingT, options *KubectlOptions, opts metav1.L
 // Returns:
 //   - A slice of StatefulSet objects found in the specified namespace.
 //   - An error if the StatefulSets could not be listed.
+// ListStatefulSetsE lists matching resources.
 func ListStatefulSetsE(t testing.TestingT, options *KubectlOptions, opts metav1.ListOptions) ([]appsv1.StatefulSet, error) {
 	client, err := NewClient(t, options)
 	if err != nil {
@@ -106,11 +110,20 @@ func ListStatefulSetsE(t testing.TestingT, options *KubectlOptions, opts metav1.
 //   - name: The name of the StatefulSet to check.
 //   - namespace: The namespace where the StatefulSet is located.
 //   - timeout: The maximum duration to wait for the StatefulSet to become ready.
+// WaitForStatefulSetReady waits for the resource condition to be satisfied.
 func WaitForStatefulSetReady(t testing.TestingT, options *KubectlOptions, name, namespace string, timeout time.Duration) {
-	client, err := NewClient(t, options)
-	require.NoError(t, err, "Failed to create stateful set clientset")
+	err := WaitForStatefulSetReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "StatefulSet %s/%s was not Ready in time", namespace, name)
+}
 
-	err = wait.PollUntilContextTimeout(context.Background(), 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+// WaitForStatefulSetReadyE waits for the resource condition to be satisfied.
+func WaitForStatefulSetReadyE(t testing.TestingT, options *KubectlOptions, name, namespace string, timeout time.Duration) error {
+	client, err := NewClient(t, options)
+	if err != nil {
+		return err
+	}
+
+	return wait.PollUntilContextTimeout(context.Background(), 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		sts, err := client.AppsV1().StatefulSets(namespace).Get(ctx, name, v1.GetOptions{})
 		if err != nil {
 			return false, nil // retry
@@ -120,10 +133,6 @@ func WaitForStatefulSetReady(t testing.TestingT, options *KubectlOptions, name, 
 		}
 		return false, nil
 	})
-
-	if err != nil {
-		t.Fatalf("StatefulSet %s/%s was not Ready in time: %v", namespace, name, err)
-	}
 }
 
 // IsStatefulSetUptoDate checks whether the given StatefulSet has all its replicas updated, available, and current.
@@ -136,6 +145,7 @@ func WaitForStatefulSetReady(t testing.TestingT, options *KubectlOptions, name, 
 //   - bool: True if the StatefulSet is up-to-date (all replicas are updated, available, and current), false otherwise.
 //
 // This function is useful for determining if a StatefulSet rollout has completed successfully.
+// IsStatefulSetUptoDate returns whether the resource matches the expected state.
 func IsStatefulSetUptoDate(sts *appsv1.StatefulSet) bool {
 	return sts.Status.UpdatedReplicas == sts.Status.Replicas &&
 		sts.Status.AvailableReplicas == sts.Status.Replicas &&

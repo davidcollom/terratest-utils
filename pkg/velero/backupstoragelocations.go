@@ -25,16 +25,28 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.BackupStorageLocation objects found in the specified namespace.
+// ListBackupStorageLocation lists matching resources.
 func ListBackupStorageLocation(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.BackupStorageLocation {
+	locations, err := ListBackupStorageLocationE(t, options, namespace)
+	require.NoError(t, err, "Failed to list BackupStorageLocations in namespace %s", namespace)
+	return locations
+}
+
+// ListBackupStorageLocationE lists matching resources.
+func ListBackupStorageLocationE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]velerov1.BackupStorageLocation, error) {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	var bsl velerov1.BackupStorageLocationList
 	err = client.List(ctx, &bsl, ctrlclient.InNamespace(namespace))
-	require.NoError(t, err, "Failed to list BackupStorageLocations in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return bsl.Items
+	return bsl.Items, nil
 }
 
 // WaitForBackupStorageLocationReady waits until the specified Velero BackupStorageLocation resource
@@ -50,14 +62,23 @@ func ListBackupStorageLocation(t testing.TestingT, options *k8s.KubectlOptions, 
 //
 // This function is intended for use in integration or end-to-end tests to ensure that
 // a Velero BackupStorageLocation is ready before proceeding.
+// WaitForBackupStorageLocationReady waits for the resource condition to be satisfied.
 func WaitForBackupStorageLocationReady(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForBackupStorageLocationReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "BackupStorageLocation %s/%s did not become Available", namespace, name)
+}
+
+// WaitForBackupStorageLocationReadyE waits for the resource condition to be satisfied.
+func WaitForBackupStorageLocationReadyE(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return err
+	}
 	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var bsl velerov1.BackupStorageLocation
 		err := client.Get(ctx, key, &bsl)
 		if err != nil {
@@ -66,8 +87,4 @@ func WaitForBackupStorageLocationReady(t testing.TestingT, options k8s.KubectlOp
 		}
 		return bsl.Status.Phase == velerov1.BackupStorageLocationPhaseAvailable, nil
 	})
-
-	if err != nil {
-		t.Fatalf("BackupStorageLocation %s/%s did not become Available: %v", namespace, name, err)
-	}
 }

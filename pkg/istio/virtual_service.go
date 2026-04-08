@@ -2,8 +2,9 @@ package istio
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
@@ -22,14 +23,24 @@ import (
 //
 // Returns:
 //   - A slice of pointers to VirtualService objects found in the namespace.
+// ListVirtualServices lists matching resources.
 func ListVirtualServices(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.VirtualService {
+	virtualServices, err := ListVirtualServicesE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Virtual Services in namespace %s", namespace)
+	return virtualServices
+}
+
+// ListVirtualServicesE lists matching resources.
+func ListVirtualServicesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]*istionetworkingv1alpha3.VirtualService, error) {
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
 	virtualServices, err := istioClient.NetworkingV1alpha3().VirtualServices(namespace).List(ctx, v1meta.ListOptions{})
-	require.NoError(t, err, "Failed to list Virtual Services in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return virtualServices.Items
+	return virtualServices.Items, nil
 }
 
 // WaitForVirtualServiceReady waits until the specified VirtualService in the given namespace is Ready or the timeout is reached.
@@ -41,12 +52,19 @@ func ListVirtualServices(t testing.TestingT, options *k8s.KubectlOptions, namesp
 //   - name: The name of the VirtualService to check.
 //   - namespace: The namespace of the VirtualService.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+// WaitForVirtualServiceReady waits for the resource condition to be satisfied.
 func WaitForVirtualServiceReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForVirtualServiceReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "VirtualService %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForVirtualServiceReadyE waits for the resource condition to be satisfied.
+func WaitForVirtualServiceReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
-	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var virtualService *istionetworkingv1alpha3.VirtualService
 		virtualService, err := istioClient.NetworkingV1alpha3().VirtualServices(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
@@ -57,8 +75,4 @@ func WaitForVirtualServiceReady(t testing.TestingT, options *k8s.KubectlOptions,
 		}
 		return false, nil
 	})
-
-	if err != nil {
-		t.Fatalf("VirtualService %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }
