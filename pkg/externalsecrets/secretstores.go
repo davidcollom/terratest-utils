@@ -28,6 +28,7 @@ import (
 //
 // Returns:
 //   - A slice of esov1.SecretStore objects found in the specified namespace.
+//
 // ListSecretStores lists matching resources.
 func ListSecretStores(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.SecretStore {
 	stores, err := ListSecretStoresE(t, options, namespace)
@@ -81,7 +82,7 @@ func WaitForSecretStoreReadyE(t testing.TestingT, options *k8s.KubectlOptions, n
 	ctx := context.Background()
 	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var store esov1.SecretStore
-		err := esoclient.Get(context.TODO(), ctrlclient.ObjectKey{Name: name, Namespace: namespace}, &store)
+		err := esoclient.Get(ctx, ctrlclient.ObjectKey{Name: name, Namespace: namespace}, &store)
 		if err != nil {
 			fmt.Printf("SecretStore %s/%s not yet available: %v\n", namespace, name, err)
 			return false, nil // keep retrying

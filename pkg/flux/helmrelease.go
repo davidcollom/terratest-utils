@@ -64,7 +64,6 @@ func ListHelmReleasesE(t testing.TestingT, options *k8s.KubectlOptions, namespac
 //	namespace- The namespace where the HelmRelease is located.
 //	timeout  - The maximum duration to wait for the HelmRelease to become Ready.
 //
-// The function will call t.Fatalf if the HelmRelease does not become Ready within the timeout.
 // WaitForHelmReleaseReady waits for the resource condition to be satisfied.
 func WaitForHelmReleaseReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForHelmReleaseReadyE(t, options, name, namespace, timeout)

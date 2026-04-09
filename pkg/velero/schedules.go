@@ -64,13 +64,13 @@ func ListSchedulesE(t testing.TestingT, options *k8s.KubectlOptions, namespace s
 //
 // This function logs retries and fails the test with a fatal error if the schedule does not become enabled in time.
 // WaitForScheduleToExist waits for the resource condition to be satisfied.
-func WaitForScheduleToExist(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForScheduleToExist(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForScheduleToExistE(t, options, name, namespace, timeout)
 	require.NoError(t, err, "Schedule %s/%s did not become enabled", namespace, name)
 }
 
 // WaitForScheduleToExistE waits for the resource condition to be satisfied.
-func WaitForScheduleToExistE(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
+func WaitForScheduleToExistE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewVeleroClient(options.RestConfig)
 	if err != nil {
 		return err

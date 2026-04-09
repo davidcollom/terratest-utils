@@ -28,6 +28,7 @@ import (
 //
 // Returns:
 //   - A slice of cmv1.CertificateRequest representing the CertificateRequests found in the namespace.
+//
 // ListCertificateRequests lists matching resources.
 func ListCertificateRequests(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []cmv1.CertificateRequest {
 	certificateRequests, err := ListCertificateRequestsE(t, options, namespace)
@@ -53,7 +54,7 @@ func ListCertificateRequestsE(t testing.TestingT, options *k8s.KubectlOptions, n
 
 // WaitForCertificateRequestReadyE waits until the specified CertificateRequest resource in the given namespace
 // reaches the Ready condition within the provided timeout duration. It polls the resource status every 2 seconds.
-// If the CertificateRequest does not become Ready within the timeout, the test fails with a fatal error.
+// If the CertificateRequest does not become Ready within the timeout, the function returns an error.
 //
 // Parameters:
 //
@@ -67,10 +68,12 @@ func ListCertificateRequestsE(t testing.TestingT, options *k8s.KubectlOptions, n
 // WaitForCertificateRequestReadyE waits for the resource condition to be satisfied.
 func WaitForCertificateRequestReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewClient(t, options)
-	require.NoError(t, err, "Failed to create cert-manager clientset")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		cr, err := client.CertmanagerV1().CertificateRequests(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return false, nil
@@ -82,8 +85,6 @@ func WaitForCertificateRequestReadyE(t testing.TestingT, options *k8s.KubectlOpt
 		}
 		return false, nil
 	})
-
-	return err
 }
 
 // WaitForCertificateRequestReady waits until the specified CertificateRequest resource in the given namespace
@@ -96,6 +97,7 @@ func WaitForCertificateRequestReadyE(t testing.TestingT, options *k8s.KubectlOpt
 //   - name: The name of the CertificateRequest resource.
 //   - namespace: The namespace where the CertificateRequest is located.
 //   - timeout: The maximum duration to wait for the CertificateRequest to become ready.
+//
 // WaitForCertificateRequestReady waits for the resource condition to be satisfied.
 func WaitForCertificateRequestReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForCertificateRequestReadyE(t, options, name, namespace, timeout)

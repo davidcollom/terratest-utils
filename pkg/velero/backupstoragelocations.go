@@ -63,13 +63,13 @@ func ListBackupStorageLocationE(t testing.TestingT, options *k8s.KubectlOptions,
 // This function is intended for use in integration or end-to-end tests to ensure that
 // a Velero BackupStorageLocation is ready before proceeding.
 // WaitForBackupStorageLocationReady waits for the resource condition to be satisfied.
-func WaitForBackupStorageLocationReady(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForBackupStorageLocationReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForBackupStorageLocationReadyE(t, options, name, namespace, timeout)
 	require.NoError(t, err, "BackupStorageLocation %s/%s did not become Available", namespace, name)
 }
 
 // WaitForBackupStorageLocationReadyE waits for the resource condition to be satisfied.
-func WaitForBackupStorageLocationReadyE(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
+func WaitForBackupStorageLocationReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewVeleroClient(options.RestConfig)
 	if err != nil {
 		return err

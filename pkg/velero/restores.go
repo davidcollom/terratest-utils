@@ -28,6 +28,7 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Restore objects found in the specified namespace.
+//
 // ListRestores lists matching resources.
 func ListRestores(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Restore {
 	restores, err := ListRestoresE(t, options, namespace)
@@ -62,14 +63,15 @@ func ListRestoresE(t testing.TestingT, options *k8s.KubectlOptions, namespace st
 //   - name: The name of the Velero Restore resource.
 //   - namespace: The namespace where the Restore resource is located.
 //   - timeout: The maximum duration to wait for the Restore to complete.
+//
 // WaitForRestoreCompleted waits for the resource condition to be satisfied.
-func WaitForRestoreCompleted(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+func WaitForRestoreCompleted(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForRestoreCompletedE(t, options, name, namespace, timeout)
 	require.NoError(t, err, "Restore %s/%s did not complete", namespace, name)
 }
 
 // WaitForRestoreCompletedE waits for the resource condition to be satisfied.
-func WaitForRestoreCompletedE(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
+func WaitForRestoreCompletedE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewVeleroClient(options.RestConfig)
 	if err != nil {
 		return err

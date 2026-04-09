@@ -26,6 +26,7 @@ import (
 //
 // Returns:
 //   - A slice of cmv1.Issuer objects found in the specified namespace.
+//
 // ListIssuers lists matching resources.
 func ListIssuers(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []cmv1.Issuer {
 	issuers, err := ListIssuersE(t, options, namespace)
@@ -74,7 +75,7 @@ func WaitForIssuerReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, 
 
 	ctx := context.Background()
 	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
-		issuer, err := client.CertmanagerV1().Issuers(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+		issuer, err := client.CertmanagerV1().Issuers(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return false, nil
 		}
@@ -98,6 +99,7 @@ func WaitForIssuerReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, 
 //
 // Returns:
 //   - A slice of cmv1.ClusterIssuer representing the ClusterIssuers found in the cluster.
+//
 // ListClusterIssuers lists matching resources.
 func ListClusterIssuers(t testing.TestingT, options *k8s.KubectlOptions) []cmv1.ClusterIssuer {
 	clusterIssuers, err := ListClusterIssuersE(t, options)
