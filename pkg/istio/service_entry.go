@@ -2,8 +2,9 @@ package istio
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/stretchr/testify/require"
@@ -22,14 +23,24 @@ import (
 //
 // Returns:
 //   - A slice of pointers to ServiceEntry objects found in the namespace.
+// ListServiceEntries lists matching resources.
 func ListServiceEntries(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.ServiceEntry {
+	serviceEntries, err := ListServiceEntriesE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Service Entries in namespace %s", namespace)
+	return serviceEntries
+}
+
+// ListServiceEntriesE lists matching resources.
+func ListServiceEntriesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]*istionetworkingv1alpha3.ServiceEntry, error) {
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
 	serviceEntries, err := istioClient.NetworkingV1alpha3().ServiceEntries(namespace).List(ctx, v1meta.ListOptions{})
-	require.NoError(t, err, "Failed to list Service Entries in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return serviceEntries.Items
+	return serviceEntries.Items, nil
 }
 
 // WaitForServiceEntryReady waits until the specified ServiceEntry in the given namespace is Ready or the timeout is reached.
@@ -41,12 +52,19 @@ func ListServiceEntries(t testing.TestingT, options *k8s.KubectlOptions, namespa
 //   - name: The name of the ServiceEntry to check.
 //   - namespace: The namespace of the ServiceEntry.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+// WaitForServiceEntryReady waits for the resource condition to be satisfied.
 func WaitForServiceEntryReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForServiceEntryReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "ServiceEntry %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForServiceEntryReadyE waits for the resource condition to be satisfied.
+func WaitForServiceEntryReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	options = k8s.NewKubectlOptions("", "", namespace)
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
-	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var serviceEntry *istionetworkingv1alpha3.ServiceEntry
 		serviceEntry, err := istioClient.NetworkingV1alpha3().ServiceEntries(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
@@ -57,8 +75,4 @@ func WaitForServiceEntryReady(t testing.TestingT, options *k8s.KubectlOptions, n
 		}
 		return false, nil
 	})
-
-	if err != nil {
-		t.Fatalf("ServiceEntry %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

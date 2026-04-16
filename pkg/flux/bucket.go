@@ -2,8 +2,9 @@ package flux
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -26,9 +27,19 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.Bucket objects found in the specified namespace.
+// ListBuckets lists matching resources.
 func ListBuckets(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.Bucket {
+	buckets, err := ListBucketsE(t, options, namespace, opts...)
+	require.NoError(t, err, "Failed to list Buckets in namespace %s", namespace)
+	return buckets
+}
+
+// ListBucketsE lists matching resources.
+func ListBucketsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) ([]sourcev1.Bucket, error) {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return nil, err
+	}
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
@@ -36,9 +47,11 @@ func ListBuckets(t testing.TestingT, options *k8s.KubectlOptions, namespace stri
 	ctx := context.Background()
 	var buckets sourcev1.BucketList
 	err = fluxclient.List(ctx, &buckets, opts...)
-	require.NoError(t, err, "Failed to list Buckets in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return buckets.Items
+	return buckets.Items, nil
 }
 
 // WaitForBucketReady waits until the specified Flux Bucket resource reaches the "Ready" condition within the given timeout.
@@ -51,12 +64,21 @@ func ListBuckets(t testing.TestingT, options *k8s.KubectlOptions, namespace stri
 //	name     - The name of the Bucket resource.
 //	namespace- The namespace where the Bucket resource is located.
 //	timeout  - The maximum duration to wait for the Bucket to become ready.
+// WaitForBucketReady waits for the resource condition to be satisfied.
 func WaitForBucketReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForBucketReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "Bucket %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForBucketReadyE waits for the resource condition to be satisfied.
+func WaitForBucketReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var bucket sourcev1.Bucket
 		err = fluxclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &bucket)
@@ -65,8 +87,4 @@ func WaitForBucketReady(t testing.TestingT, options *k8s.KubectlOptions, name, n
 		}
 		return hasReadyCondition(bucket.Status.Conditions), nil
 	})
-
-	if err != nil {
-		t.Fatalf("Bucket %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

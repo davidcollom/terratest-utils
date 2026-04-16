@@ -23,12 +23,22 @@ import (
 //
 // Returns:
 //   - A slice of pointers to AuthorizationPolicy objects found in the namespace.
+// ListAuthorizationPolicies lists matching resources.
 func ListAuthorizationPolicies(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.AuthorizationPolicy {
+	authorizationPolicies, err := ListAuthorizationPoliciesE(t, options, namespace)
+	require.NoError(t, err, "Failed to list AuthorizationPolicies in namespace %s", namespace)
+	return authorizationPolicies
+}
+
+// ListAuthorizationPoliciesE lists matching resources.
+func ListAuthorizationPoliciesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]*linkerdpolicyv1alpha1.AuthorizationPolicy, error) {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
 	authorizationPolicies, err := linkerdClient.PolicyV1alpha1().AuthorizationPolicies(namespace).List(ctx, v1meta.ListOptions{})
-	require.NoError(t, err, "Failed to list AuthorizationPolicies in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert slice of values to slice of pointers
 	var result []*linkerdpolicyv1alpha1.AuthorizationPolicy
@@ -36,7 +46,7 @@ func ListAuthorizationPolicies(t testing.TestingT, options *k8s.KubectlOptions, 
 		result = append(result, &authorizationPolicies.Items[i])
 	}
 
-	return result
+	return result, nil
 }
 
 // GetAuthorizationPolicy retrieves a specific Linkerd AuthorizationPolicy resource by name in the specified namespace.
@@ -50,14 +60,24 @@ func ListAuthorizationPolicies(t testing.TestingT, options *k8s.KubectlOptions, 
 //
 // Returns:
 //   - A pointer to the AuthorizationPolicy object.
+// GetAuthorizationPolicy gets a resource by name.
 func GetAuthorizationPolicy(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.AuthorizationPolicy {
+	authorizationPolicy, err := GetAuthorizationPolicyE(t, options, name, namespace)
+	require.NoError(t, err, "Failed to get AuthorizationPolicy %s in namespace %s", name, namespace)
+	return authorizationPolicy
+}
+
+// GetAuthorizationPolicyE gets a resource by name.
+func GetAuthorizationPolicyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) (*linkerdpolicyv1alpha1.AuthorizationPolicy, error) {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
 	authorizationPolicy, err := linkerdClient.PolicyV1alpha1().AuthorizationPolicies(namespace).Get(ctx, name, v1meta.GetOptions{})
-	require.NoError(t, err, "Failed to get AuthorizationPolicy %s in namespace %s", name, namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return authorizationPolicy
+	return authorizationPolicy, nil
 }
 
 // WaitForAuthorizationPolicyExists waits until the specified AuthorizationPolicy exists in the given namespace or the timeout is reached.
@@ -69,19 +89,22 @@ func GetAuthorizationPolicy(t testing.TestingT, options *k8s.KubectlOptions, nam
 //   - name: The name of the AuthorizationPolicy to check.
 //   - namespace: The namespace of the AuthorizationPolicy.
 //   - timeout: The maximum duration to wait for the resource to exist.
+// WaitForAuthorizationPolicyExists waits for the resource condition to be satisfied.
 func WaitForAuthorizationPolicyExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForAuthorizationPolicyExistsE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "AuthorizationPolicy %s/%s did not exist within timeout", namespace, name)
+}
+
+// WaitForAuthorizationPolicyExistsE waits for the resource condition to be satisfied.
+func WaitForAuthorizationPolicyExistsE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
-	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := linkerdClient.PolicyV1alpha1().AuthorizationPolicies(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
 			return false, nil
 		}
 		return true, nil
 	})
-
-	if err != nil {
-		t.Fatalf("AuthorizationPolicy %s/%s did not exist within timeout: %v", namespace, name, err)
-	}
 }

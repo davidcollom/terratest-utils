@@ -2,8 +2,9 @@ package externalsecrets
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -26,16 +27,28 @@ import (
 //
 // Returns:
 //   - []esov1.ClusterExternalSecret: A slice containing the ClusterExternalSecret resources found in the namespace.
+// ListClusterExternalSecrets lists matching resources.
 func ListClusterExternalSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.ClusterExternalSecret {
+	secrets, err := ListClusterExternalSecretsE(t, options, namespace)
+	require.NoError(t, err, "Failed to list ClusterExternalSecrets in namespace %s", namespace)
+	return secrets
+}
+
+// ListClusterExternalSecretsE lists matching resources.
+func ListClusterExternalSecretsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]esov1.ClusterExternalSecret, error) {
 	esoclient, err := NewESOClient(t, options)
-	require.NoError(t, err, "Unable to create External Secrets client")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	var secrets esov1.ClusterExternalSecretList
 	err = esoclient.List(ctx, &secrets, client.InNamespace(namespace))
-	require.NoError(t, err, "Failed to list ClusterExternalSecrets in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return secrets.Items
+	return secrets.Items, nil
 }
 
 // WaitForClusterExternalSecretReady waits until the specified ClusterExternalSecret resource in the given namespace
@@ -51,12 +64,21 @@ func ListClusterExternalSecrets(t testing.TestingT, options *k8s.KubectlOptions,
 //   - timeout: The maximum duration to wait for the resource to become ready.
 //
 // Fails the test if the ClusterExternalSecret does not become ready within the timeout.
+// WaitForClusterExternalSecretReady waits for the resource condition to be satisfied.
 func WaitForClusterExternalSecretReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForClusterExternalSecretReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "ClusterExternalSecret %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForClusterExternalSecretReadyE waits for the resource condition to be satisfied.
+func WaitForClusterExternalSecretReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	esoclient, err := NewESOClient(t, options)
-	require.NoError(t, err, "Unable to create External Secrets client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var eso esov1.ClusterExternalSecret
 		err := esoclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &eso)
 		if err != nil {
@@ -68,16 +90,13 @@ func WaitForClusterExternalSecretReady(t testing.TestingT, options *k8s.KubectlO
 		}
 		return false, nil
 	})
-
-	if err != nil {
-		t.Fatalf("Application %s/%s did not become Healthy & Synced: %v", namespace, name, err)
-	}
 }
 
 // IsClusterExternalSecretReady checks if the ClusterExternalSecret resource is in a ready state.
 // It returns true if any of the conditions in the provided ClusterExternalSecretStatus
 // has a type of ClusterExternalSecretReady and a status of ConditionTrue, indicating readiness.
 // Otherwise, it returns false.
+// IsClusterExternalSecretReady returns whether the resource matches the expected state.
 func IsClusterExternalSecretReady(secStatus esov1.ClusterExternalSecretStatus) bool {
 	for _, condition := range secStatus.Conditions {
 		if condition.Type == esov1.ClusterExternalSecretReady && condition.Status == corev1.ConditionTrue {

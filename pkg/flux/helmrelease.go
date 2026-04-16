@@ -2,8 +2,9 @@ package flux
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	helmv2 "github.com/fluxcd/helm-controller/api/v2"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -24,9 +25,19 @@ import (
 //
 // Returns:
 //   - A slice of helmv2.HelmRelease objects found in the specified namespace.
+// ListHelmReleases lists matching resources.
 func ListHelmReleases(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []helmv2.HelmRelease {
+	releases, err := ListHelmReleasesE(t, options, namespace, opts...)
+	require.NoError(t, err, "Failed to list HelmReleases in namespace %s", namespace)
+	return releases
+}
+
+// ListHelmReleasesE lists matching resources.
+func ListHelmReleasesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) ([]helmv2.HelmRelease, error) {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return nil, err
+	}
 
 	// Append the namespace to the list options
 	opts = append(opts, client.InNamespace(namespace))
@@ -34,9 +45,11 @@ func ListHelmReleases(t testing.TestingT, options *k8s.KubectlOptions, namespace
 	ctx := context.Background()
 	var releases helmv2.HelmReleaseList
 	err = fluxclient.List(ctx, &releases, opts...)
-	require.NoError(t, err, "Failed to list HelmReleases in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return releases.Items
+	return releases.Items, nil
 }
 
 // WaitForHelmReleaseReady waits until the specified HelmRelease resource in the given namespace
@@ -51,13 +64,21 @@ func ListHelmReleases(t testing.TestingT, options *k8s.KubectlOptions, namespace
 //	namespace- The namespace where the HelmRelease is located.
 //	timeout  - The maximum duration to wait for the HelmRelease to become Ready.
 //
-// The function will call t.Fatalf if the HelmRelease does not become Ready within the timeout.
+// WaitForHelmReleaseReady waits for the resource condition to be satisfied.
 func WaitForHelmReleaseReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForHelmReleaseReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "HelmRelease %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForHelmReleaseReadyE waits for the resource condition to be satisfied.
+func WaitForHelmReleaseReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	fluxclient, err := NewFluxClient(t, options)
-	require.NoError(t, err, "Unable to create Flux client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 
 		var release helmv2.HelmRelease
 		err = fluxclient.Get(ctx, client.ObjectKey{Name: name, Namespace: namespace}, &release)
@@ -66,8 +87,4 @@ func WaitForHelmReleaseReady(t testing.TestingT, options *k8s.KubectlOptions, na
 		}
 		return hasReadyCondition(release.Status.Conditions), nil
 	})
-
-	if err != nil {
-		t.Fatalf("HelmRelease %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

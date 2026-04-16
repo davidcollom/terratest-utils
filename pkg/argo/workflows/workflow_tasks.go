@@ -22,15 +22,29 @@ import (
 //
 // Returns:
 //   - A slice of WorkflowTaskResult resources found in the specified namespace.
+// ListArgoWorkflowTaskResults lists matching resources.
 func ListArgoWorkflowTaskResults(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTaskResult {
+	results, err := ListArgoWorkflowTaskResultsE(t, options, namespace)
+	require.NoError(t, err, "Failed to list WorkflowTaskResults in namespace %s", namespace)
+	return results
+}
+
+// ListArgoWorkflowTaskResultsE retrieves a list of Argo WorkflowTaskResult resources from the specified namespace.
+// It returns an error to the caller instead of failing the test directly.
+// ListArgoWorkflowTaskResultsE lists matching resources.
+func ListArgoWorkflowTaskResultsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]workflowv1alpha1.WorkflowTaskResult, error) {
 	client, err := NewArgoWorkflowsClient(t, options)
-	require.NoError(t, err, "Failed to create Argo Workflows clientset")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
-	workflowTemplateList, err := client.ArgoprojV1alpha1().WorkflowTaskResults(namespace).List(ctx, metav1.ListOptions{})
-	require.NoError(t, err, "Failed to list WorkflowTemplates in namespace %s", namespace)
+	workflowTaskResultList, err := client.ArgoprojV1alpha1().WorkflowTaskResults(namespace).List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
 
-	return workflowTemplateList.Items
+	return workflowTaskResultList.Items, nil
 }
 
 // ListArgoWorkflowTaskSet retrieves all Argo WorkflowTaskSet resources in the specified namespace.
@@ -45,13 +59,27 @@ func ListArgoWorkflowTaskResults(t testing.TestingT, options *k8s.KubectlOptions
 //
 // Returns:
 //   - A slice of WorkflowTaskSet objects present in the specified namespace.
+// ListArgoWorkflowTaskSet lists matching resources.
 func ListArgoWorkflowTaskSet(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTaskSet {
+	taskSets, err := ListArgoWorkflowTaskSetE(t, options, namespace)
+	require.NoError(t, err, "Failed to list WorkflowTaskSets in namespace %s", namespace)
+	return taskSets
+}
+
+// ListArgoWorkflowTaskSetE retrieves all Argo WorkflowTaskSet resources in the specified namespace.
+// It returns an error to the caller instead of failing the test directly.
+// ListArgoWorkflowTaskSetE lists matching resources.
+func ListArgoWorkflowTaskSetE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]workflowv1alpha1.WorkflowTaskSet, error) {
 	client, err := NewArgoWorkflowsClient(t, options)
-	require.NoError(t, err, "Failed to create Argo Workflows clientset")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
-	workflowTemplateList, err := client.ArgoprojV1alpha1().WorkflowTaskSets(namespace).List(ctx, metav1.ListOptions{})
-	require.NoError(t, err, "Failed to list WorkflowTemplates in namespace %s", namespace)
+	workflowTaskSetList, err := client.ArgoprojV1alpha1().WorkflowTaskSets(namespace).List(ctx, metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
 
-	return workflowTemplateList.Items
+	return workflowTaskSetList.Items, nil
 }

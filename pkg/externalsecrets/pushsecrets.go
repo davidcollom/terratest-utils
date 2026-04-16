@@ -28,9 +28,19 @@ import (
 //
 // Returns:
 //   - A slice of PushSecret resources found in the specified namespace.
+// ListPushSecrets lists matching resources.
 func ListPushSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...ctrlclient.ListOption) []esov1alpha1.PushSecret {
+	pushSecrets, err := ListPushSecretsE(t, options, namespace, opts...)
+	require.NoError(t, err, "Failed to list PushSecrets in namespace %s", namespace)
+	return pushSecrets
+}
+
+// ListPushSecretsE lists matching resources.
+func ListPushSecretsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...ctrlclient.ListOption) ([]esov1alpha1.PushSecret, error) {
 	esoclient, err := NewESOClient(t, options)
-	require.NoError(t, err, "Unable to create External Secrets client")
+	if err != nil {
+		return nil, err
+	}
 
 	// Append the namespace to the list options.
 	opts = append(opts, ctrlclient.InNamespace(namespace))
@@ -38,9 +48,11 @@ func ListPushSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace 
 	ctx := context.Background()
 	var pushSecrets esov1alpha1.PushSecretList
 	err = esoclient.List(ctx, &pushSecrets, opts...)
-	require.NoError(t, err, "Failed to list PushSecrets in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return pushSecrets.Items
+	return pushSecrets.Items, nil
 }
 
 // WaitForPushSecretReady waits until the specified PushSecret resource in the given namespace becomes Ready within the provided timeout.
@@ -52,12 +64,21 @@ func ListPushSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace 
 //   - name: The name of the PushSecret resource.
 //   - namespace: The namespace where the PushSecret is located.
 //   - timeout: The maximum duration to wait for the PushSecret to become Ready.
+// WaitForPushSecretReady waits for the resource condition to be satisfied.
 func WaitForPushSecretReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForPushSecretReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "PushSecret %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForPushSecretReadyE waits for the resource condition to be satisfied.
+func WaitForPushSecretReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	esoclient, err := NewESOClient(t, options)
-	require.NoError(t, err, "Unable to create External Secrets client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var ps esov1alpha1.PushSecret
 		err := esoclient.Get(ctx, ctrlclient.ObjectKey{Name: name, Namespace: namespace}, &ps)
 		if err != nil {
@@ -66,10 +87,6 @@ func WaitForPushSecretReady(t testing.TestingT, options *k8s.KubectlOptions, nam
 		}
 		return hasReadyCondition(ps.Status.Conditions), nil
 	})
-
-	if err != nil {
-		t.Fatalf("PushSecret %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }
 
 // hasReadyCondition checks if the provided slice of PushSecretStatusCondition contains

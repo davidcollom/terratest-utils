@@ -27,16 +27,28 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Schedule representing the schedules found in the given namespace.
+// ListSchedules lists matching resources.
 func ListSchedules(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Schedule {
+	schedules, err := ListSchedulesE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Schedules in namespace %s", namespace)
+	return schedules
+}
+
+// ListSchedulesE lists matching resources.
+func ListSchedulesE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]velerov1.Schedule, error) {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	var schedules velerov1.ScheduleList
 	err = client.List(ctx, &schedules, ctrlclient.InNamespace(namespace))
-	require.NoError(t, err, "Failed to list Schedules in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return schedules.Items
+	return schedules.Items, nil
 }
 
 // WaitForScheduleToExist waits until a Velero Schedule resource with the specified name and namespace exists
@@ -51,14 +63,23 @@ func ListSchedules(t testing.TestingT, options *k8s.KubectlOptions, namespace st
 //   - timeout: The maximum duration to wait for the schedule to become enabled.
 //
 // This function logs retries and fails the test with a fatal error if the schedule does not become enabled in time.
-func WaitForScheduleToExist(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+// WaitForScheduleToExist waits for the resource condition to be satisfied.
+func WaitForScheduleToExist(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForScheduleToExistE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "Schedule %s/%s did not become enabled", namespace, name)
+}
+
+// WaitForScheduleToExistE waits for the resource condition to be satisfied.
+func WaitForScheduleToExistE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return err
+	}
 	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var schedule velerov1.Schedule
 		err := client.Get(ctx, key, &schedule)
 		if err != nil {
@@ -67,8 +88,4 @@ func WaitForScheduleToExist(t testing.TestingT, options k8s.KubectlOptions, name
 		}
 		return schedule.Status.Phase == velerov1.SchedulePhaseEnabled, nil
 	})
-
-	if err != nil {
-		t.Fatalf("Schedule %s/%s did not become enabled: %v", namespace, name, err)
-	}
 }

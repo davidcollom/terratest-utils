@@ -2,8 +2,9 @@ package cd
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
 	"github.com/gruntwork-io/terratest/modules/k8s"
@@ -25,15 +26,29 @@ import (
 //
 // Returns:
 //   - A slice of v1alpha1.Application representing the Applications found in the namespace.
+// ListApplications lists matching resources.
 func ListApplications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.Application {
+	applications, err := ListApplicationsE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Applications in namespace %s", namespace)
+	return applications
+}
+
+// ListApplicationsE retrieves a list of Argo CD Application resources from the specified namespace.
+// It returns an error to the caller instead of failing the test directly.
+// ListApplicationsE lists matching resources.
+func ListApplicationsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]argocdv1alpha1.Application, error) {
 	client, err := NewArgoCDClient(t, options)
-	require.NoError(t, err, "Failed to create Argo clientset")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	applicationList, err := client.ArgoprojV1alpha1().Applications(namespace).List(ctx, metav1.ListOptions{})
-	require.NoError(t, err, "Failed to list Applications in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return applicationList.Items
+	return applicationList.Items, nil
 }
 
 // WaitForApplicationHealthyAndSynced waits until the specified Argo CD Application resource
@@ -50,12 +65,23 @@ func ListApplications(t testing.TestingT, options *k8s.KubectlOptions, namespace
 //	timeout  - The maximum duration to wait for the Application to become Healthy and Synced.
 //
 // Fails the test if the Application does not reach the desired state within the timeout.
+// WaitForApplicationHealthyAndSynced waits for the resource condition to be satisfied.
 func WaitForApplicationHealthyAndSynced(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForApplicationHealthyAndSyncedE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "Application %s/%s did not become Healthy & Synced", namespace, name)
+}
+
+// WaitForApplicationHealthyAndSyncedE waits until the specified Argo CD Application resource
+// reaches both Healthy and Synced status within the provided timeout.
+// WaitForApplicationHealthyAndSyncedE waits for the resource condition to be satisfied.
+func WaitForApplicationHealthyAndSyncedE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewArgoCDClient(t, options)
-	require.NoError(t, err, "Unable to create Argo CD client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		app, err := client.ArgoprojV1alpha1().Applications(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return false, nil
@@ -66,8 +92,4 @@ func WaitForApplicationHealthyAndSynced(t testing.TestingT, options *k8s.Kubectl
 		}
 		return false, nil
 	})
-
-	if err != nil {
-		t.Fatalf("Application %s/%s did not become Healthy & Synced: %v", namespace, name, err)
-	}
 }

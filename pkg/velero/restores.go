@@ -28,16 +28,29 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Restore objects found in the specified namespace.
+//
+// ListRestores lists matching resources.
 func ListRestores(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Restore {
+	restores, err := ListRestoresE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Restores in namespace %s", namespace)
+	return restores
+}
+
+// ListRestoresE lists matching resources.
+func ListRestoresE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]velerov1.Restore, error) {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	var restores velerov1.RestoreList
 	err = client.List(ctx, &restores, ctrlclient.InNamespace(namespace))
-	require.NoError(t, err, "Failed to list Restores in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return restores.Items
+	return restores.Items, nil
 }
 
 // WaitForRestoreCompleted waits until a Velero Restore resource reaches the "Completed" phase or the specified timeout is reached.
@@ -50,14 +63,24 @@ func ListRestores(t testing.TestingT, options *k8s.KubectlOptions, namespace str
 //   - name: The name of the Velero Restore resource.
 //   - namespace: The namespace where the Restore resource is located.
 //   - timeout: The maximum duration to wait for the Restore to complete.
-func WaitForRestoreCompleted(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+//
+// WaitForRestoreCompleted waits for the resource condition to be satisfied.
+func WaitForRestoreCompleted(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForRestoreCompletedE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "Restore %s/%s did not complete", namespace, name)
+}
+
+// WaitForRestoreCompletedE waits for the resource condition to be satisfied.
+func WaitForRestoreCompletedE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return err
+	}
 	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var restore velerov1.Restore
 		err := client.Get(ctx, key, &restore)
 		if err != nil {
@@ -66,8 +89,4 @@ func WaitForRestoreCompleted(t testing.TestingT, options k8s.KubectlOptions, nam
 		}
 		return restore.Status.Phase == velerov1.RestorePhaseCompleted, nil
 	})
-
-	if err != nil {
-		t.Fatalf("Restore %s/%s did not complete: %v", namespace, name, err)
-	}
 }

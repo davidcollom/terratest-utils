@@ -26,16 +26,28 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Backup objects found in the specified namespace.
+// ListBackups lists matching resources.
 func ListBackups(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Backup {
+	backups, err := ListBackupsE(t, options, namespace)
+	require.NoError(t, err, "Failed to list Backups in namespace %s", namespace)
+	return backups
+}
+
+// ListBackupsE lists matching resources.
+func ListBackupsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]velerov1.Backup, error) {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	var backups velerov1.BackupList
 	err = client.List(ctx, &backups, ctrlclient.InNamespace(namespace))
-	require.NoError(t, err, "Failed to list Backups in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return backups.Items
+	return backups.Items, nil
 }
 
 // WaitForBackupSucceeded waits until the specified Velero backup reaches the "Completed" phase or the timeout is reached.
@@ -47,16 +59,23 @@ func ListBackups(t testing.TestingT, options *k8s.KubectlOptions, namespace stri
 //   - name: The name of the Velero backup to check.
 //   - namespace: The namespace where the backup resides.
 //   - timeout: The maximum duration to wait for the backup to complete.
-//
-// This function will call t.Fatalf if the backup does not complete successfully within the timeout.
-func WaitForBackupSucceeded(t testing.TestingT, options k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+// WaitForBackupSucceeded waits for the resource condition to be satisfied.
+func WaitForBackupSucceeded(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForBackupSucceededE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "Backup %s/%s did not complete successfully", namespace, name)
+}
+
+// WaitForBackupSucceededE waits for the resource condition to be satisfied.
+func WaitForBackupSucceededE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	client, err := NewVeleroClient(options.RestConfig)
-	require.NoError(t, err, "Unable to create Velero client")
+	if err != nil {
+		return err
+	}
 	ctx := context.Background()
 
 	key := ctrlclient.ObjectKey{Name: name, Namespace: namespace}
 
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var backup velerov1.Backup
 		err := client.Get(ctx, key, &backup)
 		if err != nil {
@@ -65,8 +84,4 @@ func WaitForBackupSucceeded(t testing.TestingT, options k8s.KubectlOptions, name
 		}
 		return backup.Status.Phase == velerov1.BackupPhaseCompleted, nil
 	})
-
-	if err != nil {
-		t.Fatalf("Backup %s/%s did not complete successfully: %v", namespace, name, err)
-	}
 }

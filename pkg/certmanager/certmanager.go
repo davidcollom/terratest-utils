@@ -63,6 +63,7 @@ func newClient(t testing.TestingT, options *k8s.KubectlOptions) (cmclientset.Int
 // Returns:
 //
 //	true if a condition with the specified type and status exists, false otherwise.
+// HasCondition performs this helper operation.
 func HasCondition(conds []cmv1.CertificateRequestCondition, condType cmv1.CertificateRequestConditionType, status cmmetav1.ConditionStatus) bool {
 	for _, cond := range conds {
 		if cond.Type == condType && cond.Status == status {

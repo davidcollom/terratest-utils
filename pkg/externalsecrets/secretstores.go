@@ -28,16 +28,29 @@ import (
 //
 // Returns:
 //   - A slice of esov1.SecretStore objects found in the specified namespace.
+//
+// ListSecretStores lists matching resources.
 func ListSecretStores(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.SecretStore {
+	stores, err := ListSecretStoresE(t, options, namespace)
+	require.NoError(t, err, "Failed to list SecretStores in namespace %s", namespace)
+	return stores
+}
+
+// ListSecretStoresE lists matching resources.
+func ListSecretStoresE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]esov1.SecretStore, error) {
 	esoclient, err := NewESOClient(t, options)
-	require.NoError(t, err, "Unable to create External Secrets client")
+	if err != nil {
+		return nil, err
+	}
 
 	ctx := context.Background()
 	var stores esov1.SecretStoreList
 	err = esoclient.List(ctx, &stores, ctrlclient.InNamespace(namespace))
-	require.NoError(t, err, "Failed to list SecretStores in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return stores.Items
+	return stores.Items, nil
 }
 
 // WaitForSecretStoreReady waits until the specified SecretStore resource in the given namespace becomes Ready.
@@ -53,14 +66,23 @@ func ListSecretStores(t testing.TestingT, options *k8s.KubectlOptions, namespace
 //	timeout  - The maximum duration to wait for the SecretStore to become Ready.
 //
 // This function requires the External Secrets Operator client to be available and the SecretStore resource to be present.
+// WaitForSecretStoreReady waits for the resource condition to be satisfied.
 func WaitForSecretStoreReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForSecretStoreReadyE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "SecretStore %s/%s did not become Ready", namespace, name)
+}
+
+// WaitForSecretStoreReadyE waits for the resource condition to be satisfied.
+func WaitForSecretStoreReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	esoclient, err := NewESOClient(t, options)
-	require.NoError(t, err, "Unable to create External Secrets client")
+	if err != nil {
+		return err
+	}
 
 	ctx := context.Background()
-	err = wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		var store esov1.SecretStore
-		err := esoclient.Get(context.TODO(), ctrlclient.ObjectKey{Name: name, Namespace: namespace}, &store)
+		err := esoclient.Get(ctx, ctrlclient.ObjectKey{Name: name, Namespace: namespace}, &store)
 		if err != nil {
 			fmt.Printf("SecretStore %s/%s not yet available: %v\n", namespace, name, err)
 			return false, nil // keep retrying
@@ -72,7 +94,4 @@ func WaitForSecretStoreReady(t testing.TestingT, options *k8s.KubectlOptions, na
 		}
 		return false, nil
 	})
-	if err != nil {
-		t.Fatalf("SecretStore %s/%s did not become Ready: %v", namespace, name, err)
-	}
 }

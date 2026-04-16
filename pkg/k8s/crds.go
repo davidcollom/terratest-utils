@@ -26,6 +26,8 @@ import (
 // Returns:
 //
 //	*apixv1.CustomResourceDefinition - The requested CRD object.
+//
+// GetCustomResourceDefinition gets a resource by name.
 func GetCustomResourceDefinition(t testing.TestingT, options *KubectlOptions, crdName string, opts metav1.GetOptions) *apixv1.CustomResourceDefinition {
 	crd, err := GetCustomResourceDefinitionE(t, options, crdName, opts)
 	require.NoError(t, err)
@@ -44,6 +46,8 @@ func GetCustomResourceDefinition(t testing.TestingT, options *KubectlOptions, cr
 // Returns:
 //   - *apixv1.CustomResourceDefinition: The retrieved CRD object.
 //   - error: An error if the CRD could not be retrieved.
+//
+// GetCustomResourceDefinitionE gets a resource by name.
 func GetCustomResourceDefinitionE(t testing.TestingT, options *KubectlOptions, crdName string, opts metav1.GetOptions) (*apixv1.CustomResourceDefinition, error) {
 	client, err := NewAPIXClient(t, options)
 	if err != nil {
@@ -63,6 +67,8 @@ func GetCustomResourceDefinitionE(t testing.TestingT, options *KubectlOptions, c
 // Returns:
 //   - A pointer to a CustomResourceDefinitionList containing the CRDs found in the cluster.
 //   - error: An error if the list could not be retrieved.
+//
+// ListCustomResourceDefinitionsE lists matching resources.
 func ListCustomResourceDefinitionsE(t testing.TestingT, options *KubectlOptions, opts metav1.ListOptions) (*apixv1.CustomResourceDefinitionList, error) {
 	client, err := NewAPIXClient(t, options)
 	if err != nil {
@@ -80,13 +86,21 @@ func ListCustomResourceDefinitionsE(t testing.TestingT, options *KubectlOptions,
 //   - options: The kubectl options to use for connecting to the cluster.
 //   - crdName: The name of the CRD to check for readiness.
 //   - timeout: The maximum duration to wait for the CRD to become ready.
+//
+// WaitForCustomResourceDefinitionIsReady waits for the resource condition to be satisfied.
 func WaitForCustomResourceDefinitionIsReady(t testing.TestingT, options *KubectlOptions, crdName string, timeout time.Duration) {
+	err := WaitForCustomResourceDefinitionIsReadyE(t, options, crdName, timeout)
+	require.NoError(t, err, "CustomResourceDefinition %s was not Ready in time", crdName)
+}
+
+// WaitForCustomResourceDefinitionIsReadyE waits for the resource condition to be satisfied.
+func WaitForCustomResourceDefinitionIsReadyE(t testing.TestingT, options *KubectlOptions, crdName string, timeout time.Duration) error {
 	client, err := NewAPIXClient(t, options)
 	if err != nil {
-		t.Fatalf("Failed to create APIX client: %v", err)
+		return err
 	}
 
-	err = wait.PollUntilContextTimeout(context.Background(), 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		crd, err := client.ApiextensionsV1().CustomResourceDefinitions().Get(ctx, crdName, metav1.GetOptions{})
 		if err != nil {
 			return false, nil // retry
@@ -96,10 +110,6 @@ func WaitForCustomResourceDefinitionIsReady(t testing.TestingT, options *Kubectl
 		}
 		return false, nil
 	})
-
-	if err != nil {
-		t.Fatalf("CustomResourceDefinition %s was not Ready in time: %v", crdName, err)
-	}
 }
 
 // IsCustomResourceDefinitionReady checks whether the given CustomResourceDefinition (CRD)
@@ -112,6 +122,8 @@ func WaitForCustomResourceDefinitionIsReady(t testing.TestingT, options *Kubectl
 //
 // Returns:
 //   - bool: True if the CRD is ready (both 'Established' and 'NamesAccepted' conditions are true), false otherwise.
+//
+// IsCustomResourceDefinitionReady returns whether the resource matches the expected state.
 func IsCustomResourceDefinitionReady(crd *apixv1.CustomResourceDefinition) bool {
 	conds := crd.Status.Conditions
 	var (

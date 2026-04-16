@@ -2,8 +2,9 @@ package linkerd
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	linkerdpolicyv1alpha1 "github.com/linkerd/linkerd2/controller/gen/apis/policy/v1alpha1"
@@ -22,12 +23,22 @@ import (
 //
 // Returns:
 //   - A slice of pointers to MeshTLSAuthentication objects found in the namespace.
+// ListMeshTLSAuthentications lists matching resources.
 func ListMeshTLSAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.MeshTLSAuthentication {
+	meshTLSAuthentications, err := ListMeshTLSAuthenticationsE(t, options, namespace)
+	require.NoError(t, err, "Failed to list MeshTLSAuthentications in namespace %s", namespace)
+	return meshTLSAuthentications
+}
+
+// ListMeshTLSAuthenticationsE lists matching resources.
+func ListMeshTLSAuthenticationsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]*linkerdpolicyv1alpha1.MeshTLSAuthentication, error) {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
 	meshTLSAuthentications, err := linkerdClient.PolicyV1alpha1().MeshTLSAuthentications(namespace).List(ctx, v1meta.ListOptions{})
-	require.NoError(t, err, "Failed to list MeshTLSAuthentications in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert slice of values to slice of pointers
 	var result []*linkerdpolicyv1alpha1.MeshTLSAuthentication
@@ -35,7 +46,7 @@ func ListMeshTLSAuthentications(t testing.TestingT, options *k8s.KubectlOptions,
 		result = append(result, &meshTLSAuthentications.Items[i])
 	}
 
-	return result
+	return result, nil
 }
 
 // GetMeshTLSAuthentication retrieves a specific Linkerd MeshTLSAuthentication resource by name in the specified namespace.
@@ -49,14 +60,24 @@ func ListMeshTLSAuthentications(t testing.TestingT, options *k8s.KubectlOptions,
 //
 // Returns:
 //   - A pointer to the MeshTLSAuthentication object.
+// GetMeshTLSAuthentication gets a resource by name.
 func GetMeshTLSAuthentication(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.MeshTLSAuthentication {
+	meshTLSAuthentication, err := GetMeshTLSAuthenticationE(t, options, name, namespace)
+	require.NoError(t, err, "Failed to get MeshTLSAuthentication %s in namespace %s", name, namespace)
+	return meshTLSAuthentication
+}
+
+// GetMeshTLSAuthenticationE gets a resource by name.
+func GetMeshTLSAuthenticationE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) (*linkerdpolicyv1alpha1.MeshTLSAuthentication, error) {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
 	meshTLSAuthentication, err := linkerdClient.PolicyV1alpha1().MeshTLSAuthentications(namespace).Get(ctx, name, v1meta.GetOptions{})
-	require.NoError(t, err, "Failed to get MeshTLSAuthentication %s in namespace %s", name, namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return meshTLSAuthentication
+	return meshTLSAuthentication, nil
 }
 
 // WaitForMeshTLSAuthenticationExists waits until the specified MeshTLSAuthentication exists in the given namespace or the timeout is reached.
@@ -68,19 +89,22 @@ func GetMeshTLSAuthentication(t testing.TestingT, options *k8s.KubectlOptions, n
 //   - name: The name of the MeshTLSAuthentication to check.
 //   - namespace: The namespace of the MeshTLSAuthentication.
 //   - timeout: The maximum duration to wait for the resource to exist.
+// WaitForMeshTLSAuthenticationExists waits for the resource condition to be satisfied.
 func WaitForMeshTLSAuthenticationExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForMeshTLSAuthenticationExistsE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "MeshTLSAuthentication %s/%s did not exist within timeout", namespace, name)
+}
+
+// WaitForMeshTLSAuthenticationExistsE waits for the resource condition to be satisfied.
+func WaitForMeshTLSAuthenticationExistsE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
-	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := linkerdClient.PolicyV1alpha1().MeshTLSAuthentications(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
 			return false, nil
 		}
 		return true, nil
 	})
-
-	if err != nil {
-		t.Fatalf("MeshTLSAuthentication %s/%s did not exist within timeout: %v", namespace, name, err)
-	}
 }

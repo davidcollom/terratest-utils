@@ -2,8 +2,9 @@ package linkerd
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
 	"time"
+
+	"github.com/gruntwork-io/terratest/modules/testing"
 
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	linkerdpolicyv1alpha1 "github.com/linkerd/linkerd2/controller/gen/apis/policy/v1alpha1"
@@ -22,12 +23,22 @@ import (
 //
 // Returns:
 //   - A slice of pointers to NetworkAuthentication objects found in the namespace.
+// ListNetworkAuthentications lists matching resources.
 func ListNetworkAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.NetworkAuthentication {
+	networkAuthentications, err := ListNetworkAuthenticationsE(t, options, namespace)
+	require.NoError(t, err, "Failed to list NetworkAuthentications in namespace %s", namespace)
+	return networkAuthentications
+}
+
+// ListNetworkAuthenticationsE lists matching resources.
+func ListNetworkAuthenticationsE(t testing.TestingT, options *k8s.KubectlOptions, namespace string) ([]*linkerdpolicyv1alpha1.NetworkAuthentication, error) {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
 	networkAuthentications, err := linkerdClient.PolicyV1alpha1().NetworkAuthentications(namespace).List(ctx, v1meta.ListOptions{})
-	require.NoError(t, err, "Failed to list NetworkAuthentications in namespace %s", namespace)
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert slice of values to slice of pointers
 	var result []*linkerdpolicyv1alpha1.NetworkAuthentication
@@ -35,7 +46,7 @@ func ListNetworkAuthentications(t testing.TestingT, options *k8s.KubectlOptions,
 		result = append(result, &networkAuthentications.Items[i])
 	}
 
-	return result
+	return result, nil
 }
 
 // GetNetworkAuthentication retrieves a specific Linkerd NetworkAuthentication resource by name in the specified namespace.
@@ -49,14 +60,24 @@ func ListNetworkAuthentications(t testing.TestingT, options *k8s.KubectlOptions,
 //
 // Returns:
 //   - A pointer to the NetworkAuthentication object.
+// GetNetworkAuthentication gets a resource by name.
 func GetNetworkAuthentication(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.NetworkAuthentication {
+	networkAuthentication, err := GetNetworkAuthenticationE(t, options, name, namespace)
+	require.NoError(t, err, "Failed to get NetworkAuthentication %s in namespace %s", name, namespace)
+	return networkAuthentication
+}
+
+// GetNetworkAuthenticationE gets a resource by name.
+func GetNetworkAuthenticationE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) (*linkerdpolicyv1alpha1.NetworkAuthentication, error) {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
 	networkAuthentication, err := linkerdClient.PolicyV1alpha1().NetworkAuthentications(namespace).Get(ctx, name, v1meta.GetOptions{})
-	require.NoError(t, err, "Failed to get NetworkAuthentication %s in namespace %s", name, namespace)
+	if err != nil {
+		return nil, err
+	}
 
-	return networkAuthentication
+	return networkAuthentication, nil
 }
 
 // WaitForNetworkAuthenticationExists waits until the specified NetworkAuthentication exists in the given namespace or the timeout is reached.
@@ -68,19 +89,22 @@ func GetNetworkAuthentication(t testing.TestingT, options *k8s.KubectlOptions, n
 //   - name: The name of the NetworkAuthentication to check.
 //   - namespace: The namespace of the NetworkAuthentication.
 //   - timeout: The maximum duration to wait for the resource to exist.
+// WaitForNetworkAuthenticationExists waits for the resource condition to be satisfied.
 func WaitForNetworkAuthenticationExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
+	err := WaitForNetworkAuthenticationExistsE(t, options, name, namespace, timeout)
+	require.NoError(t, err, "NetworkAuthentication %s/%s did not exist within timeout", namespace, name)
+}
+
+// WaitForNetworkAuthenticationExistsE waits for the resource condition to be satisfied.
+func WaitForNetworkAuthenticationExistsE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
 	linkerdClient := NewClient(t, options)
 
 	ctx := context.Background()
-	err := wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
+	return wait.PollUntilContextTimeout(ctx, 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
 		_, err := linkerdClient.PolicyV1alpha1().NetworkAuthentications(namespace).Get(ctx, name, v1meta.GetOptions{})
 		if err != nil {
 			return false, nil
 		}
 		return true, nil
 	})
-
-	if err != nil {
-		t.Fatalf("NetworkAuthentication %s/%s did not exist within timeout: %v", namespace, name, err)
-	}
 }
