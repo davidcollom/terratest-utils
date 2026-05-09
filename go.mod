@@ -21,7 +21,6 @@ require (
 	github.com/fluxcd/kustomize-controller/api v1.8.3
 	github.com/fluxcd/source-controller/api v1.8.2
 	github.com/gruntwork-io/terratest v0.56.0
-	github.com/linkerd/linkerd2 v0.5.1-0.20260402204901-372abd361635
 	github.com/stretchr/testify v1.11.1
 	github.com/vmware-tanzu/velero v1.18.0
 	istio.io/api v1.29.1
