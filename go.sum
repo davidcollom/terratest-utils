@@ -38,8 +38,8 @@ github.com/alicebob/miniredis/v2 v2.35.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/argoproj/argo-cd/v3 v3.3.6 h1:eaWeTkM5EdDHSD3seySuxmbBY38UHjZfRJUPRBccGcY=
-github.com/argoproj/argo-cd/v3 v3.3.6/go.mod h1:jNt8U5uib3bZWtKc4c0L9OsvgkYVOA0HtcRppVcp1oM=
+github.com/argoproj/argo-cd/v3 v3.3.9 h1:5etMk6bD18iIiSeRo/5zTsp6Bwn6heoVeHIeA3++SSI=
+github.com/argoproj/argo-cd/v3 v3.3.9/go.mod h1:Qh80AE4vFLe5jhdI7qYareRc7YOTLDQsDEq7ghvs0Qc=
 github.com/argoproj/argo-events v1.9.10 h1:zVC4J0sHUZd1LRRYks8XsVnx0M50KCZ1MuYoqZBOqFE=
 github.com/argoproj/argo-events v1.9.10/go.mod h1:ftbm7Gj8ycNxw56YVTY9xDUAJDa733jWBaL0M0qXz28=
 github.com/argoproj/argo-rollouts v1.9.0 h1:bXgBpwCByXyAUcgBnyP0fxkSW2CEot78InTFjFlag5g=

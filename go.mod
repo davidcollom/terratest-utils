@@ -8,7 +8,7 @@ go 1.26.2
 replace sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
 
 require (
-	github.com/argoproj/argo-cd/v3 v3.3.6
+	github.com/argoproj/argo-cd/v3 v3.3.9
 	github.com/argoproj/argo-events v1.9.10
 	github.com/argoproj/argo-rollouts v1.9.0
 	github.com/argoproj/argo-workflows/v3 v3.7.14
