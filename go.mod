@@ -7,13 +7,14 @@ go 1.26.2
 // https://github.com/linkerd/linkerd2/blob/b0431fde84c07a549a271ca9643fd125674dd5ad/go.mod
 replace sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
 
+replace github.com/argoproj/argo-cd/gitops-engine => github.com/argoproj/argo-cd/gitops-engine v0.0.0-20260508195653-5ec06031ba40
+
 require (
 	github.com/argoproj/argo-cd/v3 v3.4.1
 	github.com/argoproj/argo-events v1.9.10
 	github.com/argoproj/argo-rollouts v1.9.0
 	github.com/argoproj/argo-workflows/v3 v3.7.14
-	github.com/argoproj/gitops-engine v0.7.3
-	github.com/cert-manager/cert-manager v1.20.1
+	github.com/cert-manager/cert-manager v1.20.2
 	github.com/external-secrets/external-secrets/apis v0.0.0-20260407212151-e325bced502e
 	github.com/fluxcd/helm-controller/api v1.5.3
 	github.com/fluxcd/kustomize-controller/api v1.8.3
@@ -45,6 +46,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
+	github.com/argoproj/argo-cd/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627 // indirect
 	github.com/argoproj/pkg v0.13.7-0.20250305113207-cbc37dc61de5 // indirect
 	github.com/argoproj/pkg/v2 v2.0.1 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.41.5 // indirect
@@ -105,7 +107,6 @@ require (
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
-	github.com/evanphx/json-patch v5.9.11+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect

@@ -38,6 +38,8 @@ github.com/alicebob/miniredis/v2 v2.37.0/go.mod h1:TcL7YfarKPGDAthEtl5NBeHZfeUQj
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
 github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
+github.com/argoproj/argo-cd/gitops-engine v0.0.0-20260508195653-5ec06031ba40 h1:zVogjhpuNCSQcF3TekSwSwcUoobrxmfb1TGEdngyNgA=
+github.com/argoproj/argo-cd/gitops-engine v0.0.0-20260508195653-5ec06031ba40/go.mod h1:oRAmiJ1yLU1zeGwia5wxA07PdR0SbeDm47EoM1zxkFs=
 github.com/argoproj/argo-cd/v3 v3.4.1 h1:3ZZiZXiXtOieolSdtVYgtAT00qc7OgHP0w0F0XLEjFI=
 github.com/argoproj/argo-cd/v3 v3.4.1/go.mod h1:JKUhQ1bPoL7g1G3LY/M4UF5DY0lfEBOFCnrRFYzxD/Q=
 github.com/argoproj/argo-events v1.9.10 h1:zVC4J0sHUZd1LRRYks8XsVnx0M50KCZ1MuYoqZBOqFE=
@@ -46,8 +48,6 @@ github.com/argoproj/argo-rollouts v1.9.0 h1:bXgBpwCByXyAUcgBnyP0fxkSW2CEot78InTF
 github.com/argoproj/argo-rollouts v1.9.0/go.mod h1:jOalqf2kDSmCp7eQpFF4i3kHnlEqNE/Yjwz1q7CpPIU=
 github.com/argoproj/argo-workflows/v3 v3.7.14 h1:ptbGB8ljmDgV3PlX0dEMfHwuq1P9DklQ5Hi4XzHBVLA=
 github.com/argoproj/argo-workflows/v3 v3.7.14/go.mod h1:ZfqYgzWJJx8ZNZWAjog4fqBVaafF/XvTaMuZLKDlFFE=
-github.com/argoproj/gitops-engine v0.7.3 h1:0ZlRTReAJG5Y1PviQ8ZIJq/+VowxWe2uFwoXqYcbtXU=
-github.com/argoproj/gitops-engine v0.7.3/go.mod h1:pRgVpLW7pZqf7n3COJ7UcDepk4cI61LAcJd64Q3Jq/c=
 github.com/argoproj/pkg v0.13.7-0.20250305113207-cbc37dc61de5 h1:YBoLSjpoaJXaXAldVvBRKJuOPvIXz9UOv6S96gMJM/Q=
 github.com/argoproj/pkg v0.13.7-0.20250305113207-cbc37dc61de5/go.mod h1:ebVOzFJphdN1p6EG2mIMECv/3Rk/almSaxIYuFAmsSw=
 github.com/argoproj/pkg/v2 v2.0.1 h1:O/gCETzB/3+/hyFL/7d/VM/6pSOIRWIiBOTb2xqAHvc=
@@ -154,8 +154,8 @@ github.com/casbin/govaluate v1.10.0/go.mod h1:G/UnbIjZk/0uMNaLwZZmFQrR72tYRZWQkO
 github.com/cenkalti/backoff/v5 v5.0.3 h1:ZN+IMa753KfX5hd8vVaMixjnqRZ3y8CuJKRKj1xcsSM=
 github.com/cenkalti/backoff/v5 v5.0.3/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F97BxZthm/crw=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/cert-manager/cert-manager v1.20.1 h1:99ExHJu5TPp1V92AvvE4oY6BkOSyJiWLxxMkbqbdGaY=
-github.com/cert-manager/cert-manager v1.20.1/go.mod h1:ut67FnggYJJqAdDWLhSPnj10P06QwbNU88RYNh9MvMc=
+github.com/cert-manager/cert-manager v1.20.2 h1:CimnY00nLqB2lmxhoSuEC4GDMFDK7JCXqyjwMM9ndIQ=
+github.com/cert-manager/cert-manager v1.20.2/go.mod h1:1g/+a/WK5zWH/dXPZa3dMD3aJQJNRXQu+PN17C6WrOw=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cespare/xxhash/v2 v2.2.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=

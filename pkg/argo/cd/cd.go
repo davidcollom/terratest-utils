@@ -8,7 +8,6 @@ import (
 
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
 	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
-	apphealth "github.com/argoproj/gitops-engine/pkg/health"
 	"github.com/davidcollom/terratest-utils/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"k8s.io/client-go/rest"
@@ -18,7 +17,7 @@ import (
 // It checks that the application's health status is 'Healthy' and its sync status is 'Synced'.
 // IsApplicationHealthyAndSynced returns whether the resource matches the expected state.
 func IsApplicationHealthyAndSynced(app *argocdv1alpha1.Application) bool {
-	return app.Status.Health.Status == apphealth.HealthStatusHealthy &&
+	return app.Status.Health.Status == "Healthy" &&
 		app.Status.Sync.Status == argocdv1alpha1.SyncStatusCodeSynced
 }
 
