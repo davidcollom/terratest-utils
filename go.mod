@@ -13,7 +13,7 @@ require (
 	github.com/argoproj/argo-rollouts v1.9.0
 	github.com/argoproj/argo-workflows/v3 v3.7.14
 	github.com/argoproj/gitops-engine v0.7.3
-	github.com/cert-manager/cert-manager v1.20.1
+	github.com/cert-manager/cert-manager v1.20.2
 	github.com/external-secrets/external-secrets/apis v0.0.0-20260407212151-e325bced502e
 	github.com/fluxcd/helm-controller/api v1.5.3
 	github.com/fluxcd/kustomize-controller/api v1.8.3
