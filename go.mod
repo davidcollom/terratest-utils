@@ -11,7 +11,7 @@ replace github.com/argoproj/argo-cd/gitops-engine => github.com/argoproj/argo-cd
 
 require (
 	github.com/argoproj/argo-cd/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627
-	github.com/argoproj/argo-cd/v3 v3.4.1
+	github.com/argoproj/argo-cd/v3 v3.4.2
 	github.com/argoproj/argo-events v1.9.10
 	github.com/argoproj/argo-rollouts v1.9.0
 	github.com/argoproj/argo-workflows/v3 v3.7.14
