@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to ServerAuthorization objects found in the namespace.
+//
 // ListServerAuthorizations lists matching resources.
 func ListServerAuthorizations(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdserverauthorizationv1beta1.ServerAuthorization {
 	serverAuthorizations, err := ListServerAuthorizationsE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListServerAuthorizationsE(t testing.TestingT, options *k8s.KubectlOptions, 
 //
 // Returns:
 //   - A pointer to the ServerAuthorization object.
+//
 // GetServerAuthorization gets a resource by name.
 func GetServerAuthorization(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdserverauthorizationv1beta1.ServerAuthorization {
 	serverAuthorization, err := GetServerAuthorizationE(t, options, name, namespace)
@@ -89,6 +91,7 @@ func GetServerAuthorizationE(t testing.TestingT, options *k8s.KubectlOptions, na
 //   - name: The name of the ServerAuthorization to check.
 //   - namespace: The namespace of the ServerAuthorization.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForServerAuthorizationExists waits for the resource condition to be satisfied.
 func WaitForServerAuthorizationExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForServerAuthorizationExistsE(t, options, name, namespace, timeout)

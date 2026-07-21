@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to VirtualService objects found in the namespace.
+//
 // ListVirtualServices lists matching resources.
 func ListVirtualServices(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.VirtualService {
 	virtualServices, err := ListVirtualServicesE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListVirtualServicesE(t testing.TestingT, options *k8s.KubectlOptions, names
 //   - name: The name of the VirtualService to check.
 //   - namespace: The namespace of the VirtualService.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForVirtualServiceReady waits for the resource condition to be satisfied.
 func WaitForVirtualServiceReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForVirtualServiceReadyE(t, options, name, namespace, timeout)

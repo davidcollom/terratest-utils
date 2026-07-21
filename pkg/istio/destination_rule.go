@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to DestinationRule objects found in the namespace.
+//
 // ListDestinationRules lists matching resources.
 func ListDestinationRules(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*isitonetworkingv1alpha3.DestinationRule {
 	destinationRules, err := ListDestinationRulesE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListDestinationRulesE(t testing.TestingT, options *k8s.KubectlOptions, name
 //   - name: The name of the DestinationRule to check.
 //   - namespace: The namespace of the DestinationRule.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForDestinationRuleReady waits for the resource condition to be satisfied.
 func WaitForDestinationRuleReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForDestinationRuleReadyE(t, options, name, namespace, timeout)

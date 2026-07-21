@@ -6,8 +6,8 @@ package cd
 import (
 	"github.com/gruntwork-io/terratest/modules/testing"
 
-	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
 	apphealth "github.com/argoproj/argo-cd/gitops-engine/pkg/health"
+	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
 	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
 	"github.com/davidcollom/terratest-utils/pkg/utils"
 	"github.com/gruntwork-io/terratest/modules/k8s"

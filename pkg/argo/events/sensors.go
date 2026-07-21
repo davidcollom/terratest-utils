@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - A slice of argoeventsv1alpha1.Sensor objects representing the sensors found in the namespace.
+//
 // ListSensors lists matching resources.
 func ListSensors(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.Sensor {
 	sensors, err := ListSensorsE(t, options, namespace)
@@ -59,6 +60,7 @@ func ListSensorsE(t testing.TestingT, options *k8s.KubectlOptions, namespace str
 //   - name: The name of the Sensor resource.
 //   - namespace: The namespace where the Sensor is located.
 //   - timeout: The maximum duration to wait for the sensor to become Ready.
+//
 // WaitForSensorReady waits for the resource condition to be satisfied.
 func WaitForSensorReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForSensorReadyE(t, options, name, namespace, timeout)

@@ -26,6 +26,7 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.HelmRepository objects found in the specified namespace.
+//
 // ListHelmRepositories lists matching resources.
 func ListHelmRepositories(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmRepository {
 	repos, err := ListHelmRepositoriesE(t, options, namespace, opts...)

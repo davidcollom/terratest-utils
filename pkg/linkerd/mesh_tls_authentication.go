@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to MeshTLSAuthentication objects found in the namespace.
+//
 // ListMeshTLSAuthentications lists matching resources.
 func ListMeshTLSAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.MeshTLSAuthentication {
 	meshTLSAuthentications, err := ListMeshTLSAuthenticationsE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListMeshTLSAuthenticationsE(t testing.TestingT, options *k8s.KubectlOptions
 //
 // Returns:
 //   - A pointer to the MeshTLSAuthentication object.
+//
 // GetMeshTLSAuthentication gets a resource by name.
 func GetMeshTLSAuthentication(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.MeshTLSAuthentication {
 	meshTLSAuthentication, err := GetMeshTLSAuthenticationE(t, options, name, namespace)
@@ -89,6 +91,7 @@ func GetMeshTLSAuthenticationE(t testing.TestingT, options *k8s.KubectlOptions, 
 //   - name: The name of the MeshTLSAuthentication to check.
 //   - namespace: The namespace of the MeshTLSAuthentication.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForMeshTLSAuthenticationExists waits for the resource condition to be satisfied.
 func WaitForMeshTLSAuthenticationExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForMeshTLSAuthenticationExistsE(t, options, name, namespace, timeout)

@@ -35,6 +35,7 @@ var (
 //
 // Returns:
 //   - A slice of pointers to unstructured objects representing TrafficSplit resources found in the namespace.
+//
 // ListTrafficSplits lists matching resources.
 func ListTrafficSplits(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*unstructured.Unstructured {
 	trafficSplits, err := ListTrafficSplitsE(t, options, namespace)
@@ -71,6 +72,7 @@ func ListTrafficSplitsE(t testing.TestingT, options *k8s.KubectlOptions, namespa
 //
 // Returns:
 //   - An unstructured object representing the TrafficSplit resource.
+//
 // GetTrafficSplit gets a resource by name.
 func GetTrafficSplit(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *unstructured.Unstructured {
 	trafficSplit, err := GetTrafficSplitE(t, options, name, namespace)
@@ -100,6 +102,7 @@ func GetTrafficSplitE(t testing.TestingT, options *k8s.KubectlOptions, name, nam
 //   - name: The name of the TrafficSplit to check.
 //   - namespace: The namespace of the TrafficSplit.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForTrafficSplitExists waits for the resource condition to be satisfied.
 func WaitForTrafficSplitExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForTrafficSplitExistsE(t, options, name, namespace, timeout)
@@ -130,6 +133,7 @@ func WaitForTrafficSplitExistsE(t testing.TestingT, options *k8s.KubectlOptions,
 //
 // Returns:
 //   - dynamic.Interface: A dynamic client for interacting with custom resources.
+//
 // NewDynamicClient creates a new client or helper instance.
 func NewDynamicClient(t testing.TestingT, options *k8s.KubectlOptions) dynamic.Interface {
 	cfg, err := utils.GetRestConfigE(t, options)

@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - A slice of ApplicationSet resources found in the specified namespace.
+//
 // ListApplicationSets lists matching resources.
 func ListApplicationSets(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.ApplicationSet {
 	applicationSets, err := ListApplicationSetsE(t, options, namespace)
@@ -62,6 +63,7 @@ func ListApplicationSetsE(t testing.TestingT, options *k8s.KubectlOptions, names
 //   - name: The name of the ApplicationSet.
 //   - namespace: The namespace where the ApplicationSet resides.
 //   - timeout: The maximum duration to wait for the ApplicationSet to become healthy and synced.
+//
 // WaitForApplicationSetHealthyAndSynced waits for the resource condition to be satisfied.
 func WaitForApplicationSetHealthyAndSynced(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForApplicationSetHealthyAndSyncedE(t, options, name, namespace, timeout)

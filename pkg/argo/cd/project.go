@@ -60,6 +60,7 @@ func ListAppProjectsE(t testing.TestingT, options *k8s.KubectlOptions, namespace
 //   - name: The name of the AppProject to wait for.
 //   - namespace: The namespace in which to look for the AppProject.
 //   - timeout: The maximum duration to wait for the AppProject to appear.
+//
 // WaitForAppProjectExists waits for the resource condition to be satisfied.
 func WaitForAppProjectExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForAppProjectExistsE(t, options, name, namespace, timeout)

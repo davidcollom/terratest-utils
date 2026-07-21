@@ -25,6 +25,7 @@ import (
 //
 // Returns:
 //   - A slice of WorkflowTemplate objects found in the specified namespace.
+//
 // ListArgoWorkflowTemplates lists matching resources.
 func ListArgoWorkflowTemplates(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTemplate {
 	templates, err := ListArgoWorkflowTemplatesE(t, options, namespace)
@@ -61,6 +62,7 @@ func ListArgoWorkflowTemplatesE(t testing.TestingT, options *k8s.KubectlOptions,
 //
 // Returns:
 //   - A slice of ClusterWorkflowTemplate objects.
+//
 // ListArgoClusterWorkflowTemplates lists matching resources.
 func ListArgoClusterWorkflowTemplates(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.ClusterWorkflowTemplate {
 	templates, err := ListArgoClusterWorkflowTemplatesE(t, options, namespace)

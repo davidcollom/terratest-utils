@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to EnvoyFilter objects found in the namespace.
+//
 // ListEnvoyFilters lists matching resources.
 func ListEnvoyFilters(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.EnvoyFilter {
 	envoyFilters, err := ListEnvoyFiltersE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListEnvoyFiltersE(t testing.TestingT, options *k8s.KubectlOptions, namespac
 //   - name: The name of the EnvoyFilter to check.
 //   - namespace: The namespace of the EnvoyFilter.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForEnvoyFilterReady waits for the resource condition to be satisfied.
 func WaitForEnvoyFilterReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForEnvoyFilterReadyE(t, options, name, namespace, timeout)

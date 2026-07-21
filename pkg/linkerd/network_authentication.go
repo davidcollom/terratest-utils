@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to NetworkAuthentication objects found in the namespace.
+//
 // ListNetworkAuthentications lists matching resources.
 func ListNetworkAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.NetworkAuthentication {
 	networkAuthentications, err := ListNetworkAuthenticationsE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListNetworkAuthenticationsE(t testing.TestingT, options *k8s.KubectlOptions
 //
 // Returns:
 //   - A pointer to the NetworkAuthentication object.
+//
 // GetNetworkAuthentication gets a resource by name.
 func GetNetworkAuthentication(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.NetworkAuthentication {
 	networkAuthentication, err := GetNetworkAuthenticationE(t, options, name, namespace)
@@ -89,6 +91,7 @@ func GetNetworkAuthenticationE(t testing.TestingT, options *k8s.KubectlOptions, 
 //   - name: The name of the NetworkAuthentication to check.
 //   - namespace: The namespace of the NetworkAuthentication.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForNetworkAuthenticationExists waits for the resource condition to be satisfied.
 func WaitForNetworkAuthenticationExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForNetworkAuthenticationExistsE(t, options, name, namespace, timeout)

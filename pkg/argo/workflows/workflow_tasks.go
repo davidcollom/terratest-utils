@@ -22,6 +22,7 @@ import (
 //
 // Returns:
 //   - A slice of WorkflowTaskResult resources found in the specified namespace.
+//
 // ListArgoWorkflowTaskResults lists matching resources.
 func ListArgoWorkflowTaskResults(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTaskResult {
 	results, err := ListArgoWorkflowTaskResultsE(t, options, namespace)
@@ -59,6 +60,7 @@ func ListArgoWorkflowTaskResultsE(t testing.TestingT, options *k8s.KubectlOption
 //
 // Returns:
 //   - A slice of WorkflowTaskSet objects present in the specified namespace.
+//
 // ListArgoWorkflowTaskSet lists matching resources.
 func ListArgoWorkflowTaskSet(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.WorkflowTaskSet {
 	taskSets, err := ListArgoWorkflowTaskSetE(t, options, namespace)

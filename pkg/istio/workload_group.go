@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to WorkloadGroup objects found in the namespace.
+//
 // ListWorkloadGroups lists matching resources.
 func ListWorkloadGroups(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.WorkloadGroup {
 	workloadGroups, err := ListWorkloadGroupsE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListWorkloadGroupsE(t testing.TestingT, options *k8s.KubectlOptions, namesp
 //   - name: The name of the WorkloadGroup to check.
 //   - namespace: The namespace of the WorkloadGroup.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForWorkloadGroupReady waits for the resource condition to be satisfied.
 func WaitForWorkloadGroupReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForWorkloadGroupReadyE(t, options, name, namespace, timeout)

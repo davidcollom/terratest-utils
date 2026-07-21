@@ -18,8 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-go
-      - name: Run go fmt
-        run: go fmt ./...
+      - name: Check go fmt
+        run: |
+          UNFORMATTED=$(gofmt -l .)
+          if [ -n "$UNFORMATTED" ]; then
+            echo "The following files are not gofmt'd. Run: go fmt ./..."
+            echo "$UNFORMATTED"
+            exit 1
+          fi
   vet:
     runs-on: ubuntu-latest
     steps:
@@ -57,5 +63,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-go
       - name: Run tests
         run: go test -v ./...

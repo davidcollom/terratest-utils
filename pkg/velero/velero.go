@@ -20,6 +20,7 @@ import (
 // Returns:
 //   - client.Client: A controller-runtime client configured for Velero resources.
 //   - error: An error if the client could not be created.
+//
 // NewVeleroClient creates a new client or helper instance.
 func NewVeleroClient(cfg *rest.Config) (client.Client, error) {
 	scheme := runtime.NewScheme()

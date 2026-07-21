@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to Server objects found in the namespace.
+//
 // ListServers lists matching resources.
 func ListServers(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdserverv1beta1.Server {
 	servers, err := ListServersE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListServersE(t testing.TestingT, options *k8s.KubectlOptions, namespace str
 //
 // Returns:
 //   - A pointer to the Server object.
+//
 // GetServer gets a resource by name.
 func GetServer(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdserverv1beta1.Server {
 	server, err := GetServerE(t, options, name, namespace)
@@ -89,6 +91,7 @@ func GetServerE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace
 //   - name: The name of the Server to check.
 //   - namespace: The namespace of the Server.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForServerExists waits for the resource condition to be satisfied.
 func WaitForServerExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForServerExistsE(t, options, name, namespace, timeout)

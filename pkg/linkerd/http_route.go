@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to HTTPRoute objects found in the namespace.
+//
 // ListHTTPRoutes lists matching resources.
 func ListHTTPRoutes(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.HTTPRoute {
 	httpRoutes, err := ListHTTPRoutesE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListHTTPRoutesE(t testing.TestingT, options *k8s.KubectlOptions, namespace 
 //
 // Returns:
 //   - A pointer to the HTTPRoute object.
+//
 // GetHTTPRoute gets a resource by name.
 func GetHTTPRoute(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.HTTPRoute {
 	httpRoute, err := GetHTTPRouteE(t, options, name, namespace)
@@ -89,6 +91,7 @@ func GetHTTPRouteE(t testing.TestingT, options *k8s.KubectlOptions, name, namesp
 //   - name: The name of the HTTPRoute to check.
 //   - namespace: The namespace of the HTTPRoute.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForHTTPRouteExists waits for the resource condition to be satisfied.
 func WaitForHTTPRouteExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForHTTPRouteExistsE(t, options, name, namespace, timeout)

@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Schedule representing the schedules found in the given namespace.
+//
 // ListSchedules lists matching resources.
 func ListSchedules(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Schedule {
 	schedules, err := ListSchedulesE(t, options, namespace)

@@ -28,6 +28,7 @@ import (
 //
 // Returns:
 //   - A slice of acmev1.Challenge objects found in the specified namespace.
+//
 // ListChallenges lists matching resources.
 func ListChallenges(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []acmev1.Challenge {
 	challenges, err := ListChallengesE(t, options, namespace)

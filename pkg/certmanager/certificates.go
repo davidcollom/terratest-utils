@@ -28,6 +28,7 @@ import (
 //
 // Returns:
 //   - A slice of certv1.Certificate objects found in the specified namespace.
+//
 // ListCertificates lists matching resources.
 func ListCertificates(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []certv1.Certificate {
 	certificates, err := ListCertificatesE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListCertificatesE(t testing.TestingT, options *k8s.KubectlOptions, namespac
 //   - name: The name of the Certificate resource.
 //   - namespace: The namespace of the Certificate resource.
 //   - timeout: The maximum duration to wait for the Certificate to become Ready.
+//
 // WaitForCertificateReady waits for the resource condition to be satisfied.
 func WaitForCertificateReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForCertificateReadyE(t, options, name, namespace, timeout)
@@ -100,6 +102,7 @@ func WaitForCertificateReadyE(t testing.TestingT, options *k8s.KubectlOptions, n
 //	t       - The testing context.
 //	options - Kubectl options for accessing the Kubernetes cluster.
 //	cert    - The cert-manager Certificate resource whose Secret should be validated.
+//
 // ValidateCertificateSecret validates resource state.
 func ValidateCertificateSecret(t testing.TestingT, options *k8s.KubectlOptions, cert *certv1.Certificate) {
 	// We need to ensure we're looking in the right namespace

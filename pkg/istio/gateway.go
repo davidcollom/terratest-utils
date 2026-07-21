@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to Gateway objects found in the namespace.
+//
 // ListGateways lists matching resources.
 func ListGateways(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.Gateway {
 	gateways, err := ListGatewaysE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListGatewaysE(t testing.TestingT, options *k8s.KubectlOptions, namespace st
 //   - name: The name of the Gateway to check.
 //   - namespace: The namespace of the Gateway.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForGatewayReady waits for the resource condition to be satisfied.
 func WaitForGatewayReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForGatewayReadyE(t, options, name, namespace, timeout)

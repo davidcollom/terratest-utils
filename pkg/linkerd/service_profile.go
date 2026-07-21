@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to ServiceProfile objects found in the namespace.
+//
 // ListServiceProfiles lists matching resources.
 func ListServiceProfiles(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdv1alpha2.ServiceProfile {
 	serviceProfiles, err := ListServiceProfilesE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListServiceProfilesE(t testing.TestingT, options *k8s.KubectlOptions, names
 //
 // Returns:
 //   - A pointer to the ServiceProfile object.
+//
 // GetServiceProfile gets a resource by name.
 func GetServiceProfile(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdv1alpha2.ServiceProfile {
 	serviceProfile, err := GetServiceProfileE(t, options, name, namespace)
@@ -89,6 +91,7 @@ func GetServiceProfileE(t testing.TestingT, options *k8s.KubectlOptions, name, n
 //   - name: The name of the ServiceProfile to check.
 //   - namespace: The namespace of the ServiceProfile.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForServiceProfileExists waits for the resource condition to be satisfied.
 func WaitForServiceProfileExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForServiceProfileExistsE(t, options, name, namespace, timeout)
