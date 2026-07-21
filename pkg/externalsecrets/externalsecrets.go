@@ -29,6 +29,7 @@ import (
 //
 // Returns:
 //   - A slice of ExternalSecret objects found in the specified namespace.
+//
 // ListExternalSecrets lists matching resources.
 func ListExternalSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.ExternalSecret {
 	secrets, err := ListExternalSecretsE(t, options, namespace)
@@ -106,6 +107,7 @@ func WaitForExternalSecretReadyE(t testing.TestingT, options *k8s.KubectlOptions
 // Returns:
 //
 //	bool - true if the ExternalSecret is ready, false otherwise.
+//
 // IsExternalSecretReady returns whether the resource matches the expected state.
 func IsExternalSecretReady(secStatus esov1.ExternalSecretStatus) bool {
 	for _, condition := range secStatus.Conditions {

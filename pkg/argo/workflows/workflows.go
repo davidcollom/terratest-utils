@@ -30,6 +30,7 @@ import (
 //
 // Returns:
 //   - A slice of Workflow objects present in the specified namespace.
+//
 // ListArgoWorkflows lists matching resources.
 func ListArgoWorkflows(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.Workflow {
 	workflows, err := ListArgoWorkflowsE(t, options, namespace)
@@ -87,6 +88,7 @@ func NewArgoWorkflowsClient(t testing.TestingT, options *k8s.KubectlOptions) (wo
 //
 // Returns:
 //   - []workflowv1alpha1.Workflow: A slice containing the workflows found in the specified namespace.
+//
 // ListWorkflows lists matching resources.
 func ListWorkflows(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.Workflow {
 	workflows, err := ListWorkflowsE(t, options, namespace)
@@ -111,6 +113,7 @@ func ListWorkflowsE(t testing.TestingT, options *k8s.KubectlOptions, namespace s
 //   - name: The name of the workflow to check.
 //   - namespace: The namespace where the workflow resides.
 //   - timeout: The maximum duration to wait for the workflow to reach the "Running" phase.
+//
 // WaitForWorkflowRunning waits for the resource condition to be satisfied.
 func WaitForWorkflowRunning(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForWorkflowRunningE(t, options, name, namespace, timeout)
@@ -132,6 +135,7 @@ func WaitForWorkflowRunningE(t testing.TestingT, options *k8s.KubectlOptions, na
 //	name      - The name of the workflow to monitor.
 //	namespace - The namespace where the workflow is running.
 //	timeout   - The maximum duration to wait for the workflow to reach the "Error" phase.
+//
 // WaitForWorkflowError waits for the resource condition to be satisfied.
 func WaitForWorkflowError(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForWorkflowErrorE(t, options, name, namespace, timeout)

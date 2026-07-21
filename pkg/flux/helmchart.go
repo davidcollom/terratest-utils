@@ -26,6 +26,7 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.HelmChart objects present in the specified namespace.
+//
 // ListHelmCharts lists matching resources.
 func ListHelmCharts(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.HelmChart {
 	charts, err := ListHelmChartsE(t, options, namespace, opts...)

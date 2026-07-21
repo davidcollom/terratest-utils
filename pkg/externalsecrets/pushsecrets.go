@@ -28,6 +28,7 @@ import (
 //
 // Returns:
 //   - A slice of PushSecret resources found in the specified namespace.
+//
 // ListPushSecrets lists matching resources.
 func ListPushSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...ctrlclient.ListOption) []esov1alpha1.PushSecret {
 	pushSecrets, err := ListPushSecretsE(t, options, namespace, opts...)
@@ -64,6 +65,7 @@ func ListPushSecretsE(t testing.TestingT, options *k8s.KubectlOptions, namespace
 //   - name: The name of the PushSecret resource.
 //   - namespace: The namespace where the PushSecret is located.
 //   - timeout: The maximum duration to wait for the PushSecret to become Ready.
+//
 // WaitForPushSecretReady waits for the resource condition to be satisfied.
 func WaitForPushSecretReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForPushSecretReadyE(t, options, name, namespace, timeout)

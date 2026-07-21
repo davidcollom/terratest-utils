@@ -25,6 +25,7 @@ import (
 //
 // Returns:
 //   - A slice of workflowv1alpha1.CronWorkflow representing the CronWorkflows found in the namespace.
+//
 // ListCronWorkflows lists matching resources.
 func ListCronWorkflows(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []workflowv1alpha1.CronWorkflow {
 	cronWorkflows, err := ListCronWorkflowsE(t, options, namespace)

@@ -26,6 +26,7 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.Backup objects found in the specified namespace.
+//
 // ListBackups lists matching resources.
 func ListBackups(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.Backup {
 	backups, err := ListBackupsE(t, options, namespace)
@@ -59,6 +60,7 @@ func ListBackupsE(t testing.TestingT, options *k8s.KubectlOptions, namespace str
 //   - name: The name of the Velero backup to check.
 //   - namespace: The namespace where the backup resides.
 //   - timeout: The maximum duration to wait for the backup to complete.
+//
 // WaitForBackupSucceeded waits for the resource condition to be satisfied.
 func WaitForBackupSucceeded(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForBackupSucceededE(t, options, name, namespace, timeout)

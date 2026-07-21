@@ -25,6 +25,7 @@ import (
 //
 // Returns:
 //   - A slice of velerov1.BackupStorageLocation objects found in the specified namespace.
+//
 // ListBackupStorageLocation lists matching resources.
 func ListBackupStorageLocation(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []velerov1.BackupStorageLocation {
 	locations, err := ListBackupStorageLocationE(t, options, namespace)

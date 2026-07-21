@@ -10,8 +10,8 @@ import (
 // TestIstioConditionReady tests the istioConditionReady helper function
 func TestIstioConditionReady(t *testing.T) {
 	tests := []struct {
-		name       string
-		status     *istiometa.IstioStatus
+		name        string
+		status      *istiometa.IstioStatus
 		expectReady bool
 	}{
 		{

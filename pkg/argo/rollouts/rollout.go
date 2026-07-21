@@ -32,6 +32,7 @@ import (
 // Returns:
 //   - rolloutClientSet.Interface: The Argo Rollouts client interface for interacting with Rollouts resources.
 //   - error: An error if the client could not be created.
+//
 // NewArgoRolloutsClient creates a new client or helper instance.
 func NewArgoRolloutsClient(t testing.TestingT, options *k8s.KubectlOptions) (rolloutClientSet.Interface, error) {
 	var cfg *rest.Config
@@ -58,6 +59,7 @@ func NewArgoRolloutsClient(t testing.TestingT, options *k8s.KubectlOptions) (rol
 //
 // Returns:
 //   - A slice of rolloutsv1alpha1.Rollout objects representing the Rollouts in the given namespace.
+//
 // ListRollouts lists matching resources.
 func ListRollouts(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []rolloutsv1alpha1.Rollout {
 	rollouts, err := ListRolloutsE(t, options, namespace)
@@ -90,6 +92,7 @@ func ListRolloutsE(t testing.TestingT, options *k8s.KubectlOptions, namespace st
 //   - name: The name of the rollout resource.
 //   - namespace: The namespace of the rollout resource.
 //   - timeout: The maximum duration to wait for the rollout to become healthy.
+//
 // WaitForRolloutHealthy waits for the resource condition to be satisfied.
 func WaitForRolloutHealthy(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForRolloutHealthyE(t, options, name, namespace, timeout)
@@ -133,6 +136,7 @@ func WaitForRolloutHealthyE(t testing.TestingT, options *k8s.KubectlOptions, nam
 //	name     - The name of the rollout resource.
 //	namespace- The namespace of the rollout resource.
 //	timeout  - The maximum duration to wait for the rollout to pause.
+//
 // WaitForRolloutPaused waits for the resource condition to be satisfied.
 func WaitForRolloutPaused(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForRolloutPausedE(t, options, name, namespace, timeout)

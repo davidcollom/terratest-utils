@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to AuthorizationPolicy objects found in the namespace.
+//
 // ListAuthorizationPolicies lists matching resources.
 func ListAuthorizationPolicies(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*linkerdpolicyv1alpha1.AuthorizationPolicy {
 	authorizationPolicies, err := ListAuthorizationPoliciesE(t, options, namespace)
@@ -60,6 +61,7 @@ func ListAuthorizationPoliciesE(t testing.TestingT, options *k8s.KubectlOptions,
 //
 // Returns:
 //   - A pointer to the AuthorizationPolicy object.
+//
 // GetAuthorizationPolicy gets a resource by name.
 func GetAuthorizationPolicy(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string) *linkerdpolicyv1alpha1.AuthorizationPolicy {
 	authorizationPolicy, err := GetAuthorizationPolicyE(t, options, name, namespace)
@@ -89,6 +91,7 @@ func GetAuthorizationPolicyE(t testing.TestingT, options *k8s.KubectlOptions, na
 //   - name: The name of the AuthorizationPolicy to check.
 //   - namespace: The namespace of the AuthorizationPolicy.
 //   - timeout: The maximum duration to wait for the resource to exist.
+//
 // WaitForAuthorizationPolicyExists waits for the resource condition to be satisfied.
 func WaitForAuthorizationPolicyExists(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForAuthorizationPolicyExistsE(t, options, name, namespace, timeout)

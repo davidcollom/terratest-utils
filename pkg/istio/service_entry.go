@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to ServiceEntry objects found in the namespace.
+//
 // ListServiceEntries lists matching resources.
 func ListServiceEntries(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.ServiceEntry {
 	serviceEntries, err := ListServiceEntriesE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListServiceEntriesE(t testing.TestingT, options *k8s.KubectlOptions, namesp
 //   - name: The name of the ServiceEntry to check.
 //   - namespace: The namespace of the ServiceEntry.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForServiceEntryReady waits for the resource condition to be satisfied.
 func WaitForServiceEntryReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForServiceEntryReadyE(t, options, name, namespace, timeout)

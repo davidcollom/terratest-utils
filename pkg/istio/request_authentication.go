@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to RequestAuthentication objects found in the namespace.
+//
 // ListRequestAuthentications lists matching resources.
 func ListRequestAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.RequestAuthentication {
 	requestAuthentications, err := ListRequestAuthenticationsE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListRequestAuthenticationsE(t testing.TestingT, options *k8s.KubectlOptions
 //   - name: The name of the RequestAuthentication to check.
 //   - namespace: The namespace of the RequestAuthentication.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForRequestAuthenticationReady waits for the resource condition to be satisfied.
 func WaitForRequestAuthenticationReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForRequestAuthenticationReadyE(t, options, name, namespace, timeout)

@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to PeerAuthentication objects found in the namespace.
+//
 // ListPeerAuthentications lists matching resources.
 func ListPeerAuthentications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.PeerAuthentication {
 	peerAuthentications, err := ListPeerAuthenticationsE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListPeerAuthenticationsE(t testing.TestingT, options *k8s.KubectlOptions, n
 //   - name: The name of the PeerAuthentication to check.
 //   - namespace: The namespace of the PeerAuthentication.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForPeerAuthenticationReady waits for the resource condition to be satisfied.
 func WaitForPeerAuthenticationReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForPeerAuthenticationReadyE(t, options, name, namespace, timeout)

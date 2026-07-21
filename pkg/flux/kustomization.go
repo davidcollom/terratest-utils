@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - A slice of kustomizev1.Kustomization objects found in the specified namespace.
+//
 // ListKustomization lists matching resources.
 func ListKustomization(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []kustomizev1.Kustomization {
 	kustomizations, err := ListKustomizationE(t, options, namespace, opts...)

@@ -26,6 +26,7 @@ import (
 //
 // Returns:
 //   - A slice of argoeventsv1alpha1.EventSource objects representing the EventSources in the namespace.
+//
 // ListEventSources lists matching resources.
 func ListEventSources(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.EventSource {
 	eventSources, err := ListEventSourcesE(t, options, namespace)

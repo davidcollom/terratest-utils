@@ -25,6 +25,7 @@ import (
 //
 // Returns:
 //   - A slice of helmv2.HelmRelease objects found in the specified namespace.
+//
 // ListHelmReleases lists matching resources.
 func ListHelmReleases(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []helmv2.HelmRelease {
 	releases, err := ListHelmReleasesE(t, options, namespace, opts...)

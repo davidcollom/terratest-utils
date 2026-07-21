@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.Bucket objects found in the specified namespace.
+//
 // ListBuckets lists matching resources.
 func ListBuckets(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.Bucket {
 	buckets, err := ListBucketsE(t, options, namespace, opts...)
@@ -64,6 +65,7 @@ func ListBucketsE(t testing.TestingT, options *k8s.KubectlOptions, namespace str
 //	name     - The name of the Bucket resource.
 //	namespace- The namespace where the Bucket resource is located.
 //	timeout  - The maximum duration to wait for the Bucket to become ready.
+//
 // WaitForBucketReady waits for the resource condition to be satisfied.
 func WaitForBucketReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForBucketReadyE(t, options, name, namespace, timeout)

@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to WorkloadEntry objects found in the namespace.
+//
 // ListWorkloadEntries lists matching resources.
 func ListWorkloadEntries(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.WorkloadEntry {
 	workloadEntries, err := ListWorkloadEntriesE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListWorkloadEntriesE(t testing.TestingT, options *k8s.KubectlOptions, names
 //   - name: The name of the WorkloadEntry to check.
 //   - namespace: The namespace of the WorkloadEntry.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForWorkloadEntryReady waits for the resource condition to be satisfied.
 func WaitForWorkloadEntryReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForWorkloadEntryReadyE(t, options, name, namespace, timeout)

@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - A slice of argoeventsv1alpha1.EventBus objects found in the specified namespace.
+//
 // ListEventBuses lists matching resources.
 func ListEventBuses(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argoeventsv1alpha1.EventBus {
 	eventBuses, err := ListEventBusesE(t, options, namespace)

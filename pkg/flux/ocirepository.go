@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - []sourcev1.OCIRepository: A slice containing the retrieved OCIRepository resources.
+//
 // ListOCIRepositories lists matching resources.
 func ListOCIRepositories(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.OCIRepository {
 	repos, err := ListOCIRepositoriesE(t, options, namespace, opts...)

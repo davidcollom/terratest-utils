@@ -25,6 +25,7 @@ import (
 //
 // Returns:
 //   - A slice of acmev1.Order objects found in the specified namespace.
+//
 // ListOrders lists matching resources.
 func ListOrders(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []acmev1.Order {
 	orders, err := ListOrdersE(t, options, namespace)

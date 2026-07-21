@@ -26,6 +26,7 @@ import (
 //
 // Returns:
 //   - A slice of v1alpha1.Application representing the Applications found in the namespace.
+//
 // ListApplications lists matching resources.
 func ListApplications(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []argocdv1alpha1.Application {
 	applications, err := ListApplicationsE(t, options, namespace)

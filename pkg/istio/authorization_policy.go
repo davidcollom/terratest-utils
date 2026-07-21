@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to AuthorizationPolicy objects found in the namespace.
+//
 // ListAuthorizationPolicies lists matching resources.
 func ListAuthorizationPolicies(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istiosecurityv1.AuthorizationPolicy {
 	authorizationPolicies, err := ListAuthorizationPoliciesE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListAuthorizationPoliciesE(t testing.TestingT, options *k8s.KubectlOptions,
 //   - name: The name of the AuthorizationPolicy to check.
 //   - namespace: The namespace of the AuthorizationPolicy.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForAuthorizationPolicyReady waits for the resource condition to be satisfied.
 func WaitForAuthorizationPolicyReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForAuthorizationPolicyReadyE(t, options, name, namespace, timeout)

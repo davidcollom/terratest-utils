@@ -27,6 +27,7 @@ import (
 //
 // Returns:
 //   - []esov1.ClusterExternalSecret: A slice containing the ClusterExternalSecret resources found in the namespace.
+//
 // ListClusterExternalSecrets lists matching resources.
 func ListClusterExternalSecrets(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []esov1.ClusterExternalSecret {
 	secrets, err := ListClusterExternalSecretsE(t, options, namespace)

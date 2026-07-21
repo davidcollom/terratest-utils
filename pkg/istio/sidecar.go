@@ -23,6 +23,7 @@ import (
 //
 // Returns:
 //   - A slice of pointers to Sidecar objects found in the namespace.
+//
 // ListSidecars lists matching resources.
 func ListSidecars(t testing.TestingT, options *k8s.KubectlOptions, namespace string) []*istionetworkingv1alpha3.Sidecar {
 	sidecars, err := ListSidecarsE(t, options, namespace)
@@ -52,6 +53,7 @@ func ListSidecarsE(t testing.TestingT, options *k8s.KubectlOptions, namespace st
 //   - name: The name of the Sidecar to check.
 //   - namespace: The namespace of the Sidecar.
 //   - timeout: The maximum duration to wait for the resource to become Ready.
+//
 // WaitForSidecarReady waits for the resource condition to be satisfied.
 func WaitForSidecarReady(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) {
 	err := WaitForSidecarReadyE(t, options, name, namespace, timeout)

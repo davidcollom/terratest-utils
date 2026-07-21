@@ -25,6 +25,7 @@ import (
 //
 // Returns:
 //   - A slice of sourcev1.GitRepository objects found in the specified namespace.
+//
 // ListGitRepositories lists matching resources.
 func ListGitRepositories(t testing.TestingT, options *k8s.KubectlOptions, namespace string, opts ...client.ListOption) []sourcev1.GitRepository {
 	repos, err := ListGitRepositoriesE(t, options, namespace, opts...)
