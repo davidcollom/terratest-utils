@@ -14,7 +14,7 @@ require (
 	github.com/argoproj/argo-cd/v3 v3.4.5
 	github.com/argoproj/argo-events v1.9.11
 	github.com/argoproj/argo-rollouts v1.9.1
-	github.com/argoproj/argo-workflows/v3 v3.7.17
+	github.com/argoproj/argo-workflows/v3 v3.7.18
 	github.com/cert-manager/cert-manager v1.20.2
 	github.com/external-secrets/external-secrets/apis v0.0.0-20260407212151-e325bced502e
 	github.com/fluxcd/helm-controller/api v1.5.3
@@ -164,7 +164,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/kevinburke/ssh_config v1.6.0 // indirect
-	github.com/klauspost/compress v1.18.6 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
