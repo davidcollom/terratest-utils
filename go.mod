@@ -22,7 +22,7 @@ require (
 	github.com/fluxcd/source-controller/api v1.8.2
 	github.com/gruntwork-io/terratest v0.56.0
 	github.com/linkerd/linkerd2 v0.5.1-0.20260622225159-eadc1acf79ad
-	github.com/stretchr/testify v1.11.1
+	github.com/stretchr/testify v1.12.1
 	github.com/vmware-tanzu/velero v1.18.2
 	istio.io/api v1.30.3
 	istio.io/client-go v1.30.3
@@ -210,7 +210,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
-	go.yaml.in/yaml/v3 v3.0.4 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
@@ -229,7 +229,6 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/apiserver v0.35.4 // indirect
 	k8s.io/cli-runtime v0.35.3 // indirect
 	k8s.io/component-base v0.35.4 // indirect
