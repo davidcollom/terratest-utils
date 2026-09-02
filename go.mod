@@ -13,7 +13,7 @@ require (
 	github.com/argoproj/argo-cd/gitops-engine v0.7.1-0.20250908182407-97ad5b59a627
 	github.com/argoproj/argo-cd/v3 v3.4.5
 	github.com/argoproj/argo-events v1.9.11
-	github.com/argoproj/argo-rollouts v1.9.1
+	github.com/argoproj/argo-rollouts v1.10.0
 	github.com/argoproj/argo-workflows/v3 v3.7.18
 	github.com/cert-manager/cert-manager v1.20.2
 	github.com/external-secrets/external-secrets/apis v0.0.0-20260407212151-e325bced502e
