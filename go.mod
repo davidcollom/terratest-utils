@@ -24,8 +24,8 @@ require (
 	github.com/linkerd/linkerd2 v0.5.1-0.20260622225159-eadc1acf79ad
 	github.com/stretchr/testify v1.12.1
 	github.com/vmware-tanzu/velero v1.18.2
-	istio.io/api v1.30.4
-	istio.io/client-go v1.30.4
+	istio.io/api v1.31.0
+	istio.io/client-go v1.31.0
 	k8s.io/api v0.35.4
 	k8s.io/apiextensions-apiserver v0.35.4
 	k8s.io/apimachinery v0.37.0
