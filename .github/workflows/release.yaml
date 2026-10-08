@@ -41,9 +41,16 @@ jobs:
       - name: Compute version and aliases
         id: version
         run: |
-          VERSION=$(svu ${{ github.event.inputs.release_type }})
-          MAJOR=$(echo "$VERSION" | cut -d. -f1)
-          MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
+          release_type='${{ github.event.inputs.release_type }}'
+          # svu subcommand: the "auto" input maps to "next"; the rest pass through.
+          if [[ "$release_type" == "auto" ]]; then
+            VERSION=$(svu next)
+          else
+            VERSION=$(svu "$release_type")
+          fi
+          # Strip the leading v from MAJOR / MAJOR_MINOR (we re-add it when tagging).
+          MAJOR=$(echo "$VERSION" | cut -d. -f1 | sed 's/^v//')
+          MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2 | sed 's/^v//')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "major=$MAJOR" >> $GITHUB_OUTPUT
           echo "major_minor=$MAJOR_MINOR" >> $GITHUB_OUTPUT
@@ -63,24 +70,28 @@ jobs:
             git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
           fi
 
-      - name: Create version tag
-        run: git tag ${{ steps.version.outputs.version }}
-
-      - name: Create minor alias tag
+      - name: Create version + alias + module-prefixed tags
         run: |
-          if git rev-parse v${{ steps.version.outputs.major_minor }} >/dev/null 2>&1; then
-            echo "Minor alias tag v${{ steps.version.outputs.major_minor }} already exists, skipping"
-          else
-            git tag v${{ steps.version.outputs.major_minor }}
-          fi
-
-      - name: Create major alias tag
-        run: |
-          if git rev-parse v${{ steps.version.outputs.major }} >/dev/null 2>&1; then
-            echo "Major alias tag v${{ steps.version.outputs.major }} already exists, skipping"
-          else
-            git tag v${{ steps.version.outputs.major }}
-          fi
+          VERSION='${{ steps.version.outputs.version }}'
+          MAJOR='${{ steps.version.outputs.major }}'
+          MAJOR_MINOR='${{ steps.version.outputs.major_minor }}'
+          # The empty leading entry creates the root-module tags (vX.Y.Z, vX, vX.Y).
+          # Per Go's module proxy, require github.com/davidcollom/terratest-utils/pkg/utils vX.Y.Z
+          # resolves to tag pkg/utils/vX.Y.Z on this repo; the same pattern applies to every
+          # other module under pkg/, so we create the three tags for every prefix.
+          for prefix in '' pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+            # ${prefix:+...} is empty when prefix is "", so the root-module tags come out
+            # as vX.Y.Z / vX / vX.Y, while every other module gets prefix-prefixed tags
+            # like pkg/utils/vX.Y.Z.
+            prefix_slash="${prefix:+${prefix}/}"
+            for tag in "${prefix_slash}${VERSION}" "${prefix_slash}v${MAJOR}" "${prefix_slash}v${MAJOR_MINOR}"; do
+              if git rev-parse "$tag" >/dev/null 2>&1; then
+                echo "Tag $tag already exists, skipping"
+              else
+                git tag "$tag"
+              fi
+            done
+          done
 
       - name: Push tags
         run: git push origin --tags

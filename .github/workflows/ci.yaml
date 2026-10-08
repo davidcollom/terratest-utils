@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 env:
-  MODULES: pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows
+  MODULES: '["pkg/utils","pkg/k8s","pkg/certmanager","pkg/externalsecrets","pkg/flux","pkg/istio","pkg/linkerd","pkg/velero","pkg/argo/cd","pkg/argo/events","pkg/argo/rollouts","pkg/argo/workflows"]'
 
 jobs:
   fmt:
