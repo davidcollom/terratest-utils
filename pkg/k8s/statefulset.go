@@ -4,11 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 
 	"github.com/stretchr/testify/require"
@@ -129,7 +128,7 @@ func WaitForStatefulSetReadyE(t testing.TestingT, options *KubectlOptions, name,
 	}
 
 	return wait.PollUntilContextTimeout(context.Background(), 2*time.Second, timeout, true, func(ctx context.Context) (bool, error) {
-		sts, err := client.AppsV1().StatefulSets(namespace).Get(ctx, name, v1.GetOptions{})
+		sts, err := client.AppsV1().StatefulSets(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			return false, nil // retry
 		}

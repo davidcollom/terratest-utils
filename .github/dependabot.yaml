@@ -1,7 +1,535 @@
 version: 2
 updates:
   - package-ecosystem: "gomod"
-    directory: "/"
+    directory: "/pkg/utils"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/k8s"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/certmanager"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/externalsecrets"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/flux"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/istio"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/linkerd"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/velero"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/argo/cd"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/argo/events"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/argo/rollouts"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "github.com/external-secrets/external-secrets"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "k8s.io/*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      kube:
+        patterns:
+          - k8s.io/*
+          - sigs.k8s.io/*
+      istio:
+        patterns:
+          - istio.io/*
+          - github.com/istio/*
+      flux:
+        patterns:
+          - fluxcd.io/*
+          - github.com/fluxcd/*
+      argo:
+        patterns:
+          - argoproj.io/*
+          - github.com/argoproj/*
+      external-secrets:
+        patterns:
+          - github.com/external-secrets/*
+          - github.com/external-secrets/external-secrets/*
+      tanzu:
+        patterns:
+          - github.com/vmware-tanzu/*
+      linkerd:
+        patterns:
+          - github.com/linkerd/*
+      cert-manager:
+        patterns:
+          - github.com/cert-manager/*
+      other:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gomod"
+    directory: "/pkg/argo/workflows"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5

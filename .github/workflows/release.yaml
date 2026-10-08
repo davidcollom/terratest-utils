@@ -1,0 +1,124 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      major: ${{ steps.version.outputs.major }}
+      major_minor: ${{ steps.version.outputs.major_minor }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.23'
+
+      - name: Install svu
+        run: go install github.com/caarlos0/svu/v3@latest
+
+      - name: Compute version and aliases
+        id: version
+        run: |
+          release_type='${{ github.event.inputs.release_type }}'
+          # svu subcommand: the "auto" input maps to "next"; the rest pass through.
+          if [[ "$release_type" == "auto" ]]; then
+            VERSION=$(svu next)
+          else
+            VERSION=$(svu "$release_type")
+          fi
+          # Strip the leading v from MAJOR / MAJOR_MINOR (we re-add it when tagging).
+          MAJOR=$(echo "$VERSION" | cut -d. -f1 | sed 's/^v//')
+          MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2 | sed 's/^v//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "major=$MAJOR" >> $GITHUB_OUTPUT
+          echo "major_minor=$MAJOR_MINOR" >> $GITHUB_OUTPUT
+          echo "Tagging version: $VERSION"
+
+      - name: Run bump-version script
+        run: ./scripts/bump-version.sh ${{ steps.version.outputs.version }}
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit (already at ${{ steps.version.outputs.version }})."
+          else
+            git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          fi
+
+      - name: Create full version + moving alias + module-prefixed tags
+        run: |
+          set -euo pipefail
+          VERSION='${{ steps.version.outputs.version }}'
+          MAJOR='${{ steps.version.outputs.major }}'
+          MAJOR_MINOR='${{ steps.version.outputs.major_minor }}'
+          for prefix in '' pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+            # ${prefix:+...} is empty when prefix is "", so the root-module tags come out
+            # as vX.Y.Z / vX / vX.Y, while every other module gets prefix-prefixed tags
+            # like pkg/utils/vX.Y.Z.
+            prefix_slash="${prefix:+${prefix}/}"
+            # Full version tags are immutable - never recreate or repoint them.
+            git tag "${prefix_slash}${VERSION}"
+            # Alias tags (major, major.minor) are moving - force-update on every release
+            # so consumers pinned to e.g. v0 get the latest patch release.
+            git tag -f "${prefix_slash}v${MAJOR}" "${prefix_slash}${VERSION}"
+            git tag -f "${prefix_slash}v${MAJOR_MINOR}" "${prefix_slash}${VERSION}"
+          done
+
+      - name: Push full version tags
+        run: |
+          set -euo pipefail
+          VERSION='${{ steps.version.outputs.version }}'
+          for prefix in '' pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+            prefix_slash="${prefix:+${prefix}/}"
+            git push origin "${prefix_slash}${VERSION}"
+          done
+
+      - name: Force-push moving alias tags
+        run: |
+          set -euo pipefail
+          MAJOR='${{ steps.version.outputs.major }}'
+          MAJOR_MINOR='${{ steps.version.outputs.major_minor }}'
+          for prefix in '' pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+            prefix_slash="${prefix:+${prefix}/}"
+            git push --force origin "${prefix_slash}v${MAJOR}" "${prefix_slash}v${MAJOR_MINOR}"
+          done
+
+  github-release:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      discussions: write
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.release.outputs.version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

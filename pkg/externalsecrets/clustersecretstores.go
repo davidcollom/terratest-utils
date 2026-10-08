@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
-	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
+	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 
 	"github.com/stretchr/testify/require"
 	"k8s.io/apimachinery/pkg/util/wait"

@@ -1,11 +1,11 @@
 package externalsecrets
 
 import (
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"

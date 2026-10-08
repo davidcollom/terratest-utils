@@ -3,7 +3,7 @@ package utils
 import (
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/rest"
 )

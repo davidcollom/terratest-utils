@@ -1,27 +1,29 @@
 # Terratest Utils
 
-This package provides a set of helpers for [Terratest](https://terratest.gruntwork.io/) and general integration testing. It is designed to help validate that platforms and deployments have been successfully provisioned and configured.
+Terratest-compatible helper libraries for testing Kubernetes-ecosystem resources, split into 12 independent Go modules on top of Terratest v2.
 
-## Features
+## Modules
 
-- Utilities for testing Kubernetes resources, including cert-manager, external-secrets, ArgoCD, and Flux
-- Functions to check readiness, status, and correctness of deployed resources
-- Simplifies writing robust integration tests for cloud-native platforms
-- Can be used with Terratest or standalone in Go test suites
+Each module is a standalone Go module that can be imported independently. All helpers follow the Terratest job-helper pattern (`VerbResource` and `VerbResourceE` pairs).
+
+| Module | Import path | Coverage |
+| --- | --- | --- |
+| utils | `github.com/davidcollom/terratest-utils/pkg/utils` | Shared REST config helper used by every domain module |
+| k8s | `github.com/davidcollom/terratest-utils/pkg/k8s` | Core Kubernetes (CRD, StatefulSet) and a `KubectlOptions` alias over Terratest v2 |
+| certmanager | `github.com/davidcollom/terratest-utils/pkg/certmanager` | cert-manager — Certificate, Issuer, ClusterIssuer, CertificateRequest, Order, Challenge |
+| externalsecrets | `github.com/davidcollom/terratest-utils/pkg/externalsecrets` | External Secrets Operator — ExternalSecret, ClusterExternalSecret, SecretStore, ClusterSecretStore, PushSecret |
+| flux | `github.com/davidcollom/terratest-utils/pkg/flux` | Flux v2 — HelmRelease, HelmRepository, HelmChart, GitRepository, Kustomization, Bucket, OCIRepository |
+| istio | `github.com/davidcollom/terratest-utils/pkg/istio` | Istio networking (Gateway, VirtualService, DestinationRule, ServiceEntry, Sidecar, EnvoyFilter, WorkloadEntry, WorkloadGroup) and security (AuthorizationPolicy, PeerAuthentication, RequestAuthentication) |
+| linkerd | `github.com/davidcollom/terratest-utils/pkg/linkerd` | Linkerd — Server, ServerAuthorization, AuthorizationPolicy, HTTPRoute, MeshTLSAuthentication, NetworkAuthentication, ServiceProfile, TrafficSplit |
+| velero | `github.com/davidcollom/terratest-utils/pkg/velero` | Velero — Backup, Restore, Schedule, BackupStorageLocation |
+| argo/cd | `github.com/davidcollom/terratest-utils/pkg/argo/cd` | ArgoCD — Application, ApplicationSet, AppProject |
+| argo/events | `github.com/davidcollom/terratest-utils/pkg/argo/events` | Argo Events — EventBus, EventSource, Sensor |
+| argo/rollouts | `github.com/davidcollom/terratest-utils/pkg/argo/rollouts` | Argo Rollouts |
+| argo/workflows | `github.com/davidcollom/terratest-utils/pkg/argo/workflows` | Argo Workflows — Workflows, CronWorkflows, WorkflowTemplates, WorkflowPhases |
 
 ## Usage
 
-Import the relevant package(s) in your Terratest or Go integration tests:
-
-```go
-import (
-    "github.com/davidcollom/terratest-utils/pkg/certmanager"
-    "github.com/davidcollom/terratest-utils/pkg/externalsecrets"
-    // ...other helpers
-)
-```
-
-Use the provided functions to validate resources, e.g.:
+Import the modules you need in your Terratest or Go integration tests. All helpers accept `testing.TestingT` from Terratest v2 and `*k8s.KubectlOptions` from Terratest v2.
 
 ```go
 import (
@@ -30,7 +32,7 @@ import (
 
     "github.com/davidcollom/terratest-utils/pkg/certmanager"
     "github.com/davidcollom/terratest-utils/pkg/flux"
-    "github.com/gruntwork-io/terratest/modules/k8s"
+    "github.com/gruntwork-io/terratest/modules/k8s/v2"
 )
 
 func TestPlatform(t *testing.T) {
@@ -43,39 +45,53 @@ func TestPlatform(t *testing.T) {
     releases := flux.ListHelmReleases(t, options, "flux-system")
 
     // Use the E variant to handle errors yourself
-    cert, err := certmanager.NewClient(t, options)
+    client, err := certmanager.NewClient(t, options)
     // ...
 }
 ```
 
+> Note: helpers accept Terratest's `testing.TestingT` interface, but the entry-point
+> test function uses the standard library's `*testing.T`, which satisfies that
+> interface. So import `"testing"`, not Terratest's `testing` package.
+
 Every helper is available in two forms:
+
 - `VerbResource(t, options, ...)` — fails the test on error
 - `VerbResourceE(t, options, ...)` — returns `(value, error)` for custom handling
 
-## Structure
+## Local development
 
-| Package | Description |
-|---|---|
-| `pkg/argo/cd` | Helpers for ArgoCD Application, ApplicationSet, and AppProject resources |
-| `pkg/argo/events` | Helpers for Argo Events — EventBus, EventSource, Sensor |
-| `pkg/argo/rollouts` | Helpers for Argo Rollouts |
-| `pkg/argo/workflows` | Helpers for Argo Workflows, CronWorkflows, WorkflowTemplates, and WorkflowPhases |
-| `pkg/certmanager` | Helpers for cert-manager Certificate, Issuer, ClusterIssuer, CertificateRequest, Order, and Challenge resources |
-| `pkg/externalsecrets` | Helpers for External Secrets Operator — ExternalSecret, ClusterExternalSecret, SecretStore, ClusterSecretStore, PushSecret |
-| `pkg/flux` | Helpers for Flux v2 — HelmRelease, HelmRepository, HelmChart, GitRepository, Kustomization, Bucket, OCIRepository |
-| `pkg/istio` | Helpers for Istio networking (Gateway, VirtualService, DestinationRule, ServiceEntry, Sidecar, EnvoyFilter, WorkloadEntry, WorkloadGroup) and security (AuthorizationPolicy, PeerAuthentication, RequestAuthentication) |
-| `pkg/k8s` | Core Kubernetes helpers — CRD, StatefulSet — plus the `KubectlOptions` alias |
-| `pkg/linkerd` | Helpers for Linkerd policy and traffic resources — Server, ServerAuthorization, AuthorizationPolicy, HTTPRoute, MeshTLSAuthentication, NetworkAuthentication, ServiceProfile, TrafficSplit |
-| `pkg/utils` | Shared utility — REST config helper used by all domain packages |
-| `pkg/velero` | Helpers for Velero Backup, Restore, Schedule, BackupStorageLocation |
+The repo is a monorepo of 12 independent Go modules wired together by the root `go.work` file. Use the workspace to build and test every module at once, or `cd` into a single module to work on it in isolation.
 
-## Purpose
+Build, vet, and test every module. The repo root is itself an empty marker module, so `go build ./...` at the root only matches packages inside the root — it does not recurse into the 12 nested modules. Loop over them explicitly:
 
-These helpers are intended to:
+```sh
+for mod in pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+  (cd "$mod" && go build ./... && go vet ./...)
+done
+```
 
-- Accelerate writing integration tests for Kubernetes platforms
-- Provide reusable checks for resource readiness and correctness
-- Help ensure deployments are successful and meet expected criteria
+Work on a single module:
+
+```sh
+cd pkg/certmanager
+go build ./...
+go test ./...
+```
+
+The root `go.mod` is a marker module for the workspace and contains no Go source. Each `pkg/<dir>` (and each `pkg/argo/<dir>`) has its own `go.mod` and is the unit of versioning and release.
+
+## Release process
+
+Releases are driven by the `Release` GitHub Actions workflow (`.github/workflows/release.yaml`), triggered manually via `workflow_dispatch`.
+
+1. **Trigger** — Run the workflow from the Actions tab and pick a release type (`auto`, `major`, `minor`, or `patch`).
+2. **Version computation** — The workflow installs [`svu`](https://github.com/caarlos0/svu) and computes the next SemVer version from the git history.
+3. **Version bump** — It runs `./scripts/bump-version.sh <version>`, which updates every submodule's `go.mod` so cross-module `require` directives point at the new version, and drops the local `replace` directives that only exist for development.
+4. **Commit and tag** — The workflow commits the version bump, creates the exact version tag (e.g. `v0.0.12`), and creates the alias tags for the minor (`v0.0`) and major (`v0`) series so consumers can pin to a moving tag.
+5. **Push and release** — Tags are pushed to `origin` and a GitHub Release is created with auto-generated notes.
+
+The `bump-version.sh` script can also be run locally: `./scripts/bump-version.sh v0.0.12`.
 
 ## License
 

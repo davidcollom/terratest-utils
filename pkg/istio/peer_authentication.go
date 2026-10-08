@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"github.com/stretchr/testify/require"
 	istiosecurityv1 "istio.io/client-go/pkg/apis/security/v1"
 	v1meta "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -62,7 +62,9 @@ func WaitForPeerAuthenticationReady(t testing.TestingT, options *k8s.KubectlOpti
 
 // WaitForPeerAuthenticationReadyE waits for the resource condition to be satisfied.
 func WaitForPeerAuthenticationReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
-	options = k8s.NewKubectlOptions("", "", namespace)
+	if options == nil {
+		options = k8s.NewKubectlOptions("", "", namespace)
+	}
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
