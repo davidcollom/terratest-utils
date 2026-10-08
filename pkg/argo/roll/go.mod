@@ -1,4 +1,4 @@
-module github.com/davidcollom/terratest-utils/pkg/argo/rollouts
+module github.com/davidcollom/terratest-utils/pkg/argo/roll
 
 go 1.27.1
 
