@@ -62,7 +62,9 @@ func WaitForServiceEntryReady(t testing.TestingT, options *k8s.KubectlOptions, n
 
 // WaitForServiceEntryReadyE waits for the resource condition to be satisfied.
 func WaitForServiceEntryReadyE(t testing.TestingT, options *k8s.KubectlOptions, name, namespace string, timeout time.Duration) error {
-	options = k8s.NewKubectlOptions("", "", namespace)
+	if options == nil {
+		options = k8s.NewKubectlOptions("", "", namespace)
+	}
 	istioClient := NewClient(t, options)
 
 	ctx := context.Background()
