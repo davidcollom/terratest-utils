@@ -13,8 +13,23 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  MODULES: '["pkg/utils","pkg/k8s","pkg/certmanager","pkg/externalsecrets","pkg/flux","pkg/istio","pkg/linkerd","pkg/velero","pkg/argo/cd","pkg/argo/events","pkg/argo/rollouts","pkg/argo/workflows"]'
+# Matrix list of every go module in the repo. Defined once and reused via
+# YAML anchor; do NOT move this into a workflow-level `env` and try to read
+# it with `${{ fromJSON(env.MODULES) }}` inside a matrix - the env context
+# is unavailable at matrix-evaluation time, which silently produces 0 jobs.
+modules: &modules
+  - pkg/utils
+  - pkg/k8s
+  - pkg/certmanager
+  - pkg/externalsecrets
+  - pkg/flux
+  - pkg/istio
+  - pkg/linkerd
+  - pkg/velero
+  - pkg/argo/cd
+  - pkg/argo/events
+  - pkg/argo/rollouts
+  - pkg/argo/workflows
 
 jobs:
   fmt:
@@ -22,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(env.MODULES) }}
+        module: *modules
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -43,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(env.MODULES) }}
+        module: *modules
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -58,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(env.MODULES) }}
+        module: *modules
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -75,7 +90,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(env.MODULES) }}
+        module: *modules
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -94,7 +109,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(env.MODULES) }}
+        module: *modules
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
