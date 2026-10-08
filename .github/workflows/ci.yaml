@@ -107,7 +107,7 @@ jobs:
           go-version-file: go.work
           cache-dependency-path: '${{ matrix.module }}/go.sum'
       - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
       - name: Run golangci-lint
         run: golangci-lint run ${{ matrix.module }}/...
 
