@@ -12,7 +12,7 @@ use (
 	./pkg/velero
 	./pkg/argo/cd
 	./pkg/argo/events
-	./pkg/argo/rollouts
+	./pkg/argo/roll
 	./pkg/argo/workflows
 )
 

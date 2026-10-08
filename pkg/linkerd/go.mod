@@ -10,6 +10,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	k8s.io/apimachinery v0.37.0
 	k8s.io/client-go v0.37.0
+	sigs.k8s.io/gateway-api v1.0.0
 )
 
 require (
@@ -74,4 +75,4 @@ require (
 
 replace github.com/davidcollom/terratest-utils/pkg/utils => ../utils
 
-replace sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
+exclude sigs.k8s.io/gateway-api v1.5.0

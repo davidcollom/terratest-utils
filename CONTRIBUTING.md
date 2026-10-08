@@ -8,21 +8,21 @@ Thank you for your interest in contributing! We welcome improvements, bug fixes,
 2. **Make your changes** (code, documentation, tests, etc.).
 3. **Run tests and linting** to ensure your changes do not break existing functionality.
 
-   The repo is a monorepo of independent Go modules wired together by `go.work`. Builds and tests can be run per-module, or across the whole workspace from the root.
+    The repo is a monorepo of independent Go modules wired together by `go.work`. The repo root is an empty marker module, so `go build ./...` at the root only matches packages inside the root — it does not recurse into the 12 nested modules. Build and test per module, or loop over them:
 
-   ```sh
-   # Build everything (uses go.work)
-   go build ./...
-   go vet ./...
-   go test ./...
+    ```sh
+    # Build a single module
+    cd pkg/certmanager
+    go build ./...
+    go test ./...
 
-   # Build a single module
-   cd pkg/certmanager
-   go build ./...
-   go test ./...
-   ```
+    # Build every module
+    for mod in pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+      (cd "$mod" && go build ./... && go vet ./...)
+    done
+    ```
 
-   When you add a new function, work inside the specific module the change belongs to and run `go build ./...` and `go vet ./...` from that module's directory before committing.
+    When you add a new function, work inside the specific module the change belongs to and run `go build ./...` and `go vet ./...` from that module's directory before committing.
 
 4. **Commit your changes** with clear and descriptive messages.
 5. **Push to your fork** and open a Pull Request (PR) against the `main` branch.

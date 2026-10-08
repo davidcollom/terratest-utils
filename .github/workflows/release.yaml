@@ -70,31 +70,43 @@ jobs:
             git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
           fi
 
-      - name: Create version + alias + module-prefixed tags
+      - name: Create full version + moving alias + module-prefixed tags
         run: |
+          set -euo pipefail
           VERSION='${{ steps.version.outputs.version }}'
           MAJOR='${{ steps.version.outputs.major }}'
           MAJOR_MINOR='${{ steps.version.outputs.major_minor }}'
-          # The empty leading entry creates the root-module tags (vX.Y.Z, vX, vX.Y).
-          # Per Go's module proxy, require github.com/davidcollom/terratest-utils/pkg/utils vX.Y.Z
-          # resolves to tag pkg/utils/vX.Y.Z on this repo; the same pattern applies to every
-          # other module under pkg/, so we create the three tags for every prefix.
           for prefix in '' pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
             # ${prefix:+...} is empty when prefix is "", so the root-module tags come out
             # as vX.Y.Z / vX / vX.Y, while every other module gets prefix-prefixed tags
             # like pkg/utils/vX.Y.Z.
             prefix_slash="${prefix:+${prefix}/}"
-            for tag in "${prefix_slash}${VERSION}" "${prefix_slash}v${MAJOR}" "${prefix_slash}v${MAJOR_MINOR}"; do
-              if git rev-parse "$tag" >/dev/null 2>&1; then
-                echo "Tag $tag already exists, skipping"
-              else
-                git tag "$tag"
-              fi
-            done
+            # Full version tags are immutable - never recreate or repoint them.
+            git tag "${prefix_slash}${VERSION}"
+            # Alias tags (major, major.minor) are moving - force-update on every release
+            # so consumers pinned to e.g. v0 get the latest patch release.
+            git tag -f "${prefix_slash}v${MAJOR}" "${prefix_slash}${VERSION}"
+            git tag -f "${prefix_slash}v${MAJOR_MINOR}" "${prefix_slash}${VERSION}"
           done
 
-      - name: Push tags
-        run: git push origin --tags
+      - name: Push full version tags
+        run: |
+          set -euo pipefail
+          VERSION='${{ steps.version.outputs.version }}'
+          for prefix in '' pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+            prefix_slash="${prefix:+${prefix}/}"
+            git push origin "${prefix_slash}${VERSION}"
+          done
+
+      - name: Force-push moving alias tags
+        run: |
+          set -euo pipefail
+          MAJOR='${{ steps.version.outputs.major }}'
+          MAJOR_MINOR='${{ steps.version.outputs.major_minor }}'
+          for prefix in '' pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+            prefix_slash="${prefix:+${prefix}/}"
+            git push --force origin "${prefix_slash}v${MAJOR}" "${prefix_slash}v${MAJOR_MINOR}"
+          done
 
   github-release:
     needs: release

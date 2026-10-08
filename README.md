@@ -27,11 +27,11 @@ Import the modules you need in your Terratest or Go integration tests. All helpe
 
 ```go
 import (
+    "testing"
     "time"
 
     "github.com/davidcollom/terratest-utils/pkg/certmanager"
     "github.com/davidcollom/terratest-utils/pkg/flux"
-    "github.com/gruntwork-io/terratest/modules/core/v2/testing"
     "github.com/gruntwork-io/terratest/modules/k8s/v2"
 )
 
@@ -50,6 +50,10 @@ func TestPlatform(t *testing.T) {
 }
 ```
 
+> Note: helpers accept Terratest's `testing.TestingT` interface, but the entry-point
+> test function uses the standard library's `*testing.T`, which satisfies that
+> interface. So import `"testing"`, not Terratest's `testing` package.
+
 Every helper is available in two forms:
 
 - `VerbResource(t, options, ...)` — fails the test on error
@@ -59,12 +63,12 @@ Every helper is available in two forms:
 
 The repo is a monorepo of 12 independent Go modules wired together by the root `go.work` file. Use the workspace to build and test every module at once, or `cd` into a single module to work on it in isolation.
 
-Build, vet, and test everything from the repo root:
+Build, vet, and test every module. The repo root is itself an empty marker module, so `go build ./...` at the root only matches packages inside the root — it does not recurse into the 12 nested modules. Loop over them explicitly:
 
 ```sh
-go build ./...
-go vet ./...
-go test ./...
+for mod in pkg/utils pkg/k8s pkg/certmanager pkg/externalsecrets pkg/flux pkg/istio pkg/linkerd pkg/velero pkg/argo/cd pkg/argo/events pkg/argo/rollouts pkg/argo/workflows; do
+  (cd "$mod" && go build ./... && go vet ./...)
+done
 ```
 
 Work on a single module:
