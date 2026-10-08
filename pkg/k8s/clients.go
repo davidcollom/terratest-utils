@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	terrak8s "github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
+	terrak8s "github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"k8s.io/client-go/kubernetes"
 
 	apixclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"

@@ -1,0 +1,14 @@
+[
+  "pkg/utils",
+  "pkg/k8s",
+  "pkg/certmanager",
+  "pkg/externalsecrets",
+  "pkg/flux",
+  "pkg/istio",
+  "pkg/linkerd",
+  "pkg/velero",
+  "pkg/argo/cd",
+  "pkg/argo/events",
+  "pkg/argo/roll",
+  "pkg/argo/workflows"
+]

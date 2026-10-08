@@ -3,8 +3,8 @@ package k8s
 import (
 	gotesting "testing"
 
-	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	apixv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apixcm "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apixfake "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/fake"
