@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/argoproj/argo-workflows/v3 v3.7.18
-	github.com/davidcollom/terratest-utils/pkg/utils v0.0.0
+	github.com/davidcollom/terratest-utils/pkg/utils v0.1.0
 	github.com/gruntwork-io/terratest/modules/core/v2 v2.0.0
 	github.com/gruntwork-io/terratest/modules/k8s/v2 v2.0.0
 	github.com/stretchr/testify v1.11.1
@@ -78,5 +78,3 @@ require (
 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
-
-replace github.com/davidcollom/terratest-utils/pkg/utils => ../../utils

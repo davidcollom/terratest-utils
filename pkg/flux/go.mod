@@ -3,7 +3,7 @@ module github.com/davidcollom/terratest-utils/pkg/flux
 go 1.27.1
 
 require (
-	github.com/davidcollom/terratest-utils/pkg/utils v0.0.0
+	github.com/davidcollom/terratest-utils/pkg/utils v0.1.0
 	github.com/fluxcd/helm-controller/api v1.5.3
 	github.com/fluxcd/kustomize-controller/api v1.8.3
 	github.com/fluxcd/source-controller/api v1.8.2
@@ -83,5 +83,3 @@ require (
 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
-
-replace github.com/davidcollom/terratest-utils/pkg/utils => ../utils
