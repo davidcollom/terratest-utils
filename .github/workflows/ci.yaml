@@ -13,23 +13,12 @@ concurrency:
 permissions:
   contents: read
 
-# Matrix list of every go module in the repo. Defined once and reused via
-# YAML anchor; do NOT move this into a workflow-level `env` and try to read
-# it with `${{ fromJSON(env.MODULES) }}` inside a matrix - the env context
-# is unavailable at matrix-evaluation time, which silently produces 0 jobs.
-modules: &modules
-  - pkg/utils
-  - pkg/k8s
-  - pkg/certmanager
-  - pkg/externalsecrets
-  - pkg/flux
-  - pkg/istio
-  - pkg/linkerd
-  - pkg/velero
-  - pkg/argo/cd
-  - pkg/argo/events
-  - pkg/argo/rollouts
-  - pkg/argo/workflows
+# Matrix of every go module in the repo. The list is repeated inline in
+# each job's matrix below because GitHub Actions does NOT expand YAML
+# anchors inside `matrix:` keys (and the `env` context is not available
+# at matrix-evaluation time either), so the only reliable way to get all
+# 12 jobs to materialize is to spell the array out in every job.
+# When adding or removing a module, update all five lists below.
 
 jobs:
   fmt:
@@ -37,7 +26,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: *modules
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/rollouts
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -58,7 +59,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: *modules
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/rollouts
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -73,7 +86,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: *modules
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/rollouts
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -90,7 +115,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: *modules
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/rollouts
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -109,7 +146,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: *modules
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/rollouts
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
