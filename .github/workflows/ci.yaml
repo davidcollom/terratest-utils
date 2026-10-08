@@ -13,28 +13,33 @@ concurrency:
 permissions:
   contents: read
 
-# The matrix list of every go module in the repo is the SINGLE SOURCE OF TRUTH
-# in .github/modules.json. A setup job reads it and exposes it as a job output,
-# which the fmt / vet / lint / vulncheck / test jobs then fromJSON() into their
-# matrix. Adding or removing a module is now a one-line change to the JSON
-# file - no need to edit five matrices in this file, and no risk of a stale
-# directory name causing matrix expansion to reference a non-existent path.
-jobs:
-  modules:
-    runs-on: ubuntu-latest
-    outputs:
-      modules: ${{ steps.read.outputs.modules }}
-    steps:
-      - id: read
-        run: echo "modules=$(jq -c . .github/modules.json)" >> "$GITHUB_OUTPUT"
+# The 12-module list is repeated in each job's matrix below because:
+#   1. GitHub Actions does not expand YAML anchors inside `matrix:` keys
+#   2. The `env` context is not available at matrix-evaluation time
+#   3. A setup-job + fromJSON(needs...) approach failed matrix expansion
+#      silently in this repo (matrix jobs never started)
+# When adding or removing a module, update all five lists below AND
+# .github/modules.json (kept in sync for documentation / future use).
 
+jobs:
   fmt:
-    needs: [modules]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(needs.modules.outputs.modules) }}
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/roll
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -51,12 +56,23 @@ jobs:
           fi
 
   vet:
-    needs: [modules]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(needs.modules.outputs.modules) }}
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/roll
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -67,12 +83,23 @@ jobs:
         run: go vet ${{ matrix.module }}/...
 
   lint:
-    needs: [modules]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(needs.modules.outputs.modules) }}
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/roll
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -85,12 +112,23 @@ jobs:
         run: golangci-lint run ${{ matrix.module }}/...
 
   vulncheck:
-    needs: [modules]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(needs.modules.outputs.modules) }}
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/roll
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
@@ -104,12 +142,24 @@ jobs:
         run: govulncheck ${{ matrix.module }}/...
 
   test:
-    needs: [fmt, vet, lint, vulncheck, modules]
+    needs: [fmt, vet, lint, vulncheck]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        module: ${{ fromJSON(needs.modules.outputs.modules) }}
+        module:
+          - pkg/utils
+          - pkg/k8s
+          - pkg/certmanager
+          - pkg/externalsecrets
+          - pkg/flux
+          - pkg/istio
+          - pkg/linkerd
+          - pkg/velero
+          - pkg/argo/cd
+          - pkg/argo/events
+          - pkg/argo/roll
+          - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
