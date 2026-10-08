@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	linkerdv1alpha2 "github.com/linkerd/linkerd2/controller/gen/apis/serviceprofile/v1alpha2"
 	"github.com/stretchr/testify/require"
 	v1meta "k8s.io/apimachinery/pkg/apis/meta/v1"

@@ -1,10 +1,10 @@
 package linkerd
 
 import (
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	linkerdclientset "github.com/linkerd/linkerd2/controller/gen/client/clientset/versioned"
 	"github.com/stretchr/testify/require"
 )

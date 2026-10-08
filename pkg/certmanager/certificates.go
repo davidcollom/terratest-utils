@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	certv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"github.com/stretchr/testify/require"
 
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -107,7 +107,7 @@ func WaitForCertificateReadyE(t testing.TestingT, options *k8s.KubectlOptions, n
 func ValidateCertificateSecret(t testing.TestingT, options *k8s.KubectlOptions, cert *certv1.Certificate) {
 	// We need to ensure we're looking in the right namespace
 	options.Namespace = cert.Namespace
-	secret := k8s.GetSecret(t, options, cert.Spec.SecretName)
+	secret := k8s.GetSecretContext(t, context.Background(), options, cert.Spec.SecretName)
 
 	if _, ok := secret.Data["tls.crt"]; !ok {
 		t.Fatalf("Secret %s missing tls.crt", cert.Spec.SecretName)

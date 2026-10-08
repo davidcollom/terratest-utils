@@ -1,10 +1,10 @@
 package utils
 
 import (
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 	"k8s.io/client-go/rest"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 )
 
 // GetRestConfigE retrieves a Kubernetes REST client configuration based on the provided KubectlOptions.
@@ -28,5 +28,5 @@ func GetRestConfigE(t testing.TestingT, options *k8s.KubectlOptions) (*rest.Conf
 	if err != nil {
 		return nil, err
 	}
-	return k8s.LoadApiClientConfigE(cfgPath, options.ContextName)
+	return k8s.LoadAPIClientConfigE(cfgPath, options.ContextName)
 }

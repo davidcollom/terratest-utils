@@ -3,7 +3,7 @@ package k8s
 import (
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	apixv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"

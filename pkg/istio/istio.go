@@ -5,10 +5,10 @@
 package istio
 
 import (
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"github.com/stretchr/testify/require"
 	istiometa "istio.io/api/meta/v1alpha1"
 	istionetworking "istio.io/api/networking/v1alpha3"

@@ -5,8 +5,8 @@ import (
 	cmclientset "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 	fakecm "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned/fake"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 

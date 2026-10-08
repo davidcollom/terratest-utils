@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	kustomizev1 "github.com/fluxcd/kustomize-controller/api/v1"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/stretchr/testify/require"

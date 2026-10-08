@@ -4,13 +4,13 @@
 package cd
 
 import (
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
-	apphealth "github.com/argoproj/argo-cd/gitops-engine/pkg/health"
+	apphealth "github.com/argoproj/argo-cd/gitops-engine/v3/pkg/health"
 	argocdv1alpha1 "github.com/argoproj/argo-cd/v3/pkg/apis/application/v1alpha1"
 	argocd "github.com/argoproj/argo-cd/v3/pkg/client/clientset/versioned"
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"k8s.io/client-go/rest"
 )
 

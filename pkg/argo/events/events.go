@@ -4,12 +4,12 @@
 package events
 
 import (
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	argoclientset "github.com/argoproj/argo-events/pkg/client/clientset/versioned"
 
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )

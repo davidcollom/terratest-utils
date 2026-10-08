@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
-	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	esov1 "github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/stretchr/testify/require"

@@ -5,13 +5,13 @@
 package certmanager
 
 import (
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
 	cmv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	cmclientset "github.com/cert-manager/cert-manager/pkg/client/clientset/versioned"
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"k8s.io/client-go/rest"
 )
 

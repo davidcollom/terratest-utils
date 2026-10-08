@@ -1,15 +1,20 @@
 package k8s
 
 import (
+	"context"
+
 	"github.com/davidcollom/terratest-utils/pkg/utils"
-	terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
-	"github.com/gruntwork-io/terratest/modules/testing"
+	terrak8s "github.com/gruntwork-io/terratest/modules/k8s/v2"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
+	"k8s.io/client-go/kubernetes"
 
 	apixclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 )
 
 // NewClient gets a new standard kubernetes clientset
-var NewClient = terrak8s.GetKubernetesClientFromOptionsE
+var NewClient = func(t testing.TestingT, options *KubectlOptions) (*kubernetes.Clientset, error) {
+	return terrak8s.GetKubernetesClientFromOptionsContextE(t, context.Background(), options)
+}
 
 // NewAPIXClient creates a new API Extensions (apix) clientset using the provided
 // terrak8s.KubectlOptions. It returns an apixclientset.Interface for interacting

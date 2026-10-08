@@ -8,7 +8,7 @@
 // Example usage:
 //
 //	import (
-//	    "github.com/gruntwork-io/terratest/modules/testing"
+//	    "github.com/gruntwork-io/terratest/modules/core/v2/testing"
 //	    "github.com/davidcollom/terratest-utils/pkg/k8s"
 //	)
 //

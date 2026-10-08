@@ -2,11 +2,11 @@ package flux
 
 import (
 	"context"
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 	"time"
 
 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/stretchr/testify/require"

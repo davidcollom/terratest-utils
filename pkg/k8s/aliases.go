@@ -1,6 +1,6 @@
 package k8s
 
-import terrak8s "github.com/gruntwork-io/terratest/modules/k8s"
+import terrak8s "github.com/gruntwork-io/terratest/modules/k8s/v2"
 
 // KubectlOptions is an alias to terratest's KubectlOptions type so package APIs can
 // match terratest function signatures.

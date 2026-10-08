@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gruntwork-io/terratest/modules/testing"
+	"github.com/gruntwork-io/terratest/modules/core/v2/testing"
 
-	"github.com/gruntwork-io/terratest/modules/k8s"
+	"github.com/gruntwork-io/terratest/modules/k8s/v2"
 	velerov1 "github.com/vmware-tanzu/velero/pkg/apis/velero/v1"
 
 	"github.com/stretchr/testify/require"
