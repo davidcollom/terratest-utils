@@ -37,7 +37,7 @@ jobs:
           - pkg/velero
           - pkg/argo/cd
           - pkg/argo/events
-          - pkg/argo/rollouts
+          - pkg/argo/roll
           - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
@@ -70,7 +70,7 @@ jobs:
           - pkg/velero
           - pkg/argo/cd
           - pkg/argo/events
-          - pkg/argo/rollouts
+          - pkg/argo/roll
           - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
@@ -97,7 +97,7 @@ jobs:
           - pkg/velero
           - pkg/argo/cd
           - pkg/argo/events
-          - pkg/argo/rollouts
+          - pkg/argo/roll
           - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
@@ -126,7 +126,7 @@ jobs:
           - pkg/velero
           - pkg/argo/cd
           - pkg/argo/events
-          - pkg/argo/rollouts
+          - pkg/argo/roll
           - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
@@ -157,7 +157,7 @@ jobs:
           - pkg/velero
           - pkg/argo/cd
           - pkg/argo/events
-          - pkg/argo/rollouts
+          - pkg/argo/roll
           - pkg/argo/workflows
     steps:
       - uses: actions/checkout@v7
