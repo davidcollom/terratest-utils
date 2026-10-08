@@ -80,7 +80,7 @@ jobs:
           go-version-file: go.work
           cache-dependency-path: '${{ matrix.module }}/go.sum'
       - name: Run go vet
-        run: go vet ${{ matrix.module }}/...
+        run: go vet ./${{ matrix.module }}/...
 
   lint:
     runs-on: ubuntu-latest
@@ -109,7 +109,7 @@ jobs:
       - name: Install golangci-lint
         run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.14.0
       - name: Run golangci-lint
-        run: golangci-lint run ${{ matrix.module }}/...
+        run: golangci-lint run ./${{ matrix.module }}/...
 
   vulncheck:
     runs-on: ubuntu-latest
@@ -139,7 +139,7 @@ jobs:
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Run govulncheck
         continue-on-error: true
-        run: govulncheck ${{ matrix.module }}/...
+        run: govulncheck ./${{ matrix.module }}/...
 
   test:
     needs: [fmt, vet, lint, vulncheck]
@@ -167,4 +167,4 @@ jobs:
           go-version-file: go.work
           cache-dependency-path: '${{ matrix.module }}/go.sum'
       - name: Run tests
-        run: go test -v ${{ matrix.module }}/...
+        run: go test -v ./${{ matrix.module }}/...
