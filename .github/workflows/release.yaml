@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      major: ${{ steps.version.outputs.major }}
+      major_minor: ${{ steps.version.outputs.major_minor }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.23'
+
+      - name: Install svu
+        run: go install github.com/caarlos0/svu/v3@latest
+
+      - name: Compute version and aliases
+        id: version
+        run: |
+          VERSION=$(svu ${{ github.event.inputs.release_type }})
+          MAJOR=$(echo "$VERSION" | cut -d. -f1)
+          MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "major=$MAJOR" >> $GITHUB_OUTPUT
+          echo "major_minor=$MAJOR_MINOR" >> $GITHUB_OUTPUT
+          echo "Tagging version: $VERSION"
+
+      - name: Run bump-version script
+        run: ./scripts/bump-version.sh ${{ steps.version.outputs.version }}
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit (already at ${{ steps.version.outputs.version }})."
+          else
+            git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+          fi
+
+      - name: Create version tag
+        run: git tag ${{ steps.version.outputs.version }}
+
+      - name: Create minor alias tag
+        run: |
+          if git rev-parse v${{ steps.version.outputs.major_minor }} >/dev/null 2>&1; then
+            echo "Minor alias tag v${{ steps.version.outputs.major_minor }} already exists, skipping"
+          else
+            git tag v${{ steps.version.outputs.major_minor }}
+          fi
+
+      - name: Create major alias tag
+        run: |
+          if git rev-parse v${{ steps.version.outputs.major }} >/dev/null 2>&1; then
+            echo "Major alias tag v${{ steps.version.outputs.major }} already exists, skipping"
+          else
+            git tag v${{ steps.version.outputs.major }}
+          fi
+
+      - name: Push tags
+        run: git push origin --tags
+
+  github-release:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      discussions: write
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.release.outputs.version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
