@@ -70,6 +70,9 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace github.com/davidcollom/terratest-utils/pkg/utils => ../utils
+replace (
+	github.com/davidcollom/terratest-utils/pkg/utils => ../utils
+	sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
+)
 
 exclude sigs.k8s.io/gateway-api v1.5.0
