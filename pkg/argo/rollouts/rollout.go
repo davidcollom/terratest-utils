@@ -22,8 +22,8 @@ import (
 )
 
 // NewArgoRolloutsClient creates a new Argo Rollouts client using the provided testing context and kubectl options.
-// It retrieves the Kubernetes REST configuration from the given options or generates one if not present.
-// Returns an Argo Rollouts client interface and an error if the client could not be created.
+// It is a variable so tests can override it with a fake clientset (see .github/copilot-instructions.md
+// "Client Construction Pattern").
 //
 // Parameters:
 //   - t: The testing context, used for logging and error handling.
@@ -32,9 +32,9 @@ import (
 // Returns:
 //   - rolloutClientSet.Interface: The Argo Rollouts client interface for interacting with Rollouts resources.
 //   - error: An error if the client could not be created.
-//
-// NewArgoRolloutsClient creates a new client or helper instance.
-func NewArgoRolloutsClient(t testing.TestingT, options *k8s.KubectlOptions) (rolloutClientSet.Interface, error) {
+var NewArgoRolloutsClient = newArgoRolloutsClient
+
+func newArgoRolloutsClient(t testing.TestingT, options *k8s.KubectlOptions) (rolloutClientSet.Interface, error) {
 	var cfg *rest.Config
 	var err error
 	if options.RestConfig == nil {
