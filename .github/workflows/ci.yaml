@@ -20,6 +20,12 @@ permissions:
 #      silently in this repo (matrix jobs never started)
 # When adding or removing a module, update all five lists below AND
 # .github/modules.json (kept in sync for documentation / future use).
+#
+# Each module entry is an object with:
+#   path: the Go module path (used for `go test ./<path>/...`, coverage files, cache key)
+#   name: an artifact-safe identifier (no `/`), used in the coverage-artifact name
+# The `name` exists because GitHub artifact names must match [A-Za-z0-9_-],
+# and the matrix `path` contains `/` for grouped modules like `pkg/argo/cd`.
 
 jobs:
   fmt:
@@ -28,29 +34,29 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - pkg/utils
-          - pkg/k8s
-          - pkg/certmanager
-          - pkg/externalsecrets
-          - pkg/flux
-          - pkg/istio
-          - pkg/linkerd
-          - pkg/velero
-          - pkg/argo/cd
-          - pkg/argo/events
-          - pkg/argo/roll
-          - pkg/argo/workflows
+          - { path: pkg/utils, name: pkg-utils }
+          - { path: pkg/k8s, name: pkg-k8s }
+          - { path: pkg/certmanager, name: pkg-certmanager }
+          - { path: pkg/externalsecrets, name: pkg-externalsecrets }
+          - { path: pkg/flux, name: pkg-flux }
+          - { path: pkg/istio, name: pkg-istio }
+          - { path: pkg/linkerd, name: pkg-linkerd }
+          - { path: pkg/velero, name: pkg-velero }
+          - { path: pkg/argo/cd, name: pkg-argo-cd }
+          - { path: pkg/argo/events, name: pkg-argo-events }
+          - { path: pkg/argo/rollouts, name: pkg-argo-rollouts }
+          - { path: pkg/argo/workflows, name: pkg-argo-workflows }
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.work
-          cache-dependency-path: '${{ matrix.module }}/go.sum'
+          cache-dependency-path: '${{ matrix.module.path }}/go.sum'
       - name: Check go fmt
         run: |
-          UNFORMATTED=$(gofmt -l ${{ matrix.module }})
+          UNFORMATTED=$(gofmt -l ${{ matrix.module.path }})
           if [ -n "$UNFORMATTED" ]; then
-            echo "The following files are not gofmt'd in ${{ matrix.module }}. Run: go fmt ./..."
+            echo "The following files are not gofmt'd in ${{ matrix.module.path }}. Run: go fmt ./..."
             echo "$UNFORMATTED"
             exit 1
           fi
@@ -61,26 +67,26 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - pkg/utils
-          - pkg/k8s
-          - pkg/certmanager
-          - pkg/externalsecrets
-          - pkg/flux
-          - pkg/istio
-          - pkg/linkerd
-          - pkg/velero
-          - pkg/argo/cd
-          - pkg/argo/events
-          - pkg/argo/roll
-          - pkg/argo/workflows
+          - { path: pkg/utils, name: pkg-utils }
+          - { path: pkg/k8s, name: pkg-k8s }
+          - { path: pkg/certmanager, name: pkg-certmanager }
+          - { path: pkg/externalsecrets, name: pkg-externalsecrets }
+          - { path: pkg/flux, name: pkg-flux }
+          - { path: pkg/istio, name: pkg-istio }
+          - { path: pkg/linkerd, name: pkg-linkerd }
+          - { path: pkg/velero, name: pkg-velero }
+          - { path: pkg/argo/cd, name: pkg-argo-cd }
+          - { path: pkg/argo/events, name: pkg-argo-events }
+          - { path: pkg/argo/rollouts, name: pkg-argo-rollouts }
+          - { path: pkg/argo/workflows, name: pkg-argo-workflows }
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.work
-          cache-dependency-path: '${{ matrix.module }}/go.sum'
+          cache-dependency-path: '${{ matrix.module.path }}/go.sum'
       - name: Run go vet
-        run: go vet ./${{ matrix.module }}/...
+        run: go vet ./${{ matrix.module.path }}/...
 
   lint:
     runs-on: ubuntu-latest
@@ -88,28 +94,28 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - pkg/utils
-          - pkg/k8s
-          - pkg/certmanager
-          - pkg/externalsecrets
-          - pkg/flux
-          - pkg/istio
-          - pkg/linkerd
-          - pkg/velero
-          - pkg/argo/cd
-          - pkg/argo/events
-          - pkg/argo/roll
-          - pkg/argo/workflows
+          - { path: pkg/utils, name: pkg-utils }
+          - { path: pkg/k8s, name: pkg-k8s }
+          - { path: pkg/certmanager, name: pkg-certmanager }
+          - { path: pkg/externalsecrets, name: pkg-externalsecrets }
+          - { path: pkg/flux, name: pkg-flux }
+          - { path: pkg/istio, name: pkg-istio }
+          - { path: pkg/linkerd, name: pkg-linkerd }
+          - { path: pkg/velero, name: pkg-velero }
+          - { path: pkg/argo/cd, name: pkg-argo-cd }
+          - { path: pkg/argo/events, name: pkg-argo-events }
+          - { path: pkg/argo/rollouts, name: pkg-argo-rollouts }
+          - { path: pkg/argo/workflows, name: pkg-argo-workflows }
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.work
-          cache-dependency-path: '${{ matrix.module }}/go.sum'
+          cache-dependency-path: '${{ matrix.module.path }}/go.sum'
       - name: Install golangci-lint
         run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.14.0
       - name: Run golangci-lint
-        run: golangci-lint run ./${{ matrix.module }}/...
+        run: golangci-lint run ./${{ matrix.module.path }}/...
 
   vulncheck:
     runs-on: ubuntu-latest
@@ -117,29 +123,29 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - pkg/utils
-          - pkg/k8s
-          - pkg/certmanager
-          - pkg/externalsecrets
-          - pkg/flux
-          - pkg/istio
-          - pkg/linkerd
-          - pkg/velero
-          - pkg/argo/cd
-          - pkg/argo/events
-          - pkg/argo/roll
-          - pkg/argo/workflows
+          - { path: pkg/utils, name: pkg-utils }
+          - { path: pkg/k8s, name: pkg-k8s }
+          - { path: pkg/certmanager, name: pkg-certmanager }
+          - { path: pkg/externalsecrets, name: pkg-externalsecrets }
+          - { path: pkg/flux, name: pkg-flux }
+          - { path: pkg/istio, name: pkg-istio }
+          - { path: pkg/linkerd, name: pkg-linkerd }
+          - { path: pkg/velero, name: pkg-velero }
+          - { path: pkg/argo/cd, name: pkg-argo-cd }
+          - { path: pkg/argo/events, name: pkg-argo-events }
+          - { path: pkg/argo/rollouts, name: pkg-argo-rollouts }
+          - { path: pkg/argo/workflows, name: pkg-argo-workflows }
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.work
-          cache-dependency-path: '${{ matrix.module }}/go.sum'
+          cache-dependency-path: '${{ matrix.module.path }}/go.sum'
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
       - name: Run govulncheck
         continue-on-error: true
-        run: govulncheck ./${{ matrix.module }}/...
+        run: govulncheck ./${{ matrix.module.path }}/...
 
   test:
     needs: [fmt, vet, lint, vulncheck]
@@ -148,38 +154,38 @@ jobs:
       fail-fast: false
       matrix:
         module:
-          - pkg/utils
-          - pkg/k8s
-          - pkg/certmanager
-          - pkg/externalsecrets
-          - pkg/flux
-          - pkg/istio
-          - pkg/linkerd
-          - pkg/velero
-          - pkg/argo/cd
-          - pkg/argo/events
-          - pkg/argo/roll
-          - pkg/argo/workflows
+          - { path: pkg/utils, name: pkg-utils }
+          - { path: pkg/k8s, name: pkg-k8s }
+          - { path: pkg/certmanager, name: pkg-certmanager }
+          - { path: pkg/externalsecrets, name: pkg-externalsecrets }
+          - { path: pkg/flux, name: pkg-flux }
+          - { path: pkg/istio, name: pkg-istio }
+          - { path: pkg/linkerd, name: pkg-linkerd }
+          - { path: pkg/velero, name: pkg-velero }
+          - { path: pkg/argo/cd, name: pkg-argo-cd }
+          - { path: pkg/argo/events, name: pkg-argo-events }
+          - { path: pkg/argo/rollouts, name: pkg-argo-rollouts }
+          - { path: pkg/argo/workflows, name: pkg-argo-workflows }
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.work
-          cache-dependency-path: '${{ matrix.module }}/go.sum'
+          cache-dependency-path: '${{ matrix.module.path }}/go.sum'
       - name: Run tests with coverage
-        run: go test -v -coverprofile=${{ matrix.module }}/coverage.out -covermode=atomic ./${{ matrix.module }}/...
+        run: go test -v -coverprofile=${{ matrix.module.path }}/coverage.out -covermode=atomic ./${{ matrix.module.path }}/...
       - name: Show coverage summary
         if: always()
-        run: go tool cover -func=${{ matrix.module }}/coverage.out | tail -1
+        run: go tool cover -func=${{ matrix.module.path }}/coverage.out | tail -1
       - name: Generate HTML coverage report
         if: always()
-        run: go tool cover -html=${{ matrix.module }}/coverage.out -o ${{ matrix.module }}/coverage.html
+        run: go tool cover -html=${{ matrix.module.path }}/coverage.out -o ${{ matrix.module.path }}/coverage.html
       - name: Upload coverage artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.module | replace('/', '-') }}
+          name: coverage-${{ matrix.module.name }}
           path: |
-            ${{ matrix.module }}/coverage.out
-            ${{ matrix.module }}/coverage.html
+            ${{ matrix.module.path }}/coverage.out
+            ${{ matrix.module.path }}/coverage.html
           retention-days: 90
