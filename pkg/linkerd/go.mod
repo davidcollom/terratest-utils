@@ -3,7 +3,7 @@ module github.com/davidcollom/terratest-utils/pkg/linkerd
 go 1.27.1
 
 require (
-	github.com/davidcollom/terratest-utils/pkg/utils v0.0.0
+	github.com/davidcollom/terratest-utils/pkg/utils v0.1.1
 	github.com/gruntwork-io/terratest/modules/core/v2 v2.0.0
 	github.com/gruntwork-io/terratest/modules/k8s/v2 v2.0.0
 	github.com/linkerd/linkerd2 v0.5.1-0.20260622225159-eadc1acf79ad
@@ -70,9 +70,6 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace (
-	github.com/davidcollom/terratest-utils/pkg/utils => ../utils
-	sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
-)
+replace sigs.k8s.io/gateway-api => sigs.k8s.io/gateway-api v1.0.0
 
 exclude sigs.k8s.io/gateway-api v1.5.0
