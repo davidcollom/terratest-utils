@@ -3,7 +3,7 @@ module github.com/davidcollom/terratest-utils/pkg/argo/rollouts
 go 1.27.1
 
 require (
-	github.com/argoproj/argo-rollouts v1.10.0
+	github.com/argoproj/argo-rollouts v1.10.1
 	github.com/davidcollom/terratest-utils/pkg/utils v0.0.0
 	github.com/gruntwork-io/terratest/modules/core/v2 v2.0.0
 	github.com/gruntwork-io/terratest/modules/k8s/v2 v2.0.0
