@@ -7,8 +7,8 @@ require (
 	github.com/gruntwork-io/terratest/modules/core/v2 v2.0.0
 	github.com/gruntwork-io/terratest/modules/k8s/v2 v2.0.0
 	github.com/stretchr/testify v1.12.1
-	istio.io/api v1.31.2
-	istio.io/client-go v1.31.2
+	istio.io/api v1.31.3
+	istio.io/client-go v1.31.3
 	k8s.io/apimachinery v0.37.1
 )
 
