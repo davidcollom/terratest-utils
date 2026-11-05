@@ -237,3 +237,7 @@ updates:
       prefix: "ci"
     labels:
       - "ci"
+    groups:
+      all:
+        patterns:
+          - "*"
