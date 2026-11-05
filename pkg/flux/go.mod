@@ -4,13 +4,13 @@ go 1.27.1
 
 require (
 	github.com/davidcollom/terratest-utils/pkg/utils v0.0.0
-	github.com/fluxcd/helm-controller/api v1.7.0
-	github.com/fluxcd/kustomize-controller/api v1.10.0
-	github.com/fluxcd/source-controller/api v1.10.0
+	github.com/fluxcd/helm-controller/api v1.7.1
+	github.com/fluxcd/kustomize-controller/api v1.10.1
+	github.com/fluxcd/source-controller/api v1.10.1
 	github.com/gruntwork-io/terratest/modules/core/v2 v2.0.0
 	github.com/gruntwork-io/terratest/modules/k8s/v2 v2.0.0
 	github.com/stretchr/testify v1.12.1
-	k8s.io/apimachinery v0.37.1
+	k8s.io/apimachinery v0.37.2
 	sigs.k8s.io/controller-runtime v0.25.2
 )
 
@@ -78,7 +78,7 @@ require (
 	k8s.io/client-go v0.37.1 // indirect
 	k8s.io/klog/v2 v2.140.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
-	k8s.io/streaming v0.37.1 // indirect
+	k8s.io/streaming v0.37.2 // indirect
 	k8s.io/utils v0.0.0-20260626114624-be93311217bd // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
